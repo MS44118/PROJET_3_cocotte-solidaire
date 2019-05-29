@@ -1,0 +1,55 @@
+.green-font{
+  color: #498e81;
+}
+i.icon-green {
+  color:  #498e81;
+}
+
+nav .brand-logo {
+  margin-left: 30px;
+  color: #498e81;
+}
+
+nav .brand-logo img{
+  height: 64px;
+  width: auto;
+}
+
+nav ul a{
+  font-size: 1rem;
+  color: #498e81;
+}
+
+.headline{
+  margin-top: 300px;
+  color: #ffffff;
+}
+.sidebarNO{
+  display:none;
+}
+.sidebarYES{
+  display:none;
+}
+@media only screen and (max-width : 1000px) {
+  .sidebarYES{
+    display:block;
+    text-align: center;
+  }
+  
+  .sidebarYES a{
+    text-decoration: none;
+    color: #498e81;
+    font-size: 1.5em;
+    margin: 1vw;
+  }
+}
+
+@media only screen and (max-width : 600px) {
+  nav .brand-logo img{
+      height: 56px;
+  }
+
+  .headline{
+      margin-top: 250px;
+  }
+}
