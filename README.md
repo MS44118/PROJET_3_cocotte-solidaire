@@ -4,6 +4,17 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `npm install`
+
+install the modules required to run the app.
+- react 
+- mysql
+- express
+
+react-router-dom?
+bootstrap?
+nodemon?
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
