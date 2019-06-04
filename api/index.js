@@ -15,7 +15,10 @@ connection.connect((err) => {
 });
 
 api.get('/', (req, res) => {
-  res.send('welcome to "la cocotte solidaire" API');
+  connection.query('SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id ;', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
 });
 
 api.get('/registrations', (req, res) => {
