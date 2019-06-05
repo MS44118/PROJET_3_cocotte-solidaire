@@ -11,12 +11,13 @@ function App() {
   return (
     <div>
       <Menu />
-      <Route path='/' exact component={Home} />
-      <Route path='/events' exact component={Events} />
-      <Route path='/activities' exact component={Activities} />
-      <Route path='/reservation' exact component={Reservation} />
-      <Route path='/users' exact component={Users} />
-    </div>  );
+      <Route path="/" exact component={Home} />
+      <Route path="/events" exact component={Events} />
+      <Route path="/activities" exact component={Activities} />
+      <Route path="/reservation" exact component={Reservation} />
+      <Route path="/users" exact component={Users} />
+    </div>
+  );
 }
 
 export default App;
