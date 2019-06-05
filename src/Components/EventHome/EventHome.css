@@ -1,0 +1,16 @@
+thead{
+background-color: #F3BCAF;
+}
+
+body{
+  color:#498e81 !important;
+}
+
+.event-display{
+  background-color: #F3BC00 !important;
+}
+
+span{ 
+  margin: 10px;
+  text-align: left;
+}

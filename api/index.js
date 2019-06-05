@@ -1,12 +1,12 @@
 const express = require('express');
-const mysql = require('mysql');
+const connection = require('./conf');
 
 const api = express(); // initialise une application express appelée api
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  database: 'cocotte_booking',
-  password: 'kernastellec',
+
+api.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
 });
 
 connection.connect((err) => {
@@ -29,10 +29,13 @@ api.get('/registrations', (req, res) => {
 });
 
 api.get('/events', (req, res) => {
-  connection.query('SELECT * FROM events', (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
+  connection.query(
+    'SELECT * FROM events',
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    },
+  );
 });
 
 api.listen(8000, 'localhost', (err) => {

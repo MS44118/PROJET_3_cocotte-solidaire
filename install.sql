@@ -78,7 +78,10 @@ INSERT INTO cocotte_booking.events
 VALUES
   (NOW(),NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2),
   (NOW(),NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3),
-  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1)
+  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1),
+  (NOW(),NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2),
+  (NOW(),NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3),
+  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1);
 
 -- controls
 SELECT * FROM events;
