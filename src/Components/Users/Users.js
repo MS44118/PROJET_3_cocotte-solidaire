@@ -40,7 +40,7 @@ function Users() {
             className="waves-effect waves-light btn-small teal white-text right"
             onClick={() => setNewMember(true)}>Nouvel adhérent</button>
         </li>
-        {newMember? <FormMember /> : ''}
+        {newMember? <FormMember userSelected='new' /> : ''}
         <li className="collection-item row center-align">
           <p className="col s2">N°adhérent</p>
           <p className="col s2">Nom</p>
