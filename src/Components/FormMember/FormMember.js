@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import M from 'materialize-css/dist/js/materialize.js';
 import 'materialize-css/dist/css/materialize.min.css';
 import '../Reservation/Reservation.css';
+import { DisplayCtx } from '../Users/Users';
+
 
 function FormMember(props) {
   const [user, setUser] = useState({});
@@ -22,7 +24,7 @@ function FormMember(props) {
   const [phone, setPhone] = useState('');
   const [zip, setZip] = useState('');
   const [labelActive, setLabelActive] = useState('')
-
+  const [display, setDisplay] = useContext(DisplayCtx);
   
   useEffect(() => {
     M.AutoInit();
@@ -105,7 +107,7 @@ function FormMember(props) {
           </div>
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
-            <input id="first_name" value={user.firstname} onChange={(event)=> setFirstname(event.target.value)} type="text" className="validate" />
+            <input id="first_name" value={user.firstname ? user.firstname : null} onChange={(event)=> {setUser({...user, firstname:'' }); setFirstname(event.target.value)}} type="text" className="validate" />
             <label className={labelActive} for="first_name">Prénom</label>
           </div>
         </div>
@@ -116,13 +118,13 @@ function FormMember(props) {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">email</i>
-            <input value={user.email} onChange={(event)=> setEmail(event.target.value)}id="email" type="email" className="validate" />
+            <input value={user.email ? user.email : null} onChange={(event)=> {setUser({...user, email:'' }); setEmail(event.target.value)}} id="email" type="email" className="validate" />
             <label className={labelActive} for="email">Email</label>
 
           </div>
           <div className="input-field col s6">
             <i className="material-icons prefix">phone</i>
-            <input value={user.phone} onChange={(event)=> setPhone(event.target.value)} id="icon_telephone" type="tel" className="validate" />
+            <input value={user.phone ? user.phone : null} onChange={(event)=> {setUser({...user, phone:'' }); setPhone(event.target.value)}} id="icon_telephone" type="tel" className="validate" />
             <label className={labelActive} for="icon_telephone">Téléphone</label>
           </div>
         </div>
@@ -130,12 +132,12 @@ function FormMember(props) {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">location_on</i>
-            <input value={user.adress} onChange={(event)=> setAdress(event.target.value)} id="adress" type="text" className="validate" />
+            <input value={user.adress ? user.adress : null} onChange={(event)=> {setUser({...user, adress:'' }); setAdress(event.target.value)}} id="adress" type="text" className="validate" />
             <label className={labelActive} for="adress">Adress</label>
           </div>
           <div className="input-field col s6">
             <i className="material-icons prefix">location_on</i>
-            <input value={user.zip} onChange={(event)=> setZip(event.target.value)} id="zip_code" type="text" className="validate" />
+            <input value={user.zip ? user.zip : null} onChange={(event)=> {setUser({...user, zip:'' }); setZip(event.target.value)}} id="zip_code" type="text" className="validate" />
             <label className={labelActive} for="zip_code">Code postal</label>
           </div>
         </div>
@@ -143,7 +145,7 @@ function FormMember(props) {
         <div className='row'>
           <div className="input-field col s6">
             <i className="material-icons prefix">location_on</i>
-            <input value={user.city} onChange={(event)=> setCity(event.target.value)} id="city" type="text" className="validate" />
+            <input value={user.city ? user.city : null} onChange={(event)=> {setUser({...user, city:'' }); setCity(event.target.value)}} id="city" type="text" className="validate" />
             <label className={labelActive} for="city">Ville</label>
           </div>
           <div className="input-field col s6">
@@ -157,8 +159,8 @@ function FormMember(props) {
         <div className='row'>
           <div className="input-field col s6">
             <i className="material-icons prefix">person_add</i>
-            <input value={user.memberId} onChange={(event)=> setMemberId(event.target.value)} id="member_id" type="text" className="validate" />
-            <label for="member_id">Numéro d'adhérent</label>
+            <input value={user.member_id ? user.member_id : null} onChange={(event)=> {setUser({...user, member_id:'' }); setMemberId(event.target.value)}} id="member_id" type="text" className="validate" />
+            <label className={labelActive} for="member_id">Numéro d'adhérent</label>
           </div>
           <div className="input-field col s6">
             <label>
@@ -184,7 +186,7 @@ function FormMember(props) {
           <div className="input-field col s4">
             <button
               className="waves-effect waves-light btn-small teal white-text right col s4"
-              onClick={''}>Envoyer</button>
+              onClick={() => setDisplay('none')}>Envoyer</button>
           </div>
 
         </div>
