@@ -8,7 +8,8 @@ function Users() {
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
   const [newMember, setNewMember] = useState(false)
-  const [display, setDisplay] = useState('none')
+  const [displayForm, setDisplayForm] = useState('none');
+  const [oneFormActivated, setOneFormActivated] = useState(false)
 
   useEffect(() => {
     console.log('tata')
@@ -20,30 +21,33 @@ function Users() {
 
   useEffect(() => {
     let arrayTemp = [];
-    for (let i = 0; i < userList.length; i++) {
-      arrayTemp[i] = false;
-      setActiveFormMember(arrayTemp)
+    if (displayForm === 'none'){
+      for (let i = 0; i < userList.length; i++) {
+        arrayTemp[i] = false;
+        setActiveFormMember(arrayTemp)
+      }
     }
-  }, [userList.length])
+  }, [userList.length, displayForm])
 
   const handleClick = (index) => {
     let arrayTemp = activeFormMember;
     arrayTemp[index] = !activeFormMember[index]
     setActiveFormMember(arrayTemp);
-    setDisplay('block')
+    setOneFormActivated(true)
+    setDisplayForm('block')
   }
 
   return (
-    <DisplayCtx.Provider value={[display, setDisplay]}>
+    <DisplayCtx.Provider value={[displayForm, setDisplayForm]}>
       <div>
         <ul className="collection with-header">
           <li className="collection-header row">
             <h4>Liste des utilisateurs / adhérents</h4>
             <button
               className="waves-effect waves-light btn-small teal white-text right"
-              onClick={() => setNewMember(true)}>Nouvel adhérent</button>
+              onClick={() => {setNewMember(true); setDisplayForm('block')}}>Nouvel adhérent</button>
           </li>
-          {newMember ? <FormMember userSelected='new' /> : ''}
+          {newMember && !oneFormActivated ? <li style={{ display: displayForm }}><FormMember userSelected='new' /></li> : ''}
           <li className="collection-item row center-align">
             <p className="col s2">N°adhérent</p>
             <p className="col s2">Nom</p>
