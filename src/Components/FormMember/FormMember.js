@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import M from 'materialize-css/dist/js/materialize.js';
 import 'materialize-css/dist/css/materialize.min.css';
 import '../Reservation/Reservation.css';
-import { DisplayCtx } from '../Users/Users';
 
+//ACTIONS 
+import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 
 function FormMember(props) {
   const [user, setUser] = useState({});
@@ -24,7 +26,6 @@ function FormMember(props) {
   const [phone, setPhone] = useState('');
   const [zip, setZip] = useState('');
   const [labelActive, setLabelActive] = useState('')
-  const [display, setDisplay] = useContext(DisplayCtx);
   
   useEffect(() => {
     M.AutoInit();
@@ -72,6 +73,33 @@ function FormMember(props) {
       })
     }
   }, [props.userSelected])
+
+  const handleSend = () =>{
+    if(props.userSelected === 'new'){
+      props.dispatch(displayNewUserFormAction('none'));
+    } else {
+      props.dispatch(displayKnownUserFormAction('none'))
+    }
+    setUser({
+      adress: adress,
+      birthday: birthday,
+      city: city,
+      email: email,
+      firstname: firstname,
+      gender: gender,
+      image_copyright: imageCopyright,
+      lastname: lastname,
+      mailing_active: mailingActive,
+      member_active: memberActive,
+      member_id: memberId,
+      membership_date_last: membershipDateLast,
+      membership_place: membershipPlace,
+      neighborhood: neighborhood,
+      phone: phone,
+      zip: zip
+    })
+    console.log(user)
+  } 
 
   return (
     <div className='container' style={{ marginBottom: '8em' }}>
@@ -186,15 +214,12 @@ function FormMember(props) {
           <div className="input-field col s4">
             <button
               className="waves-effect waves-light btn-small teal white-text right col s4"
-              onClick={() => setDisplay('none')}>Envoyer</button>
+              onClick={handleSend}>Envoyer</button>
           </div>
-
         </div>
-
       </div>
     </div>
-
   );
 }
 
-export default FormMember;
+export default connect()(FormMember)

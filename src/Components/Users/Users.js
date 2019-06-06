@@ -1,15 +1,14 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FormMember from './../FormMember/FormMember';
+import { connect } from 'react-redux';
 
-export const DisplayCtx = createContext('none');
+//ACTIONS 
+import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 
-function Users() {
+function Users(props) {
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
-  const [newMember, setNewMember] = useState(false)
-  const [displayForm, setDisplayForm] = useState('none');
-  const [oneFormActivated, setOneFormActivated] = useState(false)
 
   useEffect(() => {
     console.log('tata')
@@ -21,33 +20,31 @@ function Users() {
 
   useEffect(() => {
     let arrayTemp = [];
-    if (displayForm === 'none'){
+    if (props.displayKnownUser === 'none'){
       for (let i = 0; i < userList.length; i++) {
         arrayTemp[i] = false;
         setActiveFormMember(arrayTemp)
       }
     }
-  }, [userList.length, displayForm])
+  }, [userList.length, props.displayKnownUser])
 
   const handleClick = (index) => {
     let arrayTemp = activeFormMember;
     arrayTemp[index] = !activeFormMember[index]
     setActiveFormMember(arrayTemp);
-    setOneFormActivated(true)
-    setDisplayForm('block')
+    props.dispatch(displayKnownUserFormAction('block'));
   }
 
   return (
-    <DisplayCtx.Provider value={[displayForm, setDisplayForm]}>
       <div>
         <ul className="collection with-header">
           <li className="collection-header row">
             <h4>Liste des utilisateurs / adhérents</h4>
             <button
               className="waves-effect waves-light btn-small teal white-text right"
-              onClick={() => {setNewMember(true); setDisplayForm('block')}}>Nouvel adhérent</button>
+              onClick={() => {props.dispatch(displayNewUserFormAction('block'))}}>Nouvel adhérent</button>
           </li>
-          {newMember && !oneFormActivated ? <li style={{ display: displayForm }}><FormMember userSelected='new' /></li> : ''}
+          <li style={{ display: props.displayNewUser}}><FormMember userSelected='new' /></li>
           <li className="collection-item row center-align">
             <p className="col s2">N°adhérent</p>
             <p className="col s2">Nom</p>
@@ -71,8 +68,12 @@ function Users() {
           ))}
         </ul>
       </div>
-    </DisplayCtx.Provider>
   );
 }
 
-export default Users;
+const mapStateToProps = store => ({
+  displayNewUser: store.newUser,
+  displayKnownUser: store.knownUser
+});
+
+export default connect(mapStateToProps)(Users)
