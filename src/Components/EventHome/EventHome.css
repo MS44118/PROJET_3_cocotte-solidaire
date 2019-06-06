@@ -1,5 +1,6 @@
 thead{
-background-color: #F3BCAF;
+background-color: rgb(55,126,114);
+color: white;
 }
 
 body{
@@ -7,7 +8,7 @@ body{
 }
 
 .event-display{
-  background-color: #F3BC00 !important;
+  background-color: #F3BCAF !important;
 }
 
 span{ 
