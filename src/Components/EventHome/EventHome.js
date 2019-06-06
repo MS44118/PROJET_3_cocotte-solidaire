@@ -18,8 +18,9 @@ function EventHome() {
   useEffect(() => {
     M.AutoInit();
     console.log('toto');
-  }, [])
+  }, []);
 
+  // api call
   useEffect(() => {
     axios.get('http://localhost:8000/')
       .then((result) => {
@@ -27,6 +28,7 @@ function EventHome() {
       });
   }, []);
 
+  // display registrations : ALL
   const handleShowRegistrations = () => {
     setShowRegistrations(!showRegistrations);
   };
@@ -75,7 +77,7 @@ function EventHome() {
         {/* liste des evenements */}
         {events.map((event, index) => {
           return (
-            <tbody key={index}>
+            <tbody key={events[index]}>
               <tr className="event-display">
                 <td>{event.name}</td>
                 <td>{moment(event.date_b).format('dddd Do MMM YYYY')}</td>
@@ -105,7 +107,7 @@ function EventHome() {
         })}
 
       </table>
-      <p></p>
+      <p> </p>
     </div>
   );
 }
