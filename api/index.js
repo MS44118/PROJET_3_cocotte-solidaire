@@ -1,13 +1,15 @@
 const express = require('express');
-const mysql = require('mysql');
-
 const api = express(); // initialise une application express appelée api
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  database: 'cocotte_booking',
-  password: 'kernastellec',
-});
+const connection = require('./conf');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+// Support JSON-encoded bodies
+api.use(bodyParser.json());
+// Support URL-encoded bodies
+api.use(bodyParser.urlencoded({
+  extended: true
+}));
+api.use(cors());
 
 connection.connect((err) => {
   if (err) throw err;
@@ -25,6 +27,13 @@ api.get('/registrations', (req, res) => {
   connection.query('SELECT * FROM registrations', (err, result) => {
     if (err) throw err;
     res.send(result);
+  });
+});
+
+api.get('/users', (req, res) => {
+  connection.query('SELECT * FROM users', (err, result) => {
+    if (err) throw err;
+    res.json(result);
   });
 });
 
