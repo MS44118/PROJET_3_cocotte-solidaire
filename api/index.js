@@ -6,9 +6,13 @@ const connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   database: 'cocotte_booking',
-  password: 'kernastellec',
+  password: '29081994',
 });
 
+api.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 connection.connect((err) => {
   if (err) throw err;
   console.log('connected to MYSQL database');
@@ -16,6 +20,13 @@ connection.connect((err) => {
 
 api.get('/', (req, res) => {
   connection.query('SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id ;', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
+api.get('/activities', (req, res) => {
+  connection.query('SELECT * FROM activities', (err, result) => {
     if (err) throw err;
     res.send(result);
   });
