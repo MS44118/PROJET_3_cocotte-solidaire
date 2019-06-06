@@ -1,7 +1,10 @@
 body{
-    color:#498e81 !important;
+  color:#498e81 !important;
 }
 .txt{
-    text-align: center;
-    font-size: 25px;
+  text-align: center;
+  font-size: 25px;
+}
+.color_select{
+  color:#498e81 !important;
 }

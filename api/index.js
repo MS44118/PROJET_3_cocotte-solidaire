@@ -23,6 +23,13 @@ api.get('/', (req, res) => {
   });
 });
 
+api.get('/activities', (req, res) => {
+  connection.query('SELECT * FROM activities', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 api.get('/registrations', (req, res) => {
   connection.query('SELECT * FROM registrations', (err, result) => {
     if (err) throw err;
