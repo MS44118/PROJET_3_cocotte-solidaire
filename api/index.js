@@ -1,14 +1,17 @@
 const express = require('express');
-const api = express(); // initialise une application express appelée api
-const connection = require('./conf');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const connection = require('./conf');
+
+const api = express();
+
 // Support JSON-encoded bodies
 api.use(bodyParser.json());
 // Support URL-encoded bodies
 api.use(bodyParser.urlencoded({
-  extended: true
+  extended: true,
 }));
+// allows cross origin requests (localhost:xxxx)
 api.use(cors());
 
 connection.connect((err) => {
@@ -45,10 +48,13 @@ api.get('/users', (req, res) => {
 });
 
 api.get('/events', (req, res) => {
-  connection.query('SELECT * FROM events', (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
+  connection.query(
+    'SELECT * FROM events',
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    },
+  );
 });
 
 api.listen(8000, 'localhost', (err) => {

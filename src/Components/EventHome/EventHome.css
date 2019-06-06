@@ -1,0 +1,17 @@
+thead{
+background-color: rgb(55,126,114);
+color: white;
+}
+
+body{
+  color:#498e81 !important;
+}
+
+.event-display{
+  background-color: #F3BCAF !important;
+}
+
+span{ 
+  margin: 10px;
+  text-align: left;
+}
