@@ -17,8 +17,8 @@ function Menu() {
     <div>
       <nav>
         <div className="nav-wrapper white">
-          <a href="#" className="brand-logo">Logo</a>
-          <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons icon-green" onClick={handleClick}>menu</i></a>
+          <span className="brand-logo">Logo - ESPACE ADMIN</span>
+          <a data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons icon-green" onClick={handleClick}>menu</i></a>
           <ul className="right hide-on-med-and-down">
             <li><NavLink exact to="/">Accueil</NavLink></li>
             <li><NavLink exact to="/reservation">Réservation</NavLink></li>
