@@ -69,7 +69,7 @@ function FormMember(props) {
         neighborhood: neighborhood,
         phone: phone,
         zip: zip
-      })
+      });
     }
   }, [props.userSelected])
 

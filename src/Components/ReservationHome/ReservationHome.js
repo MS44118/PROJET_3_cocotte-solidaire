@@ -13,29 +13,25 @@ function ReservationHome() {
   }, []);
 
   return (
-      <table>
-        {/* liste des inscritions */}
-        {registrations.map((registration, index) => {
-          return (
-            <tbody key={registrations[index]}>
-              <tr>
-                <td>{registration.firstname}</td>
-                <td>{registration.lastname}</td>
-                <td>{registration.email}</td>
-                <td>{registration.phone}</td>
-                <td>{registration.member_id}</td>
-                <td>{registration.quantity_adult} adulte(s)</td>
-                <td>{registration.quantity_children} enfant(s)</td>
-                <td><i className="material-icons icon-green">create</i></td>
-                <td><i className="material-icons icon-green">delete_forever</i></td>
-                <td><i className="material-icons icon-green">warning</i></td>
-                <td><i className="material-icons icon-green">priority_high</i></td>
-                {/* <td><i className="material-icons icon-green">expand_more</i></td> */}
-              </tr>
-            </tbody>
-          );
-        })}
-      </table>
+    <div>
+      {registrations.map((registration, index) => {
+        return (
+          <li key={registrations[index]} className="registration-item row center-align">
+            <p className="col s1">{registration.firstname}</p>
+            <p className="col s1">{registration.lastname}</p>
+            <p className="col s2">{registration.email}</p>
+            <p className="col s1">{registration.phone}</p>
+            <p className="col s1">{registration.member_id}</p>
+            <p className="col s1">{registration.quantity_adult} adulte(s)</p>
+            <p className="col s1">{registration.quantity_children} enfant(s)</p>
+            <p className="col s1"><i className="material-icons icon-green">create</i></p>
+            <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
+            <p className="col s1"><i className="material-icons icon-green">warning</i></p>
+            <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
+          </li>
+        );
+      })}
+    </div>
   );
 }
 
