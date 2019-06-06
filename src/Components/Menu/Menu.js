@@ -17,8 +17,8 @@ function Menu() {
     <div>
       <nav>
         <div className="nav-wrapper white">
-          <span className="brand-logo">Logo - ESPACE ADMIN</span>
-          <a data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons icon-green" onClick={handleClick}>menu</i></a>
+          <a href="#" className="brand-logo"><img src="https://www.lacocottesolidaire.fr/build/images/logo-brand.png"></img></a>
+          <a href="#" data-target="mobile-demo" className="sidenav-trigger"><i className="material-icons icon-green" onClick={handleClick}>menu</i></a>
           <ul className="right hide-on-med-and-down">
             <li><NavLink exact to="/">Accueil</NavLink></li>
             <li><NavLink exact to="/reservation">Réservation</NavLink></li>

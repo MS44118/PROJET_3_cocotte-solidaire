@@ -1,5 +1,5 @@
 -- la cocotte solidaire booking DATABASE CREATION
-CREATE DATABASE cocotte_booking;
+-- CREATE DATABASE cocotte_booking;
 
 USE cocotte_booking;
 
@@ -22,7 +22,7 @@ CREATE TABLE users (
   neighborhood BOOLEAN,
   image_copyright BOOLEAN,
   mailing_active BOOLEAN
-)
+);
 
 -- mock datas for users TABLE
 INSERT INTO cocotte_booking.users 
@@ -31,7 +31,7 @@ VALUES
   ('maelenn', 'sallic', 'ms44118@gmail.com', '0677251296', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Einstein', 44300, 'Nantes', true, true, false),
   ('cedric', 'gardianot', 'cedric@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false),
   ('aurelia', 'roumesy', 'aurelia@gmail.com', '0655583322', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false),
-  ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false)
+  ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false);
   
 -- controls
 SELECT firstname, lastname, email, phone, birthday, gender FROM users;
@@ -43,7 +43,7 @@ CREATE TABLE activities(
   name VARCHAR(255),
   description VARCHAR(255),
   picture VARCHAR(255)
-)
+);
 
 -- mock datas for activities TABLE
 INSERT INTO cocotte_booking.activities 
@@ -51,7 +51,7 @@ INSERT INTO cocotte_booking.activities
 VALUES
   ('poterie', "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
   ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg")
+  ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg");
 
 -- controls
 SELECT id_activity, name, description FROM activities;
@@ -69,7 +69,7 @@ CREATE TABLE events (
   activity_id INT,
   PRIMARY KEY (id_event),
   FOREIGN KEY (activity_id) REFERENCES activities(id_activity)
-)
+);
 
 
 -- mock datas for events TABLE
@@ -78,7 +78,10 @@ INSERT INTO cocotte_booking.events
 VALUES
   (NOW(),NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2),
   (NOW(),NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3),
-  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1)
+  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1),
+  (NOW(),NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2),
+  (NOW(),NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3),
+  (NOW(),NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1);
 
 -- controls
 SELECT * FROM events;
@@ -96,7 +99,7 @@ CREATE TABLE registrations (
   PRIMARY KEY (id_registration),
   FOREIGN KEY (user_id) REFERENCES users(id_user),
   FOREIGN KEY (event_id) REFERENCES events(id_event)
-)
+);
 
 -- mock datas for registrations TABLE
 INSERT INTO cocotte_booking.registrations (quantity_adult, quantity_children, allergie, comment, user_id, event_id)
@@ -106,5 +109,5 @@ VALUES
   (1, 0, "cacahuètes", " ", 3, 4),
   (1, 0, " ", " ", 4, 6),
   (3, 0, " ", " ", 1, 6),
-  (1, 0, " ", " ", 2, 2)
+  (1, 0, " ", " ", 2, 2);
 
