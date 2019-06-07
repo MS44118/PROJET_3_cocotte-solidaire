@@ -3,4 +3,6 @@ node_modules
 package-lock.json
 .DS_Store
 api/.password.js
+
+# special settings visualcode (maelenn)
 .vscode
