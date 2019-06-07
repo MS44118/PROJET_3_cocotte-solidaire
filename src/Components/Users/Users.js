@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FormMember from './../FormMember/FormMember';
 import { connect } from 'react-redux';
+import './Users.css';
 
 //ACTIONS 
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
@@ -11,7 +12,6 @@ function Users(props) {
   const [activeFormMember, setActiveFormMember] = useState([]);
 
   useEffect(() => {
-    console.log('tata')
     axios.get('http://localhost:8000/users')
       .then(data => {
         setUserList(data.data)
@@ -41,11 +41,11 @@ function Users(props) {
           <li className="collection-header row">
             <h4>Liste des utilisateurs / adhérents</h4>
             <button
-              className="waves-effect waves-light btn-small teal white-text right"
+              className="waves-effect waves-light btn-small teal darken-1 white-text right"
               onClick={() => {props.dispatch(displayNewUserFormAction('block'))}}>Nouvel adhérent</button>
           </li>
           <li style={{ display: props.displayNewUser}}><FormMember userSelected='new' /></li>
-          <li className="collection-item row center-align">
+          <li className="collection-item-header row center-align">
             <p className="col s2">N°adhérent</p>
             <p className="col s2">Nom</p>
             <p className="col s2">Prénom</p>
@@ -60,7 +60,7 @@ function Users(props) {
                 <p className="col s2">{user.phone}</p>
                 <p className="col s2">{user.email}</p>
                 <button
-                  className="waves-effect waves-light btn-small teal white-text col right"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col right"
                   onClick={() => handleClick(index)}><i className="material-icons">create</i></button>
               </li>
               <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
