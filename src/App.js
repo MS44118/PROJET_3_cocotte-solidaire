@@ -6,6 +6,7 @@ import Events from './Components/Events/Events';
 import Reservation from './Components/Reservation/Reservation';
 import Users from './Components/Users/Users';
 import Home from './Components/Home/Home';
+import Footer from './Components/Footer/Footer';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/activities" exact component={Activities} />
       <Route path="/reservation" exact component={Reservation} />
       <Route path="/users" exact component={Users} />
+      <Footer />
     </div>
   );
 }
