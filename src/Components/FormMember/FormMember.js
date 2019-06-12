@@ -140,57 +140,56 @@ function FormMember({ userSelected, dispatch }) {
       <div className="row">
         <div className="row">
           <div className="input-field col s6">
+            <i className="material-icons prefix">account_circle</i>
+            <input
+              id="last_name"
+              value={lastname && lastname}
+              onChange={event => setLastname(event.target.value)}
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="last_name">
-              <i className="material-icons prefix">account_circle</i>
-              <input
-                id="last_name"
-                value={lastname && lastname}
-                onChange={event => setLastname(event.target.value)}
-                type="text"
-                className="validate"
-              />
               Nom
             </label>
           </div>
           <div className="input-field col s6">
+            <i className="material-icons prefix">account_circle</i>
+            <input
+              id="first_name"
+              value={firstname && firstname}
+              onChange={event => setFirstname(event.target.value)}
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="first_name">
-              <i className="material-icons prefix">account_circle</i>
-              <input
-                id="first_name"
-                value={firstname && firstname}
-                onChange={event => setFirstname(event.target.value)}
-                type="text"
-                className="validate"
-              />
               Prénom
             </label>
           </div>
         </div>
         <div className="row">
           <div className="input-field col s6">
+            <i className="material-icons prefix">email</i>
+            <input
+              value={email && email}
+              onChange={event => setEmail(event.target.value)}
+              id="email"
+              type="email"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="email">
-              <i className="material-icons prefix">email</i>
-              <input
-                value={email && email}
-                onChange={event => setEmail(event.target.value)}
-                id="email"
-                type="email"
-                className="validate"
-              />
               Email
             </label>
-
           </div>
           <div className="input-field col s6">
+            <i className="material-icons prefix">phone</i>
+            <input
+              value={phone && phone}
+              onChange={event => setPhone(event.target.value)}
+              id="icon_telephone"
+              type="tel"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="icon_telephone">
-              <i className="material-icons prefix">phone</i>
-              <input
-                value={phone && phone}
-                onChange={event => setPhone(event.target.value)}
-                id="icon_telephone"
-                type="tel"
-                className="validate"
-              />
               Téléphone
             </label>
           </div>
@@ -198,28 +197,28 @@ function FormMember({ userSelected, dispatch }) {
 
         <div className="row">
           <div className="input-field col s6">
+            <i className="material-icons prefix">location_on</i>
+            <input
+              value={adress && adress}
+              onChange={event => setAdress(event.target.value)}
+              id="adress"
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="adress">
-              <i className="material-icons prefix">location_on</i>
-              <input
-                value={adress && adress}
-                onChange={event => setAdress(event.target.value)}
-                id="adress"
-                type="text"
-                className="validate"
-              />
-              Adress
+              Adresse
             </label>
           </div>
           <div className="input-field col s6">
+            <i className="material-icons prefix">location_on</i>
+            <input
+              value={zip && zip}
+              onChange={event => setZip(event.target.value)}
+              id="zip_code"
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="zip_code">
-              <i className="material-icons prefix">location_on</i>
-              <input
-                value={zip && zip}
-                onChange={event => setZip(event.target.value)}
-                id="zip_code"
-                type="text"
-                className="validate"
-              />
               Code postal
             </label>
           </div>
@@ -227,20 +226,20 @@ function FormMember({ userSelected, dispatch }) {
 
         <div className="row">
           <div className="input-field col s6">
+            <i className="material-icons prefix">location_on</i>
+            <input
+              value={city && city}
+              onChange={event => setCity(event.target.value)}
+              id="city"
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="city">
-              <i className="material-icons prefix">location_on</i>
-              <input
-                value={city && city}
-                onChange={event => setCity(event.target.value)}
-                id="city"
-                type="text"
-                className="validate"
-              />
               Ville
             </label>
           </div>
           <div className="input-field col s6">
-            <label htmlFor="check_neighborhood">
+            <label>
               <input
                 type="checkbox"
                 id="check_neighborhood"
@@ -255,19 +254,19 @@ function FormMember({ userSelected, dispatch }) {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">person_add</i>
+            <input
+              value={memberId && memberId}
+              onChange={event => setMemberId(event.target.value)}
+              id="member_id"
+              type="text"
+              className="validate"
+            />
             <label className={labelActive} htmlFor="member_id">
-              <input
-                value={memberId && memberId}
-                onChange={event => setMemberId(event.target.value)}
-                id="member_id"
-                type="text"
-                className="validate"
-              />
               Numéro d&apos;adhérent
             </label>
           </div>
           <div className="input-field col s6">
-            <label htmlFor="check_member_active">
+            <label>
               <input
                 type="checkbox"
                 id="check_member_active"
@@ -281,7 +280,7 @@ function FormMember({ userSelected, dispatch }) {
 
         <div className="row">
           <div className="input-field col s4">
-            <label htmlFor="check_image_copyright">
+            <label>
               <input
                 type="checkbox"
                 id="check_image_copyright"
@@ -292,7 +291,7 @@ function FormMember({ userSelected, dispatch }) {
             </label>
           </div>
           <div className="input-field col s4">
-            <label htmlFor="check_mailing_active">
+            <label>
               <input
                 type="checkbox"
                 id="check_mailing_active"
