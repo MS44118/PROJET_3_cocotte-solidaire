@@ -15,7 +15,7 @@ function EventHome() {
   // to store api response
   const [events, setEvents] = useState([]);
   // to collapse all the registrations for a specific event
-  const [collapseRegistrations, setCollapseRegistrations] = useState([]);
+  const [collapseRegistrations, setCollapseRegistrations] = useState(false);
 
   // Auto Init allows you to initialize all of the Materialize Components
   useEffect(() => {
@@ -29,15 +29,6 @@ function EventHome() {
         setEvents(result.data);
       });
   }, []);
-
-  useEffect(() => {
-    let array = [];
-    events.map((event, index) => {
-      array[index] = false;
-    });
-    setCollapseRegistrations(array);
-  }, [events]);
-
 
   return (
     <div>
@@ -102,11 +93,11 @@ function EventHome() {
               <p className="col s1">
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapseRegistrations(!collapseRegistrations[index])}
+                  onClick={() => setCollapseRegistrations(!collapseRegistrations)}
                   type="submit"
                   name="action"
                 >
-                  { collapseRegistrations[index] === false
+                  { collapseRegistrations === false
                     ? <i className="material-icons">expand_more</i>
                     : <i className="material-icons">expand_less</i>
                   }
