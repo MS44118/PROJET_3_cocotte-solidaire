@@ -90,7 +90,7 @@ function EventHome() {
                 <td><i className="material-icons icon-green">warning</i></td>
                 <td><i className="material-icons icon-green">priority_high</i></td>
                 {/* <td><i className="material-icons icon-green">expand_more</i></td> */}
-                <td onClick={() => handleShowRegistrations(event)}><i className="material-icons icon-green">expand_more</i></td>
+                <td onClick={() => handleShowRegistrations(event)} role="button"><i className="material-icons icon-green">expand_more</i></td>
               </tr>
               { showRegistrations === false
                 ? null
