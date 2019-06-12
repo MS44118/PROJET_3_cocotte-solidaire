@@ -1,78 +1,95 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import axios from 'axios';
-import FormMember from './../FormMember/FormMember';
+import FormMember from '../FormMember/FormMember';
+import './Users.css';
 
-export const DisplayCtx = createContext('none');
+// ACTIONS
+import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 
-function Users() {
+function Users({ displayNewUser, displayKnownUser, dispatch }) {
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
-  const [newMember, setNewMember] = useState(false)
-  const [displayForm, setDisplayForm] = useState('none');
-  const [oneFormActivated, setOneFormActivated] = useState(false)
 
   useEffect(() => {
-    console.log('tata')
     axios.get('http://localhost:8000/users')
-      .then(data => {
-        setUserList(data.data)
+      .then((data) => {
+        setUserList(data.data);
       });
-  }, [])
+  }, []);
 
   useEffect(() => {
-    let arrayTemp = [];
-    if (displayForm === 'none'){
-      for (let i = 0; i < userList.length; i++) {
+    const arrayTemp = [];
+    if (displayKnownUser === 'none') {
+      for (let i = 0; i < userList.length; i += 1) {
         arrayTemp[i] = false;
-        setActiveFormMember(arrayTemp)
+        setActiveFormMember(arrayTemp);
       }
     }
-  }, [userList.length, displayForm])
+  }, [userList.length, displayKnownUser]);
 
   const handleClick = (index) => {
-    let arrayTemp = activeFormMember;
-    arrayTemp[index] = !activeFormMember[index]
+    const arrayTemp = activeFormMember;
+    arrayTemp[index] = !activeFormMember[index];
     setActiveFormMember(arrayTemp);
-    setOneFormActivated(true)
-    setDisplayForm('block')
-  }
+    dispatch(displayKnownUserFormAction('block'));
+  };
 
   return (
-    <DisplayCtx.Provider value={[displayForm, setDisplayForm]}>
-      <div>
-        <ul className="collection with-header">
-          <li className="collection-header row">
-            <h4>Liste des utilisateurs / adhérents</h4>
-            <button
-              className="waves-effect waves-light btn-small teal white-text right"
-              onClick={() => {setNewMember(true); setDisplayForm('block')}}>Nouvel adhérent</button>
-          </li>
-          {newMember && !oneFormActivated ? <li style={{ display: displayForm }}><FormMember userSelected='new' /></li> : ''}
-          <li className="collection-item row center-align">
-            <p className="col s2">N°adhérent</p>
-            <p className="col s2">Nom</p>
-            <p className="col s2">Prénom</p>
-            <p className="col s2">Tel</p>
-            <p className="col s2">Mail</p></li>
-          {userList.length && userList.map((user, index) => (
-            <div key={index}>
-              <li className="collection-item row center-align" >
-                <p className="col s2">{user.member_id}</p>
-                <p className="col s2">{user.lastname}</p>
-                <p className="col s2">{user.firstname}</p>
-                <p className="col s2">{user.phone}</p>
-                <p className="col s2">{user.email}</p>
-                <button
-                  className="waves-effect waves-light btn-small teal white-text col right"
-                  onClick={() => handleClick(index)}><i className="material-icons">create</i></button>
-              </li>
-              <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
-            </div>
-          ))}
-        </ul>
-      </div>
-    </DisplayCtx.Provider>
+    <div>
+      <ul className="collection with-header">
+        <li className="collection-header row">
+          <h4>Liste des utilisateurs / adhérents</h4>
+          <button
+            type="button"
+            className="waves-effect waves-light btn-small teal darken-1 white-text right"
+            onClick={() => dispatch(displayNewUserFormAction('block'))}
+          >
+            Nouvel adhérent
+          </button>
+        </li>
+        <li style={{ display: displayNewUser }}><FormMember userSelected="new" /></li>
+        <li className="collection-item-header row center-align">
+          <p className="col s2">N°adhérent</p>
+          <p className="col s2">Nom</p>
+          <p className="col s2">Prénom</p>
+          <p className="col s2">Tel</p>
+          <p className="col s2">Mail</p>
+        </li>
+        {userList.length && userList.map((user, index) => (
+          <div key={userList[index]}>
+            <li className="collection-item row center-align">
+              <p className="col s2">{user.member_id}</p>
+              <p className="col s2">{user.lastname}</p>
+              <p className="col s2">{user.firstname}</p>
+              <p className="col s2">{user.phone}</p>
+              <p className="col s2">{user.email}</p>
+              <button
+                type="button"
+                className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                onClick={() => handleClick(index)}
+              >
+                <i className="material-icons">create</i>
+              </button>
+            </li>
+            <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
+          </div>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-export default Users;
+const mapStateToProps = store => ({
+  displayNewUser: store.newUser,
+  displayKnownUser: store.knownUser,
+});
+
+Users.propTypes = {
+  displayNewUser: PropTypes.string,
+  displayKnownUser: PropTypes.string,
+  dispatch: PropTypes.func,
+};
+
+export default connect(mapStateToProps)(Users);

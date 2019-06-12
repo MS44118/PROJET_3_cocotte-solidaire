@@ -1,17 +1,65 @@
-thead{
-background-color: rgb(55,126,114);
-color: white;
+/* A supprimer quand page terminée*/
+
+.RAF{
+  color: red;
+  margin: 20px auto 20px auto;
 }
 
-body{
-  color:#498e81 !important;
+/* settings for calendar */
+
+.react-calendar{
+  vertical-align: middle;
+  margin: 20px auto 20px auto;
 }
 
-.event-display{
-  background-color: #F3BCAF !important;
+
+/* settings for filters (checkbox zone) */
+
+form{
+  margin-top: 20px;
 }
 
 span{ 
   margin: 10px;
   text-align: left;
+}
+
+/* settings for list of events then registrations */
+
+li,p{
+  text-align: center;
+  vertical-align: middle;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+.container{
+  width: 100% !important;
+}
+
+.row,ul{
+  margin: 0;
+  /* text-size-adjust: ; */
+}
+
+.event-header{
+  background-color: rgb(55,126,114, 1);
+  color: white;  
+  line-height: 50px;
+  display: flex;
+}
+
+.event-item{
+  background-color:rgb(248, 200, 190, 0.5);
+}
+
+.registration-header{
+  background-color: rgb(55,126,114, 0.3);
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 20px;
+  display: flex;
+}
+
+.registration-item{
+  display: flex;
 }
