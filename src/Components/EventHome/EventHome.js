@@ -63,6 +63,16 @@ function EventHome() {
 
       <div className="events-registrations-list container">
         <h3>Liste des evenements</h3>
+        <ul className="RAF"> 
+          <p> RESTE A FAIRE: </p>
+          <li> icone devient rouge sur mail non alimenté </li>
+          <li> icone devient orange sur allergies non null </li>
+          <li> action supprimer évènement (ou bien lien vers modification/suppression evenement ?) </li>
+          <li> action modifier évènement (ou bien lien vers modification/suppression evenement ?) </li>
+          <li> xxx </li>
+        </ul>
+
+
         {/* entetes liste des évenements */}
         <ul className="events with-header">
           <li className="event-header row">
