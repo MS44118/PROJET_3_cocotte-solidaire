@@ -33,9 +33,7 @@ function EventHome() {
   // set for a specific event, if the list of registrations is visible or not
   useEffect(() => {
     let array = [];
-    array = events.map(() => {
-      return (false);
-    });
+    array = events.map(() => (false));
     setCollapseRegistrations(array);
   }, [events.length > 0]);
 
@@ -104,7 +102,11 @@ function EventHome() {
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
                   onClick={() => setCollapseRegistrations(
-                    [...collapseRegistrations.slice(0, [index]), !collapseRegistrations[index], ...collapseRegistrations.slice([index + 1], collapseRegistrations.length)],
+                    [
+                      ...collapseRegistrations.slice(0, [index]),
+                      !collapseRegistrations[index],
+                      ...collapseRegistrations.slice([index + 1], collapseRegistrations.length),
+                    ],
                   )}
                   type="submit"
                   name="action"
