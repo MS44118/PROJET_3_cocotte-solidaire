@@ -63,12 +63,12 @@ function EventHome() {
 
       <div className="events-registrations-list container">
         <h3>Liste des evenements</h3>
-        <ul className="RAF"> 
+        <ul className="RAF">
           <p> RESTE A FAIRE: </p>
           <li> icone devient rouge sur mail non alimenté </li>
           <li> icone devient orange sur allergies non null </li>
-          <li> action supprimer évènement (ou bien lien vers modification/suppression evenement ?) </li>
-          <li> action modifier évènement (ou bien lien vers modification/suppression evenement ?) </li>
+          <li> action supprimer évènement (ou bien lien vers modification/suppression event ?) </li>
+          <li> action modifier évènement (ou bien lien vers modification/suppression event ?) </li>
           <li> xxx </li>
         </ul>
 
@@ -135,7 +135,7 @@ function EventHome() {
                   <li className="registration-header row">
                     <p className="col s1">prénom</p>
                     <p className="col s1">nom</p>
-                    <p className="col s2">email</p>
+                    <p className="col s1">email</p>
                     <p className="col s1">téléphone</p>
                     <p className="col s1">n°adhérent</p>
                     <p className="col s1">nb adulte(s)</p>
@@ -144,6 +144,7 @@ function EventHome() {
                     <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
                     <p className="col s1"><i className="material-icons icon-green">warning</i></p>
                     <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
+                    <p className="col s1"><i className="material-icons icon-green">comment</i></p>
                   </li>
                   <ReservationHome />
                 </ul>
