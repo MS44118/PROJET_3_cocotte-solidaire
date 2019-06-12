@@ -30,13 +30,14 @@ function EventHome() {
       });
   }, []);
 
+  // set for a specific event, if the list of registrations is visible or not
   useEffect(() => {
     let array = [];
-    events.map((event, index) => {
-      array[index] = false;
+    array = events.map(() => {
+      return (false);
     });
     setCollapseRegistrations(array);
-  }, [events]);
+  }, [events.length > 0]);
 
 
   return (
@@ -102,7 +103,9 @@ function EventHome() {
               <p className="col s1">
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapseRegistrations(!collapseRegistrations[index])}
+                  onClick={() => setCollapseRegistrations(
+                    [...collapseRegistrations.slice(0, [index]), !collapseRegistrations[index], ...collapseRegistrations.slice([index + 1], collapseRegistrations.length)],
+                  )}
                   type="submit"
                   name="action"
                 >
@@ -113,7 +116,7 @@ function EventHome() {
                 </button>
               </p>
             </li>
-            { collapseRegistrations === false
+            { collapseRegistrations[index] === false
               ? null
               : (
                 <ul className="registrations with-header">
