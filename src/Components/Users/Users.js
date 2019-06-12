@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import FormMember from './../FormMember/FormMember';
 import { connect } from 'react-redux';
+import FormMember from '../FormMember/FormMember';
 import './Users.css';
 
 // ACTIONS
@@ -20,7 +20,7 @@ function Users(props) {
 
   useEffect(() => {
     let arrayTemp = [];
-    if (props.displayKnownUser === 'none'){
+    if (props.displayKnownUser === 'none') {
       for (let i = 0; i < userList.length; i++) {
         arrayTemp[i] = false;
         setActiveFormMember(arrayTemp);
@@ -42,9 +42,13 @@ function Users(props) {
           <h4>Liste des utilisateurs / adhérents</h4>
           <button
             className="waves-effect waves-light btn-small teal darken-1 white-text right"
-            onClick={() => {props.dispatch(displayNewUserFormAction('block'))}}>Nouvel adhérent</button>
+            onClick={() => { props.dispatch(displayNewUserFormAction('block')) }}
+            type="submit"
+          >
+            Nouvel adhérent
+          </button>
         </li>
-        <li style={{ display: props.displayNewUser}}><FormMember userSelected='new' /></li>
+        <li style={{ display: props.displayNewUser }}><FormMember userSelected="new" /></li>
         <li className="collection-item-header row center-align">
           <p className="col s2">N°adhérent</p>
           <p className="col s2">Nom</p>
@@ -62,7 +66,11 @@ function Users(props) {
               <p className="col s2">{user.email}</p>
               <button
                 className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                onClick={() => handleClick(index)}><i className="material-icons">create</i></button>
+                onClick={() => handleClick(index)}
+                type="submit"
+              >
+                <i className="material-icons">create</i>
+              </button>
             </li>
             <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
           </div>

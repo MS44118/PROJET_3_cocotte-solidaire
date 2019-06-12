@@ -12,12 +12,14 @@ import ReservationHome from '../ReservationHome/ReservationHome';
 
 
 function EventHome() {
+  // to store api response
   const [events, setEvents] = useState([]);
-  const [showRegistrations, setShowRegistrations] = useState(false);
+  // to collapse all the registrations for a specific event
+  const [collapseRegistrations, setCollapseRegistrations] = useState([]);
 
+  // Auto Init allows you to initialize all of the Materialize Components
   useEffect(() => {
     M.AutoInit();
-    // console.log('Auto Init allows you to initialize all of the Materialize Components');
   }, []);
 
   // api call
@@ -28,18 +30,22 @@ function EventHome() {
       });
   }, []);
 
-  // display registrations : ALL
-  const handleShowRegistrations = () => {
-    setShowRegistrations(!showRegistrations);
-  };
+  useEffect(() => {
+    let array = [];
+    events.map((event, index) => {
+      array[index] = false;
+    });
+    setCollapseRegistrations(array);
+  }, [events]);
+
 
   return (
     <div>
-      {/* <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages au calendrier </p> */}
+      <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages au calendrier </p>
       <Calendar />
 
       <form action="#">
-        {/* <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p> */}
+        <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
         <p>
           <label htmlFor="checkManger">
             <input type="checkbox" className="filled-in" checked="checked" />
@@ -94,15 +100,20 @@ function EventHome() {
               <p className="col s1"><i className="material-icons icon-green">warning</i></p>
               <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
               <p className="col s1">
-                <button className="btn-floating waves-effect waves-light valign-wrapper" onClick={() => handleShowRegistrations(event)} type="submit" name="action">
-                  { showRegistrations === false
+                <button
+                  className="btn-floating waves-effect waves-light valign-wrapper"
+                  onClick={() => setCollapseRegistrations(!collapseRegistrations[index])}
+                  type="submit"
+                  name="action"
+                >
+                  { collapseRegistrations[index] === false
                     ? <i className="material-icons">expand_more</i>
                     : <i className="material-icons">expand_less</i>
                   }
                 </button>
               </p>
             </li>
-            { showRegistrations === false
+            { collapseRegistrations === false
               ? null
               : (
                 <ul className="registrations with-header">
