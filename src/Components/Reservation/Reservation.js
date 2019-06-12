@@ -100,16 +100,16 @@ function Reservation() {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">email</i>
+            <input id="email" type="email" className="validate" />
             <label htmlFor="email">
-              <input id="email" type="email" className="validate" />
               Email
             </label>
-
           </div>
+
           <div className="input-field col s6">
             <i className="material-icons prefix">phone</i>
+            <input id="icon_telephone" type="tel" className="validate" />
             <label htmlFor="icon_telephone">
-              <input id="icon_telephone" type="tel" className="validate" />
               Téléphone
             </label>
           </div>
@@ -117,12 +117,11 @@ function Reservation() {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">person_add</i>
+            <input id="num_user" type="text" className="validate" />
             <label htmlFor="num_user">
-              <input id="num_user" type="text" className="validate" />
               Numéros d&apos;adhérent
             </label>
           </div>
-
         </div>
 
       </div>
@@ -130,8 +129,8 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i>
+          <textarea id="allergy" className="materialize-textarea" />
           <label htmlFor="allergy">
-            <textarea id="allergy" className="materialize-textarea" />
             Allergies
           </label>
         </div>
@@ -139,9 +138,9 @@ function Reservation() {
       {/* information Row */}
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">info</i>
+          <i className="material-icons prefix">info</i> 
+          <textarea id="importantInfo" className="materialize-textarea" data-length="100%" />
           <label htmlFor="importantInfo">
-            <textarea id="importantInfo" className="materialize-textarea" data-length="100%" />
             Informations complémentaires
           </label>
         </div>
