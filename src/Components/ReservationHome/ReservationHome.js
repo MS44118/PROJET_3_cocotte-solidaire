@@ -18,21 +18,23 @@ function ReservationHome() {
         <li key={registrations[index]} className="registration-item row center-align">
           <p className="col s1">{registration.firstname}</p>
           <p className="col s1">{registration.lastname}</p>
-          <p className="col s2">{registration.email}</p>
+          <p className="col s1">{registration.email}</p>
           <p className="col s1">{registration.phone}</p>
           <p className="col s1">{registration.member_id}</p>
           <p className="col s1">
             {registration.quantity_adult}
-            ` adulte(s)`
+            {' adulte(s)'}
           </p>
           <p className="col s1">
             {registration.quantity_children}
-            ` enfant(s)`
+            {' enfant(s)'}
           </p>
           <p className="col s1"><i className="material-icons icon-green">create</i></p>
           <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
           <p className="col s1"><i className="material-icons icon-green">warning</i></p>
           <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
+          {/* <p className="col s1"><i className="material-icons icon-green">comment</i></p> */}
+          <p className="col s1"><i className="material-icons icon-green">description</i></p>
         </li>
       ))}
     </div>
