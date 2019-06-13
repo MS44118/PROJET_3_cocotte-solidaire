@@ -1,27 +1,51 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from'axios';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import './Reservation.css';
 
 
 function Reservation() {
-  useEffect(() => {
-    M.AutoInit();
-  }, []);
+
+   const [activities, setActivities] = useState([]);
+   const [activitySelect, setActivitySelect] = useState(0);
+   const [users , setUsers] = useState ([]);
+   const [userSelect, setUserSelect] = useState(0)
+   const [firstname, setFirstname] = useState () ;
+
+    useEffect(()=>{
+      M.AutoInit();
+
+      axios.get("http://localhost:8000/users")
+      .then((result)=>{
+        console.log(result.data)
+        setUsers(result.data)
+      })
+      axios.get("http://localhost:8000/activities")
+      .then((result)=>{
+        console.log(result)
+        setActivities(result.data)
+
+      })
+
+    },[]);
+    
+ 
+
   return (
 
     <div className="container">
       <h1>Réservation</h1>
       <div className="row">
         <div className="input-field  col s8">
-          <i className="material-icons prefix">event</i>
-          <select id="activity">
-            <option className="color_select" value="" disabled selected>Cuisiner et manger</option>
-            <option value="1">activité 1</option>
-            <option value="2">activité 2</option>
-            <option value="3">activité 3</option>
+       
+          <select id="activity" className="browser-default" onChange={(event)=>{setActivitySelect(event.target.value)}} value={activitySelect}>
+          {activities.map((activity, index)=>
+              <option value={index}>{activity.name}</option> 
+              )}
 
           </select>
+
 
         </div>
         <div className="input-field col s4 mr-8">
@@ -37,7 +61,7 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">event_busy</i>
-          <input id="event_name" type="text" className="validate" />
+          <input id="event_name" type="text" className="validate" value={activities[activitySelect]&& activities[activitySelect].name} />
           <label htmlFor="event_name">Nom de l&apos;évènement</label>
         </div>
 
@@ -76,22 +100,34 @@ function Reservation() {
 
 
         </div>
+        <div className="input-field  col s8">
+         <select className="browser-default" id="activity"
+         onChange={(event)=>{setUserSelect(event.target.value)}} value={userSelect}
+         
+         >
+            {users.map((user, index)=>
+              <option value={index}>{user.firstname} {user.lastname}</option> 
+              )}
+          </select>
+          </div>
 
       </div>
       {/* choose event collaps bar */}
       <div className="row">
-        <div className="row">
+      
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
-            <input type="text" id="firstName" className="validate" />
-            <label htmlFor="firstName">First Name</label>
-          </div>
-          <div className="input-field col s6">
-            <i className="material-icons prefix">account_circle</i>
-            <input id="last_name" type="text" className="validate" />
+            <input id="last_name" type="text" className="validate" value={users[userSelect] && users[userSelect].firstname }/>
             <label id="last_name" htmlFor="last_name">
-            Prénom
+            Nom
             </label>
+        </div>
+        <div  className="row">
+          <div className="input-field col s6">
+            <i className="material-icons prefix">account_circle</i>
+            <input type="text" id="firstName" className="validate" value={users[userSelect]&& users[userSelect].lastname}/>
+            <label htmlFor="firstName">Prénom</label>
+          </div>
           </div>
         </div>
 
@@ -100,7 +136,7 @@ function Reservation() {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">email</i>
-            <input id="email" type="email" className="validate" />
+            <input id="email" type="email" className="validate" value={users[userSelect]&& users[userSelect].email} />
             <label htmlFor="email">
               Email
             </label>
@@ -108,7 +144,7 @@ function Reservation() {
 
           <div className="input-field col s6">
             <i className="material-icons prefix">phone</i>
-            <input id="icon_telephone" type="tel" className="validate" />
+            <input id="icon_telephone" type="tel" className="validate" value={users[userSelect]&& users[userSelect].phone} />
             <label htmlFor="icon_telephone">
               Téléphone
             </label>
@@ -117,15 +153,15 @@ function Reservation() {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">person_add</i>
-            <input id="num_user" type="text" className="validate" />
+            <input id="num_user" type="text" className="validate" value={users[userSelect]&& users[userSelect].member_id} />
             <label htmlFor="num_user">
               Numéros d&apos;adhérent
             </label>
           </div>
         </div>
-
-      </div>
-      {/* alergies row */}
+  
+      
+      
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i>
@@ -135,7 +171,7 @@ function Reservation() {
           </label>
         </div>
       </div>
-      {/* information Row */}
+      
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">info</i> 
@@ -145,8 +181,10 @@ function Reservation() {
           </label>
         </div>
       </div>
-
     </div>
+      
+
+    
 
   );
 }
