@@ -24,7 +24,7 @@ function EventHome() {
 
   // api call
   useEffect(() => {
-    axios.get('http://localhost:8000/')
+    axios.get('http://localhost:8000/home/future-events')
       .then((result) => {
         setEvents(result.data);
       });
@@ -35,7 +35,7 @@ function EventHome() {
     let array = [];
     array = events.map(() => (false));
     setCollapseRegistrations(array);
-  }, [events.length > 0]);
+  }, [events]);
 
 
   return (
@@ -65,18 +65,15 @@ function EventHome() {
         <h3>Liste des evenements</h3>
         <ul className="RAF">
           <p> RESTE A FAIRE: </p>
-          <li> icone devient rouge sur mail non alimenté </li>
-          <li> icone devient orange sur allergies non null </li>
           <li> action supprimer évènement (ou bien lien vers modification/suppression event ?) </li>
           <li> action modifier évènement (ou bien lien vers modification/suppression event ?) </li>
-          <li> xxx </li>
         </ul>
 
 
         {/* entetes liste des évenements */}
         <ul className="events with-header">
           <li className="event-header row">
-            <p className="col s1">Atelier</p>
+            <p className="col s1">Evènement</p>
             <p className="col s2">Date</p>
             <p className="col s1">Heure</p>
             <p className="col s1">adultes</p>
@@ -94,20 +91,32 @@ function EventHome() {
         {events.map((event, index) => (
           <ul key={events[index]}>
             <li className="event-item row valign-wrapper center-align">
-              <p className="col s1">{event.name}</p>
-              <p className="col s2">{moment(event.date_b).format('dddd Do MMM YYYY')}</p>
+              <p className="col s1">{event.name_event}</p>
+              <p className="col s2">{moment(event.date_b).format('dd.Do MMM YY')}</p>
               <p className="col s1">{moment(event.date_b).format('HH:mm')}</p>
-              <p className="col s1">{event.quantity_adult}</p>
-              <p className="col s1">{event.quantity_children}</p>
+              <p className="col s1">{event.nb_adults}</p>
+              <p className="col s1">{event.nb_children}</p>
               <p className="col s1">
-                {event.quantity_adult + event.quantity_children / 2}
+                {event.nb_persons}
                 /
                 {event.capacity}
               </p>
-              <p className="col s1"><i className="material-icons icon-green">create</i></p>
+              <p className="col s1">
+                <i className="material-icons icon-green">create</i>
+              </p>
               <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-              <p className="col s1"><i className="material-icons icon-green">warning</i></p>
-              <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
+              <p className="col s1">
+                { event.nb_emails < event.NB_REG
+                  ? <i className="material-icons email-missing">priority_high</i>
+                  : <i className="material-icons icon-green">priority_high</i>
+                }
+              </p>
+              <p className="col s1">
+                { event.nb_allergies > 0
+                  ? <i className="material-icons allergie-warning">warning</i>
+                  : <i className="material-icons icon-green">warning</i>
+                }
+              </p>
               <p className="col s1">
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
@@ -131,23 +140,13 @@ function EventHome() {
             { collapseRegistrations[index] === false
               ? null
               : (
-                <ul className="registrations with-header">
-                  <li className="registration-header row">
-                    <p className="col s1">prénom</p>
-                    <p className="col s1">nom</p>
-                    <p className="col s1">email</p>
-                    <p className="col s1">téléphone</p>
-                    <p className="col s1">n°adhérent</p>
-                    <p className="col s1">nb adulte(s)</p>
-                    <p className="col s1">nb enfant(s)</p>
-                    <p className="col s1"><i className="material-icons icon-green">create</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">warning</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">comment</i></p>
-                  </li>
-                  <ReservationHome />
-                </ul>
+                <div>
+                  <ReservationHome eventId={event.id_event} />
+                  { event.nb_persons < event.capacity
+                    ? <p>il reste de la place: créer une nouvelle réservation</p>
+                    : null
+                  }
+                </div>
               )
             }
           </ul>
