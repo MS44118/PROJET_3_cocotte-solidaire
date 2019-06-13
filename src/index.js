@@ -5,14 +5,14 @@ import { BrowserRouter } from 'react-router-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import App from './App';
-import displayUserFormReducer from './Reducers/displayUserFormReducer';
+import rootReducer from './Reducers/rootReducer';
 
 import './index.css';
 import 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 
 const store = createStore(
-  displayUserFormReducer,
+  rootReducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 

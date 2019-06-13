@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import _ from 'underscore';
 import FormMember from '../FormMember/FormMember';
 import './Users.css';
 
 // ACTIONS
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 
-function Users({ displayNewUser, displayKnownUser, dispatch }) {
+function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch }) {
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
 
@@ -16,6 +17,7 @@ function Users({ displayNewUser, displayKnownUser, dispatch }) {
     axios.get('http://localhost:8000/users')
       .then((data) => {
         setUserList(data.data);
+        console.log(data.data)
       });
   }, []);
 
@@ -29,11 +31,42 @@ function Users({ displayNewUser, displayKnownUser, dispatch }) {
     }
   }, [userList.length, displayKnownUser]);
 
-  const handleClick = (index) => {
+  useEffect(() => {
+    const index = _.findIndex(userList, user => { return user.idUser === updateUser.idUser })
+    let arrayTemp = userList;
+    arrayTemp[index] = updateUser;
+    setUserList(arrayTemp)
+  } ,[updateUser]);
+
+  useEffect(() => {
+    let arrayTemp = [...userList, newUser];
+    setUserList(arrayTemp)
+    console.log(newUser)
+  } ,[newUser]);
+
+  const handleCreate = (index) => {
     const arrayTemp = activeFormMember;
     arrayTemp[index] = !activeFormMember[index];
     setActiveFormMember(arrayTemp);
     dispatch(displayKnownUserFormAction('block'));
+  };
+
+  const handleDelete = (index) => {
+    console.log(index)
+    axios.delete(`http://localhost:8000/user/${userList[index].idUser}`)
+      .then(res => {
+        console.log(res.statusText)
+        if (res.status === 200){
+          let arrayTemp = userList;
+          arrayTemp.splice(index, 1);
+          console.log(arrayTemp)
+          console.log(userList)
+          setUserList(arrayTemp);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
 
   return (
@@ -60,17 +93,24 @@ function Users({ displayNewUser, displayKnownUser, dispatch }) {
         {userList.length && userList.map((user, index) => (
           <div key={userList[index]}>
             <li className="collection-item row center-align">
-              <p className="col s2">{user.member_id}</p>
+              <p className="col s2">{user.memberId}</p>
               <p className="col s2">{user.lastname}</p>
               <p className="col s2">{user.firstname}</p>
               <p className="col s2">{user.phone}</p>
               <p className="col s2">{user.email}</p>
               <button
                 type="button"
-                className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                onClick={() => handleClick(index)}
+                className="waves-effect waves-light btn-small teal darken-1 white-text col"
+                onClick={() => handleCreate(index)}
               >
                 <i className="material-icons">create</i>
+              </button>
+              <button
+                type="button"
+                className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                onClick={() => handleDelete(index)}
+              >
+                <i className="material-icons">delete</i>
               </button>
             </li>
             <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
@@ -82,8 +122,10 @@ function Users({ displayNewUser, displayKnownUser, dispatch }) {
 }
 
 const mapStateToProps = store => ({
-  displayNewUser: store.newUser,
-  displayKnownUser: store.knownUser,
+  displayNewUser: store.displayUserForm.newUser,
+  displayKnownUser: store.displayUserForm.knownUser,
+  updateUser: store.user.updateUser,
+  newUser: store.user.newUser,
 });
 
 Users.propTypes = {

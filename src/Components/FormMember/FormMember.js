@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import axios from 'axios';
 import moment from 'moment';
+import DatePicker from "react-datepicker";
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
+import "react-datepicker/dist/react-datepicker.css";
 import '../Reservation/Reservation.css';
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
+import { updateUserAction, newUserAction } from '../../Actions/userAction';
 
 function FormMember({ userSelected, dispatch }) {
   const [user, setUser] = useState({});
@@ -25,6 +29,7 @@ function FormMember({ userSelected, dispatch }) {
   const [neighborhood, setNeighborhood] = useState(false);
   const [phone, setPhone] = useState('');
   const [zip, setZip] = useState('');
+  const [idUser, setIdUser] = useState('');
   const [labelActive, setLabelActive] = useState('');
 
   useEffect(() => {
@@ -33,19 +38,20 @@ function FormMember({ userSelected, dispatch }) {
 
   useEffect(() => {
     if (userSelected.user) {
+      setIdUser(userSelected.user.idUser);
       setAdress(userSelected.user.adress);
       setBirthday(userSelected.user.birthday);
       setCity(userSelected.user.city);
       setEmail(userSelected.user.email);
       setFirstname(userSelected.user.firstname);
       setGender(userSelected.user.gender);
-      setImageCopyright(userSelected.user.image_copyright);
+      setImageCopyright(userSelected.user.imageCopyright);
       setLastname(userSelected.user.lastname);
-      setMailingActive(userSelected.user.mailing_active);
-      setMemberActive(userSelected.user.member_active);
-      setMemberId(userSelected.user.member_id);
-      setMembershipDateLast(userSelected.user.membership_date_last);
-      setMembershipPlace(userSelected.user.membership_place);
+      setMailingActive(userSelected.user.mailingActive);
+      setMemberActive(userSelected.user.memberActive);
+      setMemberId(userSelected.user.memberId);
+      setMembershipDateLast(userSelected.user.membershipDateLast);
+      setMembershipPlace(userSelected.user.membershipPlace);
       setNeighborhood(userSelected.user.neighborhood);
       setPhone(userSelected.user.phone);
       setZip(userSelected.user.zip);
@@ -55,6 +61,7 @@ function FormMember({ userSelected, dispatch }) {
 
   useEffect(() => {
     const userTemp = {
+      idUser,
       adress,
       birthday,
       city,
@@ -83,6 +90,7 @@ function FormMember({ userSelected, dispatch }) {
     } else {
       dispatch(displayKnownUserFormAction('none'));
     }
+    setIdUser('');
     setAdress('');
     setBirthday('');
     setCity('');
@@ -99,6 +107,26 @@ function FormMember({ userSelected, dispatch }) {
     setNeighborhood(false);
     setPhone('');
     setZip('');
+    if (idUser){
+      dispatch(updateUserAction(user))
+      axios.put(`http://localhost:8000/user/${idUser}`, user)
+      .then(res => {
+        console.log(res.statusText)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    } else {
+      axios.post(`http://localhost:8000/user/`, user)
+      .then((data) => {
+        console.log(data.data[0].id_user)
+        const userTemp = {...user, idUser : data.data[0].id_user}
+        dispatch(newUserAction(userTemp));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
   };
 
   return (
@@ -117,23 +145,18 @@ function FormMember({ userSelected, dispatch }) {
       </div>
       <div className="row">
         <div className="input-field col s6">
-          <i className="material-icons prefix">calendar_today</i>
-          <input
-            type="text"
-            value={membershipDateLast && moment(membershipDateLast).format('L')}
-            onChange={event => setBirthday(event.target.value)}
-            className="datepicker"
-            placeholder="Date d'inscription"
+          <i className="material-icons">calendar_today</i>
+          {/* <div style={{ marginLeft: "50px" }}> */}
+          <DatePicker
+            selected={membershipDateLast && new Date(membershipDateLast)}
+            onChange={date => setMembershipDateLast(date)}
           />
         </div>
         <div className="input-field col s6">
-          <i className="material-icons prefix">calendar_today</i>
-          <input
-            type="text"
-            value={birthday && moment(birthday).format('L')}
-            onChange={event => setMembershipDateLast(event.target.value)}
-            className="datepicker"
-            placeholder="Date de naissance"
+          <i className="material-icons">calendar_today</i>
+          <DatePicker
+            selected={birthday && new Date(birthday)}
+            onChange={date => setBirthday(date)}
           />
         </div>
       </div>
