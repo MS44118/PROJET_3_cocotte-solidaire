@@ -5,7 +5,7 @@ function ReservationHome(props) {
   const [registrations, setRegistrations] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/home/future-registrations')
+    axios.get('http://localhost:8000/api/future-registrations')
       .then((result) => {
         setRegistrations(result.data);
       });
@@ -60,7 +60,12 @@ function ReservationHome(props) {
                   : <i className="material-icons allergie-warning">warning</i>
                 }
               </p>
-              <p className="col s1"><i className="material-icons icon-green">comment</i></p>
+              <p className="col s1">
+                { registration.comment === ' '
+                  ? null
+                  : <i className="material-icons icon-green">comment</i>
+                }
+              </p>
             </li>
           ))
         }

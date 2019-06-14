@@ -16,6 +16,9 @@ function EventHome() {
   const [events, setEvents] = useState([]);
   // to collapse all the registrations for a specific event
   const [collapseRegistrations, setCollapseRegistrations] = useState([]);
+  // const [filterCheckbox, setFilterCheckbox] = useState([]);
+  const [filterManger, setFilterManger] = useState([]);
+
 
   // Auto Init allows you to initialize all of the Materialize Components
   useEffect(() => {
@@ -24,7 +27,7 @@ function EventHome() {
 
   // api call
   useEffect(() => {
-    axios.get('http://localhost:8000/home/future-events')
+    axios.get('http://localhost:8000/api/future-events')
       .then((result) => {
         setEvents(result.data);
       });
@@ -37,6 +40,20 @@ function EventHome() {
     setCollapseRegistrations(array);
   }, [events]);
 
+  //
+  useEffect(() => {
+    let array = [];
+    array = events.filter(event => event.name_event === 'manger');
+    setFilterManger({ visible: true, arrayManger: array });
+  }, [events]);
+
+  //
+  // useEffect(() => {
+  //   let array = [];
+  //   array = events.map((event) => { return (event.name_event === 'manger' ? true : null); });
+  //   setFilterManger(array);
+  // }, [events]);
+
 
   return (
     <div>
@@ -47,8 +64,10 @@ function EventHome() {
         <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
         <p>
           <label htmlFor="checkManger">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Manger</span>
+            <input type="checkbox" className="filled-in" checked={setFilterManger({ visible: false, arrayManger: filterManger.arrayManger })} />
+            <span>
+              {'Manger: '}
+            </span>
           </label>
           <label htmlFor="checkCuisiner">
             <input type="checkbox" className="filled-in" checked="checked" />
@@ -56,10 +75,15 @@ function EventHome() {
           </label>
           <label htmlFor="checkAteliers">
             <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Ateliers</span>
+            <span>Autres</span>
           </label>
         </p>
       </form>
+      <p>
+        {'blabla: '}
+        {filterManger}
+        {' :blabla'}
+      </p>
 
       <div className="events-registrations-list container">
         <h3>Liste des evenements</h3>
@@ -74,83 +98,99 @@ function EventHome() {
         <ul className="events with-header">
           <li className="event-header row">
             <p className="col s1">Evènement</p>
-            <p className="col s2">Date</p>
+            <p className="col s1">Date</p>
             <p className="col s1">Heure</p>
             <p className="col s1">adultes</p>
             <p className="col s1">enfants</p>
             <p className="col s1">capacité</p>
             <p className="col s1">modifier</p>
             <p className="col s1">supprimer</p>
-            <p className="col s1">alertes</p>
-            <p className="col s1">alertes</p>
-            <p className="col s1">détails</p>
+            <p className="col s1">email</p>
+            <p className="col s1">allergies</p>
+            <p className="col s1">commentaires</p>
+            <p className="col s1"> </p>
           </li>
         </ul>
 
         {/* liste des evenements */}
-        {events.map((event, index) => (
-          <ul key={events[index]}>
-            <li className="event-item row valign-wrapper center-align">
-              <p className="col s1">{event.name_event}</p>
-              <p className="col s2">{moment(event.date_b).format('dd.Do MMM YY')}</p>
-              <p className="col s1">{moment(event.date_b).format('HH:mm')}</p>
-              <p className="col s1">{event.nb_adults}</p>
-              <p className="col s1">{event.nb_children}</p>
-              <p className="col s1">
-                {event.nb_persons}
-                /
-                {event.capacity}
-              </p>
-              <p className="col s1">
-                <i className="material-icons icon-green">create</i>
-              </p>
-              <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-              <p className="col s1">
-                { event.nb_emails < event.NB_REG
-                  ? <i className="material-icons email-missing">priority_high</i>
-                  : <i className="material-icons icon-green">priority_high</i>
-                }
-              </p>
-              <p className="col s1">
-                { event.nb_allergies > 0
-                  ? <i className="material-icons allergie-warning">warning</i>
-                  : <i className="material-icons icon-green">warning</i>
-                }
-              </p>
-              <p className="col s1">
-                <button
-                  className="btn-floating waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapseRegistrations(
-                    [
-                      ...collapseRegistrations.slice(0, [index]),
-                      !collapseRegistrations[index],
-                      ...collapseRegistrations.slice([index + 1], collapseRegistrations.length),
-                    ],
-                  )}
-                  type="submit"
-                  name="action"
-                >
-                  { collapseRegistrations[index] === false
-                    ? <i className="material-icons">expand_more</i>
-                    : <i className="material-icons">expand_less</i>
+        {events
+          .map((event, index) => (
+            <ul className="event-ul" key={events[index]} data-genre={event.name_event}>
+              <li className="event-item row valign-wrapper center-align">
+                <p className="col s1">{event.name_event}</p>
+                <p className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</p>
+                <p className="col s1">{moment(event.date_b).format('HH:mm')}</p>
+                <p className="col s1">{event.nb_adults}</p>
+                <p className="col s1">{event.nb_children}</p>
+                <p className="col s1">
+                  {event.nb_persons}
+                  /
+                  {event.capacity}
+                </p>
+                <p className="col s1">
+                  <i className="material-icons icon-green">create</i>
+                </p>
+                <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
+                <p className="col s1">
+                  { event.nb_emails < event.NB_REG
+                    ? <i className="material-icons email-missing">priority_high</i>
+                    : <i className="material-icons icon-green">priority_high</i>
                   }
-                </button>
-              </p>
-            </li>
-            { collapseRegistrations[index] === false
-              ? null
-              : (
-                <div>
-                  <ReservationHome eventId={event.id_event} />
-                  { event.nb_persons < event.capacity
-                    ? <p>il reste de la place: créer une nouvelle réservation</p>
+                </p>
+                <p className="col s1">
+                  { event.nb_allergies > 0
+                    ? <i className="material-icons allergie-warning">warning</i>
+                    : <i className="material-icons icon-green">warning</i>
+                  }
+                </p>
+                <p className="col s1">
+                  { event.nb_comments > 0
+                    ? <i className="material-icons icon-green">comment</i>
                     : null
                   }
-                </div>
-              )
-            }
-          </ul>
-        ))}
+                </p>
+                <p className="col s1">
+                  <button
+                    className="btn-floating waves-effect waves-light valign-wrapper"
+                    onClick={() => setCollapseRegistrations(
+                      [
+                        ...collapseRegistrations.slice(0, [index]),
+                        !collapseRegistrations[index],
+                        ...collapseRegistrations.slice([index + 1], collapseRegistrations.length),
+                      ],
+                    )}
+                    type="submit"
+                    name="action"
+                  >
+                    { collapseRegistrations[index] === false
+                      ? <i className="material-icons">expand_more</i>
+                      : <i className="material-icons">expand_less</i>
+                    }
+                  </button>
+                </p>
+              </li>
+              { collapseRegistrations[index] === false
+                ? null
+                : (
+                  <div>
+                    <ReservationHome eventId={event.id_event} />
+                    { event.nb_persons < event.capacity
+                      ? <p>il reste de la place: créer une nouvelle réservation</p>
+                      : null
+                    }
+                  </div>
+                )
+              }
+            </ul>
+          ))
+          .filter(event => event.name_event === 'manger')
+          // .filter(event => event.name_event === 'manger' || 'cuisiner & manger' || 'others')
+          // 0 = all
+          // 1 = 'manger'
+          // 2 = 'cuisiner & manger'
+          // 3 = others
+
+        }
       </div>
     </div>
   );
