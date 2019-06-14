@@ -63,3 +63,11 @@ li,p{
 .registration-item{
   display: flex;
 }
+
+.email-missing{
+  color: red !important
+}
+
+.allergie-warning{
+  color: red !important
+}

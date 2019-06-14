@@ -1,56 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import 'materialize-css/dist/css/materialize.min.css';
-import M from 'materialize-css/dist/js/materialize.js';
+import M from 'materialize-css/dist/js/materialize';
 import './Activities.css';
 
 function Activities() {
-
-  const [activities, setActivities] = useState([]); 
+  const [activities, setActivities] = useState([]);
   const [title, setTitle] = useState('');
   const [describtion, setDescribtion] = useState('');
+  const [file, setFile] = useState('');
 
   const handleChangeTitle = (event) => {
     setTitle(event.target.value);
-  }
+  };
+
   const handleChangeDescribtion = (event) => {
     setDescribtion(event.target.value);
-  }
+  };
+
   useEffect(() => {
-    M.AutoInit();
     axios.get('http://localhost:8000/activities')
-    .then((result) => {
-      setActivities(result.data);
-    })
-  }, [])
-  
+      .then((result) => {
+        setActivities(result.data);
+      });
+    M.AutoInit();
+  }, []);
+
+  const handleChangeFile = (event) => {
+    setFile(URL.createObjectURL(event.target.files[0]));
+  };
+
   return (
     <div className="container">
-      {console.log(activities)}
-      <h1>Création d'une activité</h1>
+      <h1>Création d&apos;une activité</h1>
       <form className="" action="#">
         <div className="row">
           <div className="input-field col s6">
-            <i className="material-icons prefix">title</i>
-            <select>
-              <option value="" selected>Choisir son activité</option>
+            {/* <i className="material-icons prefix">title</i> */}
+            <select className="browser-default">
+              <option value="" disabled selected>Choisir une activité</option>
               {activities ? activities.map((activity, index) => (
-                <option value={`${activity.id_activity}`} >{activity.name} f</option>
+                <option value={`${index + 1}`}>{activity.name}</option>
               )) : ''}
             </select>
           </div>
           <div className="input-field col s6">
             <i className="material-icons prefix">title</i>
-            <input id="titre_activité" type="text" className="validate" value={title} onChange={handleChangeTitle}></input>
-            <label for="titre_activité">Titre de l'activité</label>
+            <input id="titre_activité" type="text" className="validate" value={title} onChange={handleChangeTitle} />
+            <label htmlFor="titre_activité">Titre de l&apos;activité</label>
           </div>
         </div>
 
         <div className="row">
           <div className="input-field col s12">
             <i className="material-icons prefix">description</i>
-            <textarea id="description" className="materialize-textarea" value={describtion} onChange={handleChangeDescribtion}></textarea>
-            <label for="description">Déscription de l'activité</label>
+            <textarea id="description" className="materialize-textarea" value={describtion} onChange={handleChangeDescribtion} />
+            <label htmlFor="description">Déscription de l&apos;activité</label>
           </div>
         </div>
 
@@ -58,10 +63,10 @@ function Activities() {
           <div className="file-field input-field">
             <div className="btn">
               <span>Illustration</span>
-              <input type="file"></input>
+              <input type="file" onChange={handleChangeFile} />
             </div>
             <div className="file-path-wrapper">
-              <input className="file-path validate" type="text"></input>
+              <input className="file-path validate" type="text" />
             </div>
           </div>
         </div>
@@ -71,18 +76,23 @@ function Activities() {
           <button className="btn waves-effect waves-light pos_bt" type="submit" name="action">Supprimer</button>
         </div>
 
-        <p className="center-align">Rendu de l'activité</p>
+        <p className="center-align">Rendu de l&apos;activité</p>
         <div className="render">
-          <div className="container">
+          <div className="container mssg">
             <h1 className="center-align subtitles"><span>{title}</span></h1>
             <p className="justify text">{describtion}</p>
-            <img className="activitie_pics" src="https://therapeutesmagazine.com/wp-content/uploads/2016/09/mythes-yoga.jpg" alt="cocotte_activite"></img>
+            <img className="activitie_pics" src={`${file}`} alt="cocotte_activite" />
           </div>
         </div>
 
-        {/* <div className="center-align"><button className="btn waves-effect waves-light pos_bt" type="submit" name="action">Créer</button></div> */}
-        {/* <button className="btn waves-effect waves-light" type="submit" name="action">Modifier</button>
-        <button className="btn waves-effect waves-light" type="submit" name="action">Supprimer</button> */}
+        {/* <div className="center-align">
+              <button className="btn waves-effect waves-light pos_bt"
+              type="submit" name="action">Créer</button>
+            </div> */}
+        {/* <button className="btn waves-effect waves-light"
+        type="submit" name="action">Modifier</button>
+            <button className="btn waves-effect waves-light"
+            type="submit" name="action">Supprimer</button> */}
 
       </form>
     </div>
