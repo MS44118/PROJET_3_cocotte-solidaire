@@ -51,11 +51,25 @@ api.get('/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
     (err, result) => {
-      if (err) throw err;
+      if (err) throw err; 
       res.send(result);
     },
   );
 });
+
+api.post('/registrations', (req, res)=> { 
+  const reservation = req.body
+  console.log(reservation)
+  connection.query(
+    'INSERT INTO registrations (allergie) VALUES ?',reservation, (err, result)=>{
+    if (err){
+      console.log(err)
+      res.status(500).send("error while saving")
+    } else {
+      res.sendStatus(200);
+    }
+  })
+})
 
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
