@@ -17,6 +17,12 @@ function EventHome() {
   // to collapse all the registrations for a specific event
   const [collapseRegistrations, setCollapseRegistrations] = useState([]);
 
+  // { filtre_manger: true, check_manger: true }
+  const [filterCuisiner, setFilterCuisiner] = useState(false);
+  const [filterManger, setFilterManger] = useState(false);
+  const [filterAutres, setFilterAutres] = useState(false);
+  const [filterAll, setFilterAll] = useState(false);
+
   // Auto Init allows you to initialize all of the Materialize Components
   useEffect(() => {
     M.AutoInit();
@@ -37,29 +43,89 @@ function EventHome() {
     setCollapseRegistrations(array);
   }, [events]);
 
+  const checkAll = () => {
+    let check = document.getElementsByTagName('input');
+    for (let i = 0; i < check.length; i += 1) {
+      if (check[i].type === 'checkbox') {
+        check[i].checked = true;
+      }
+    }
+  };
+
 
   return (
     <div>
       <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages au calendrier </p>
       <Calendar />
 
-      <form action="#">
-        <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
-        <p>
-          <label htmlFor="checkManger">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Cuisiner</span>
-          </label>
-          <label htmlFor="checkCuisiner">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Cuisiner & Manger</span>
-          </label>
-          <label htmlFor="checkAteliers">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Autres</span>
-          </label>
-        </p>
-      </form>
+      <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
+      <p>filtrer par activités</p>
+      {/* <form action="#"> */}
+      <div className="container">
+
+        <div className="row">
+          <div className="input-field col s6">
+            <label>
+              <input
+                type="checkbox"
+                // name="filterCuisiner"
+                checked={filterAll ? 'checked' : ''}
+                onChange={event => setFilterAll(event.target.checked)}
+              />
+              <span>Tous</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="input-field col s6">
+            <label>
+              <input
+                type="checkbox"
+                // name="filterCuisiner"
+                checked={filterCuisiner ? 'checked' : ''}
+                onChange={event => setFilterCuisiner(event.target.checked)}
+              />
+              <span>Cuisiner et Manger</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="input-field col s6">
+            <label>
+              <input
+                type="checkbox"
+                // name="filterManger"
+                checked={filterManger ? 'checked' : ''}
+                onChange={event => setFilterManger(event.target.checked)}
+              />
+              <span>Manger</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="input-field col s6">
+            <label>
+              <input
+                type="checkbox"
+                // name="filterAutres"
+                checked={filterAutres ? 'checked' : ''}
+                onChange={event => setFilterAutres(event.target.checked)}
+              />
+              <span>Autres</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      {/* </form> */}
+
+
+
+
       <div className="events-registrations-list container">
         <h3>Liste des evenements</h3>
         <ul className="RAF">
@@ -89,6 +155,9 @@ function EventHome() {
 
         {/* liste des evenements */}
         {events
+          .filter(event => event.name_event === 'manger')
+          .filter(event => event.name_event === 'manger' || 'cuisiner' )
+          .filter(event => event.name_event === 'manger')
           .map((event, index) => (
             <ul className="event-ul" key={events[index]} data-genre={event.name_event}>
               <li className="event-item row valign-wrapper center-align">
