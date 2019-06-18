@@ -360,4 +360,9 @@ FormMember.propTypes = {
   dispatch: PropTypes.func,
 };
 
+FormMember.defaultProps = {
+  userSelected: null,
+  dispatch: null,
+};
+
 export default connect()(FormMember);

@@ -138,7 +138,7 @@ function Reservation() {
       {/* information Row */}
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">info</i> 
+          <i className="material-icons prefix">info</i>
           <textarea id="importantInfo" className="materialize-textarea" data-length="100%" />
           <label htmlFor="importantInfo">
             Informations complémentaires

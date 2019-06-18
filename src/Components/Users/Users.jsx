@@ -131,16 +131,50 @@ Users.propTypes = {
   displayNewUser: PropTypes.string,
   displayKnownUser: PropTypes.string,
   dispatch: PropTypes.func,
-  updateUser: PropTypes.object,
-  newUser: PropTypes.object,
+  updateUser: PropTypes.shape({
+    adress: PropTypes.string,
+    birthday: PropTypes.string,
+    city: PropTypes.string,
+    email: PropTypes.string,
+    firstname: PropTypes.string,
+    gender: PropTypes.string,
+    imageCopyright: PropTypes.bool,
+    lastname: PropTypes.string,
+    mailingActive: PropTypes.bool,
+    memberActive: PropTypes.bool,
+    memberId: PropTypes.string,
+    membershipDateLast: PropTypes.string,
+    membershipPlace: PropTypes.string,
+    neighborhood: PropTypes.bool,
+    phone: PropTypes.string,
+    zip: PropTypes.string,
+  }),
+  newUser: PropTypes.shape({
+    adress: PropTypes.string,
+    birthday: PropTypes.string,
+    city: PropTypes.string,
+    email: PropTypes.string,
+    firstname: PropTypes.string,
+    gender: PropTypes.string,
+    imageCopyright: PropTypes.bool,
+    lastname: PropTypes.string,
+    mailingActive: PropTypes.bool,
+    memberActive: PropTypes.bool,
+    memberId: PropTypes.string,
+    membershipDateLast: PropTypes.string,
+    membershipPlace: PropTypes.string,
+    neighborhood: PropTypes.bool,
+    phone: PropTypes.string,
+    zip: PropTypes.string,
+  }),
 };
-
-// 30 sec de recherche
-// google : propType is not required, but has no corresponding defaultProps declaration
-// https://github.com/yannickcr/eslint-plugin-react/issues/1433
 
 Users.defaultProps = {
   displayNewUser: null,
+  displayKnownUser: null,
+  dispatch: null,
+  updateUser: null,
+  newUser: null,
 };
 
 export default connect(mapStateToProps)(Users);
