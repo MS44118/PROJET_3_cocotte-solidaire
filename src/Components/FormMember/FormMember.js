@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import moment from 'moment';
-import DatePicker from "react-datepicker";
+import DatePicker from 'react-datepicker';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 import { updateUserAction, newUserAction } from '../../Actions/userAction';
@@ -40,7 +39,7 @@ function FormMember({ userSelected, dispatch }) {
     if (userSelected.user) {
       setIdUser(userSelected.user.idUser);
       setAdress(userSelected.user.adress);
-      setBirthday(userSelected.user.birthday);
+      setBirthday(userSelected.user.birthday !== 'Invalid date' ? userSelected.user.birthday : '');
       setCity(userSelected.user.city);
       setEmail(userSelected.user.email);
       setFirstname(userSelected.user.firstname);
@@ -50,7 +49,7 @@ function FormMember({ userSelected, dispatch }) {
       setMailingActive(userSelected.user.mailingActive);
       setMemberActive(userSelected.user.memberActive);
       setMemberId(userSelected.user.memberId);
-      setMembershipDateLast(userSelected.user.membershipDateLast);
+      setMembershipDateLast(userSelected.user.membershipDateLast !== 'Invalid date' ? userSelected.user.membershipDateLast : '');
       setMembershipPlace(userSelected.user.membershipPlace);
       setNeighborhood(userSelected.user.neighborhood);
       setPhone(userSelected.user.phone);
@@ -90,6 +89,28 @@ function FormMember({ userSelected, dispatch }) {
     } else {
       dispatch(displayKnownUserFormAction('none'));
     }
+    if (idUser) {
+      dispatch(updateUserAction(user));
+      axios.put(`http://localhost:8000/user/${idUser}`, user)
+        .then((res) => {
+          console.log(res.statusText);
+          if (res.status === 200) {
+            dispatch(updateUserAction(user));
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      axios.post('http://localhost:8000/user/', user)
+        .then((data) => {
+          const userTemp = { ...user, idUser: data.data[0].id_user };
+          dispatch(newUserAction(userTemp));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
     setIdUser('');
     setAdress('');
     setBirthday('');
@@ -107,26 +128,6 @@ function FormMember({ userSelected, dispatch }) {
     setNeighborhood(false);
     setPhone('');
     setZip('');
-    if (idUser){
-      dispatch(updateUserAction(user))
-      axios.put(`http://localhost:8000/user/${idUser}`, user)
-      .then(res => {
-        console.log(res.statusText)
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    } else {
-      axios.post(`http://localhost:8000/user/`, user)
-      .then((data) => {
-        console.log(data.data[0].id_user)
-        const userTemp = {...user, idUser : data.data[0].id_user}
-        dispatch(newUserAction(userTemp));
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    }
   };
 
   return (
@@ -135,28 +136,26 @@ function FormMember({ userSelected, dispatch }) {
       <div className="row">
         <div className="input-field  offset 2 col s8">
           <i className="material-icons prefix">wc</i>
-          <select value={user.gender} onChange={event => setGender(event.target.value)}>
+          <select onChange={event => setGender(event.target.value)}>
             <option className="color_select" value="" disabled>Genre</option>
             <option value="female">Feminin</option>
             <option value="male">Masculin</option>
           </select>
-
         </div>
       </div>
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons">calendar_today</i>
-          {/* <div style={{ marginLeft: "50px" }}> */}
           <DatePicker
             selected={membershipDateLast && new Date(membershipDateLast)}
-            onChange={date => setMembershipDateLast(date)}
+            onChange={date => date && setMembershipDateLast(date)}
           />
         </div>
         <div className="input-field col s6">
           <i className="material-icons">calendar_today</i>
           <DatePicker
             selected={birthday && new Date(birthday)}
-            onChange={date => setBirthday(date)}
+            onChange={date => date && setBirthday(date)}
           />
         </div>
       </div>
@@ -166,7 +165,7 @@ function FormMember({ userSelected, dispatch }) {
             <i className="material-icons prefix">account_circle</i>
             <input
               id="last_name"
-              value={lastname && lastname}
+              value={lastname !== null ? lastname : ''}
               onChange={event => setLastname(event.target.value)}
               type="text"
               className="validate"
@@ -179,7 +178,7 @@ function FormMember({ userSelected, dispatch }) {
             <i className="material-icons prefix">account_circle</i>
             <input
               id="first_name"
-              value={firstname && firstname}
+              value={firstname !== null ? firstname : ''}
               onChange={event => setFirstname(event.target.value)}
               type="text"
               className="validate"
@@ -193,7 +192,7 @@ function FormMember({ userSelected, dispatch }) {
           <div className="input-field col s6">
             <i className="material-icons prefix">email</i>
             <input
-              value={email && email}
+              value={email !== null ? email : ''}
               onChange={event => setEmail(event.target.value)}
               id="email"
               type="email"
@@ -206,7 +205,7 @@ function FormMember({ userSelected, dispatch }) {
           <div className="input-field col s6">
             <i className="material-icons prefix">phone</i>
             <input
-              value={phone && phone}
+              value={phone !== null ? phone : ''}
               onChange={event => setPhone(event.target.value)}
               id="icon_telephone"
               type="tel"
@@ -222,7 +221,7 @@ function FormMember({ userSelected, dispatch }) {
           <div className="input-field col s6">
             <i className="material-icons prefix">location_on</i>
             <input
-              value={adress && adress}
+              value={adress !== null ? adress : ''}
               onChange={event => setAdress(event.target.value)}
               id="adress"
               type="text"
@@ -235,7 +234,7 @@ function FormMember({ userSelected, dispatch }) {
           <div className="input-field col s6">
             <i className="material-icons prefix">location_on</i>
             <input
-              value={zip && zip}
+              value={zip !== null ? zip : ''}
               onChange={event => setZip(event.target.value)}
               id="zip_code"
               type="text"

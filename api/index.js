@@ -42,7 +42,7 @@ api.get('/registrations', (req, res) => {
 });
 
 api.get('/users', (req, res) => {
-  connection.query('SELECT * FROM users', (err, result) => {
+  connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
     const data = result.map((user, index) => ({
       idUser: user.id_user,
       firstname: user.firstname,
@@ -61,6 +61,7 @@ api.get('/users', (req, res) => {
       neighborhood: user.neighborhood,
       imageCopyright: user.image_copyright,
       mailingActive: user.mailing_active,
+      anonym: user.anonym,
     }))
     if (err) throw err;
     res.json(data);
@@ -80,16 +81,29 @@ api.get('/events', (req, res) => {
 api.put('/user/:id', (req, res) => {
   const idUser = req.params.id;
   const values = req.body;
+  {values.firstname ? null : values.firstname = null}
+  {values.lastname ? null : values.lastname = null}
+  {values.email ? null : values.email = null}
+  {values.phone ? null : values.phone = null}
+  {values.gender ? null : values.gender = null}
+  {values.memberId ? null : values.memberId = null}
+  {values.membershipPlace ? null : values.membershipPlace = null}
+  {values.adress ? null : values.adress = null}
+  {values.zip ? null : values.zip = null}
+  {values.city ? null : values.city = null}
+  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
+  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
+
   const data = {
     firstname: values.firstname,
     lastname: values.lastname,
     email: values.email,
     phone: values.phone,
-    birthday: moment(values.birthday).format('YYYY-MM-DD HH:mm:ss'),
+    birthday: values.birthday,
     gender: values.gender,
     member_id: values.memberId,
     member_active: values.memberActive,
-    membership_date_last: moment(values.membershipDateLast).format('YYYY-MM-DD HH:mm:ss'),
+    membership_date_last: values.membershipDateLast,
     membership_place: values.membershipPlace,
     adress: values.adress,
     zip: values.zip,
@@ -129,7 +143,7 @@ api.post('/user/', (req, res) => {
   (err, results) => {
     if (err) {
       console.log(err)
-      res.status(500).send("Erreur lors de l'enregistrement de la réservation");
+      res.status(500).send("Erreur lors de l'enregistrement d'un utilisateur.");
     } else {
       connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
         if (err) throw err;
@@ -139,16 +153,40 @@ api.post('/user/', (req, res) => {
   });
 });
 
-api.delete('/user/:id', (req, res) => {
+api.put('/user/anonym/:id', (req, res) => {
   const idUser = req.params.id;
-  connection.query('DELETE FROM users WHERE id_user = ?', [idUser], err => {
-    if (err) {
-      console.log(err);
-      res.status(500).send("Erreur lors de la suppression d'une réservation");
-    } else {
-      res.sendStatus(200);
-    }
-  });
+  const values = req.body;
+  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
+  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
+  const data = {
+    firstname: 'firstname',
+    lastname: 'lastname',
+    email: 'email@toto.com',
+    phone: 'phone',
+    birthday: values.birthday,
+    gender: values.gender,
+    member_id: values.memberId,
+    member_active: values.memberActive,
+    membership_date_last: values.membershipDateLast,
+    membership_place: values.membershipPlace,
+    adress: 'address',
+    zip: '00000',
+    city: values.city,
+    neighborhood: values.neighborhood,
+    image_copyright: values.imageCopyright,
+    mailing_active: values.mailingActive,
+    anonym: true,
+  }
+  if (idUser) {
+    connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Erreur lors de l'anonymisation");
+      } else {
+        res.sendStatus(200);
+      }
+    });
+  }
 });
 
 api.listen(8000, 'localhost', (err) => {

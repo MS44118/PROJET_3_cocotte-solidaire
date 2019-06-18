@@ -9,7 +9,11 @@ import './Users.css';
 // ACTIONS
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 
-function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch }) {
+function Users(
+  {
+    displayNewUser, displayKnownUser, updateUser, newUser, dispatch,
+  },
+) {
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
 
@@ -17,7 +21,6 @@ function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch
     axios.get('http://localhost:8000/users')
       .then((data) => {
         setUserList(data.data);
-        console.log(data.data)
       });
   }, []);
 
@@ -32,17 +35,16 @@ function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch
   }, [userList.length, displayKnownUser]);
 
   useEffect(() => {
-    const index = _.findIndex(userList, user => { return user.idUser === updateUser.idUser })
-    let arrayTemp = userList;
+    const arrayTemp = [...userList];
+    const index = _.findIndex(arrayTemp, user => user.idUser === updateUser.idUser);
     arrayTemp[index] = updateUser;
-    setUserList(arrayTemp)
-  } ,[updateUser]);
+    setUserList(arrayTemp);
+  }, [updateUser]);
 
   useEffect(() => {
-    let arrayTemp = [...userList, newUser];
-    setUserList(arrayTemp)
-    console.log(newUser)
-  } ,[newUser]);
+    const arrayTemp = [...userList, newUser];
+    setUserList(arrayTemp);
+  }, [newUser]);
 
   const handleCreate = (index) => {
     const arrayTemp = activeFormMember;
@@ -52,19 +54,16 @@ function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch
   };
 
   const handleDelete = (index) => {
-    console.log(index)
-    axios.delete(`http://localhost:8000/user/${userList[index].idUser}`)
-      .then(res => {
-        console.log(res.statusText)
-        if (res.status === 200){
-          let arrayTemp = userList;
+    axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+      .then((res) => {
+        console.log(res.statusText);
+        if (res.status === 200) {
+          const arrayTemp = [...userList];
           arrayTemp.splice(index, 1);
-          console.log(arrayTemp)
-          console.log(userList)
           setUserList(arrayTemp);
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -91,7 +90,7 @@ function Users({ displayNewUser, displayKnownUser, updateUser, newUser, dispatch
           <p className="col s2">Mail</p>
         </li>
         {userList.length && userList.map((user, index) => (
-          <div key={userList[index]}>
+          <div key={user[index]}>
             <li className="collection-item row center-align">
               <p className="col s2">{user.memberId}</p>
               <p className="col s2">{user.lastname}</p>
@@ -132,6 +131,8 @@ Users.propTypes = {
   displayNewUser: PropTypes.string,
   displayKnownUser: PropTypes.string,
   dispatch: PropTypes.func,
+  updateUser: PropTypes.object,
+  newUser: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(Users);
