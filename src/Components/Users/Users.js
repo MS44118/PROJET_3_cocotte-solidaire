@@ -135,4 +135,12 @@ Users.propTypes = {
   newUser: PropTypes.object,
 };
 
+// 30 sec de recherche
+// google : propType is not required, but has no corresponding defaultProps declaration
+// https://github.com/yannickcr/eslint-plugin-react/issues/1433
+
+Users.defaultProps = {
+  displayNewUser: null,
+};
+
 export default connect(mapStateToProps)(Users);
