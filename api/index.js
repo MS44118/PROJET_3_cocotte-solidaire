@@ -57,18 +57,54 @@ api.get('/events', (req, res) => {
   );
 });
 
-api.post('/registrations', (req, res)=> { 
-  const reservation = req.body
-  console.log(reservation)
-  connection.query(
-    'INSERT INTO registrations (allergie) VALUES ?',reservation, (err, result)=>{
+// api.post('/registrations', (req, res)=> { 
+//   const reservation = req.body
+//   console.log(reservation)
+//   connection.query(
+//     'INSERT INTO registrations (allergie) VALUES ?',reservation, (err, result)=>{
+//     if (err){
+//       console.log(err)
+//       res.status(500).send("error while saving")
+//     } else {
+//       res.sendStatus(200);
+//     }
+//   })
+// })
+api.post('/zboub', (req,res)=>{
+ () =>{ 
+
+  }
+  
+
+  
+
+  console.log(req.body)
+  connection.query(`INSERT INTO users (firstname,lastname,email,phone,member_id) VALUES ("${reservation.newReservationFirstName}","${reservation.newReservationName}","${reservation.newReservationMail}","${reservation.phoneNumber}","${reservation.newReservationUserId}")`, reservation, (err, result)=>{
     if (err){
       console.log(err)
       res.status(500).send("error while saving")
     } else {
-      res.sendStatus(200);
+      res.sendStatus(200)
     }
-  })
+  });
+});
+
+api.post('/newReservation', (req,res)=>{
+  const reservation= req.body
+  console.log(req.body)
+  connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}")`, reservation, (err, result)=>{
+    if (err) {
+      console.log(err)
+      res.status(500).send("error while saving")
+    }else {
+      res.status(200)
+    }
+  });
+});
+
+api.put('/changeUser', (req,res)=>{
+  const reservationData = req.body
+
 })
 
 api.listen(8000, 'localhost', (err) => {
