@@ -77,7 +77,7 @@ function Reservation() {
   }, [searchValue]);
 
   const handleUser = (e, { result })=> {
-    const arrayTemp = users.filter(user=>user.id_user===result.description)
+    const arrayTemp = users.filter(user =>user.id_user===result.description)
     setNewReservationFirstName(arrayTemp[0].firstname);
     setNewReservationName(arrayTemp[0].lastname);
     setNewReservationMail(arrayTemp[0].email);
@@ -87,10 +87,12 @@ function Reservation() {
     setExistantUser(true);
   };
 
-  const handleReservation = (index) => {
+  const handleReservation = (index) => 
+  {
     setNewActivities(activities[index].name);
-    setLabelActive('active') 
+    setLabelActive('active')          
   };
+
   console.log(addReservation)
 
   return (
@@ -100,9 +102,9 @@ function Reservation() {
       <div className="row">
         <div className="input-field  col s8">
 
-          <select id="activity" className="browser-default color_select"  onChange={(event)=>handleReservation(event.target.value)}>
+          <select id="activity" className="browser-default color_select" onChange={event => handleReservation(event.target.value)}>
             {activities.map((activity, index) =>
-              <option value={index}>{activity.name}/>
+              <option value={index}>{activity.name}</option>
             )};
           </select>
 
@@ -121,7 +123,7 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">event_busy</i>
-          <input id="event_name" type="text" className="validate" value={newActivities} onChange={(e) => setNewActivities(e.target.value)} />
+          <input id="event_name" type="text" className="validate" value={newActivities} onChange={e => setNewActivities(e.target.value)} />
           <label  id="event_name"htmlFor="event_name" className={labelActive} >Nom de l&apos;évènement</label>
         </div>
 
@@ -136,10 +138,10 @@ function Reservation() {
           <p>Places à réserver</p>
         </div>
         <div className="input-field col s4">
-          <p> nombres d'Adultes</p>
-          <select onChange={(e) => setnumberAdultReservation(e.target.value)}>
+          <p> nombres d&aposAdultes</p>
+          <select onChange={e => setnumberAdultReservation(e.target.value)}>
             <option value="0" disabled selected>Nombre Adultes</option>
-            <option value='1'>1</option>
+            <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
@@ -149,8 +151,8 @@ function Reservation() {
 
         </div>
         <div className="input-field col s4">
-          <p>Nombres d'enfants</p>
-          <select onChange={(e) => setnumbeChildrenRegistration(e.target.value)}>
+          <p>Nombres d&aposenfants</p>
+          <select onChange={e => setnumbeChildrenRegistration(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -160,19 +162,17 @@ function Reservation() {
             <option value="6">6</option>
           </select>
 
-
-
         </div>
         <Search
-          onSearchChange={(event) => setSearchValue(event.target.value)}
-          type='text'
+          onSearchChange={event => setSearchValue(event.target.value)}
+          type="text"
           value={searchValue}
           results={searchResults}
-          onResultSelect={ handleUser}
-          size='big'
+          onResultSelect={handleUser}
+          size="big"
           icon="none"
-          placeholder='nom de famille' />
-
+          placeholder="nom de famille"
+        />
 
       </div>
       {/* choose event collaps bar */}
@@ -180,7 +180,10 @@ function Reservation() {
 
         <div className="input-field col s6">
           <i className="material-icons prefix">account_circle</i>
-          <input id="last_name" type="text" className="validate"
+          <input
+            id="last_name"
+            type="text"
+            className="validate"
             value={newReservationName}
             onChange={(e) => {
               setNewReservationName(e.target.value);
@@ -193,9 +196,13 @@ function Reservation() {
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
-            <input type="text" id="firstname" className="validate"
-              onChange={(e) => setNewReservationFirstName(e.target.value)}
-              value={newReservationFirstName} />
+            <input
+              type="text" 
+              id="firstname" 
+              className="validate"
+              onChange={e => setNewReservationFirstName(e.target.value)}
+              value={newReservationFirstName} 
+            />
             <label htmlFor="firstname"className={labelActive} >Prénom</label>
           </div>
         </div>
@@ -206,9 +213,13 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">email</i>
-          <input id="email" type="email" className="validate"
-            onChange={(e) => setNewReservationMail(e.target.value)}
-            value={newReservationMail} />
+          <input
+            id="email"
+            type="email"
+            className="validate"
+            onChange={e => setNewReservationMail(e.target.value)}
+            value={newReservationMail}
+          />
           <label htmlFor="email"className={labelActive} >
             Email
             </label>
@@ -216,9 +227,12 @@ function Reservation() {
 
         <div className="input-field col s6">
           <i className="material-icons prefix">phone</i>
-          <input id="icon_telephone" type="tel" className="validate"
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            value={phoneNumber} />
+          <input
+            id="icon_telephone"
+            type="tel" className="validate"
+            onChange={e => setPhoneNumber(e.target.value)}
+            value={phoneNumber}
+          />
           <label htmlFor="icon_telephone"className={labelActive} >
             Téléphone
             </label>
@@ -227,24 +241,26 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">person_add</i>
-          <input id="num_user" type="text" className="validate"
-            onChange={(e) => setNewReservationUserId(e.target.value)}
-            value={newReservationUserId} />
+          <input
+            id="num_user"
+            type="text" 
+            className="validate"
+            onChange={e => setNewReservationUserId(e.target.value)}
+            value={newReservationUserId} 
+          />
           <label htmlFor="num_user"className={labelActive} >
             Numéros d&apos;adhérent
             </label>
         </div>
       </div>
 
-
-
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i>
           <textarea
-            id="allergy" className="materialize-textarea"
-            onChange={(e) => setReservationAllergie(e.target.value)}
-
+            id="allergy"
+            className="materialize-textarea"
+            onChange={e => setReservationAllergie(e.target.value)}
           />
           <label htmlFor="allergy">
             Allergies
@@ -255,19 +271,19 @@ function Reservation() {
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">info</i>
-          <input type='text' id="importantInfo"
+          <input
+            type="text"
+            id="importantInfo"
             className="validate"
             data-length="100%"
-            onChange={(e) => setReservationInfo(e.target.value)} />
+            onChange={e => setReservationInfo(e.target.value)}
+          />
           <label htmlFor="importantInfo">
             Informations complémentaires
           </label>
         </div>
       </div>
     </div>
-
-
-
 
   );
 }
