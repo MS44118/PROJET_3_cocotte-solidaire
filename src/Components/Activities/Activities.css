@@ -1,0 +1,63 @@
+.render {
+  border: 3px solid gray;
+  margin: 20px;
+  width: 100%;
+}
+
+.activitie_pics {
+  height: 100%;
+  width: 100%;
+}
+
+.pos_bt {
+  margin-bottom: 20px; 
+  width: 10rem;
+  margin: 3px;
+}
+
+.subtitles {
+  font-family: Simplifica;
+  color: #498e81;
+  font-size: 3em;
+  margin-top: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.subtitles:before {
+  border-top: 3px solid #f3bcaf;
+  content: "";
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.subtitles span {
+  background: #fff;
+  padding: 0 15px;
+}
+
+.justify {
+  text-align: justify;
+  text-justify: inter-word;
+  color: black !important;
+}
+.text {
+  font-size: 1.2em;
+  line-height: 2em;
+}
+p {
+  font-family: Roboto;
+}
+
+.mssg {
+  max-width: inherit;
+  word-break: break-all;
+  word-wrap: break-word;
+ }
