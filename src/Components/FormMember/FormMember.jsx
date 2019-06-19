@@ -80,8 +80,8 @@ function FormMember({ userSelected, dispatch }) {
     };
     setUser(userTemp);
   }, [adress, birthday, city, email, firstname, gender, imageCopyright,
-      lastname, mailingActive, memberActive, memberId, membershipDateLast,
-      membershipPlace, neighborhood, phone, zip]);
+    lastname, mailingActive, memberActive, memberId, membershipDateLast,
+    membershipPlace, neighborhood, phone, zip]);
 
   const handleSend = () => {
     if (userSelected === 'new') {
@@ -347,7 +347,7 @@ function FormMember({ userSelected, dispatch }) {
               onClick={handleClose}
             >
               Fermer
-                    </button>
+            </button>
           </div>
         </div>
       </div>
