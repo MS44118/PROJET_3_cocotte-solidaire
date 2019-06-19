@@ -6,6 +6,7 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import App from './App';
 import displayUserFormReducer from './Reducers/displayUserFormReducer';
+import 'semantic-ui/dist/semantic.min.css';
 
 import './index.css';
 import 'materialize-css';

@@ -1,98 +1,109 @@
 import React, { useEffect, useState } from 'react';
-import axios from'axios';
+import axios from 'axios';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
+import { Search } from 'semantic-ui-react';
 import './Reservation.css';
+import 'semantic-ui/dist/semantic.min.css';
+
 
 
 function Reservation() {
 
-   const [activities, setActivities] = useState([]);
-   const [users , setUsers] = useState ([]);
-   const [newReservationName, setNewReservationName]=useState('');
-   const [newReservationFirstName, setNewReservationFirstName]=useState('');
-   const [newReservationUserId, setNewReservationUserId]=useState('');
-   const [numberAdultReservation, setnumberAdultReservation]=useState('1');
-   const [numberchildrenReservation, setnumbeChildrenRegistration]=useState('');
-   const [newReservationMail, setNewReservationMail]=useState('');
-   const [reservationAllergie, setReservationAllergie]=useState('');
-   const [reservationInfo, setReservationInfo]=useState('');
-   const [phoneNumber, setPhoneNumber]=useState('');
-   const [newActivities, setNewActivities]=useState('');
+  const [activities, setActivities] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [newReservationName, setNewReservationName] = useState('');
+  const [newReservationFirstName, setNewReservationFirstName] = useState('');
+  const [newReservationUserId, setNewReservationUserId] = useState('');
+  const [numberAdultReservation, setnumberAdultReservation] = useState('');
+  const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
+  const [newReservationMail, setNewReservationMail] = useState('');
+  const [reservationAllergie, setReservationAllergie] = useState('');
+  const [reservationInfo, setReservationInfo] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [newActivities, setNewActivities] = useState('');
+  const [searchValue, setSearchValue] = useState('');
+  const [searchResults, setSearchResults] = useState([{ title: '' }]);
+  const[labelActive, setLabelActive] = useState('')
+  const [existantUser, setExistantUser]= useState (false)
 
-    useEffect(()=>{
-      M.AutoInit();
+  useEffect(() => {
+    M.AutoInit();
 
-      axios.get("http://localhost:8000/users")
-      .then((result)=>{
+    axios.get("http://localhost:8000/users")
+      .then((result) => {
         setUsers(result.data)
       });
-      axios.get("http://localhost:8000/activities")
-      .then((result)=>{
+    axios.get("http://localhost:8000/activities")
+      .then((result) => {
         setActivities(result.data)
       });
 
-    },[]);
-    
-    
-    const addReservation = {
-      numberAdultReservation,
-      numberchildrenReservation,
-      reservationAllergie,
-      reservationInfo,
-    };
+  }, []);
 
-    const newUserRegistration = {
-      newReservationName,
-      newReservationFirstName,
-      newReservationMail,
-      phoneNumber,
-      newReservationUserId
-    };
-  console.log(typeof(newUserRegistration))
-    const sendForm= ()=>{
-      axios.post('http://localhost:8000/zboub/',newUserRegistration)
-      .then(function(response){
-          console.log(response)
-      })
-      .then(function(err){
-        console.log(err)
-      })
-      axios.post('http://localhost:8000/newReservation/',addReservation)
-      .then(function(response){
-        console.log(response)
-      })
-      .then(function(err){
-        console.log(err)
-      })
-    };
 
-    const handleUser= (index) =>{
-      setNewReservationFirstName(users[index].firstname);
-      setNewReservationName(users[index].lastname);
-      setNewReservationMail(users[index].email);
-      setPhoneNumber(users[index].phone);
-      setNewReservationUserId(users[index].member_id);
-    };
-    const handleReservation= (index) =>{
-      setNewActivities(activities[index].name)
-    }; 
-    
+  const addReservation = {
+    numberAdultReservation,
+    numberchildrenReservation,
+    reservationAllergie,
+    reservationInfo,
+    newReservationName,
+    newReservationFirstName,
+    newReservationMail,
+    phoneNumber,
+    newReservationUserId,
+    existantUser
+  };
+
+  const sendForm = () => {
+    axios.post('http://localhost:8000/zboub/', addReservation)
+      .then(function (response) {
+        console.log(response)})
+      .then(function (err) {
+        console.log(err)})  
+  };
+
+  useEffect(() => {
+    if (searchValue.length > 0) {
+      const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`));
+
+      let resultTemp = [];
+      for (let i = 0; i < arrayTemp.length; i++) {
+        resultTemp = [...resultTemp, { title: arrayTemp[i].lastname, description: arrayTemp[i].id_user }];
+      }
+      setSearchResults(resultTemp);
+      console.log(searchResults.description)
+    }
+  }, [searchValue]);
+
+  const handleUser = (e, { result })=> {
+    const arrayTemp = users.filter(user=>user.id_user===result.description)
+    setNewReservationFirstName(arrayTemp[0].firstname);
+    setNewReservationName(arrayTemp[0].lastname);
+    setNewReservationMail(arrayTemp[0].email);
+    setPhoneNumber(arrayTemp[0].phone);
+    setNewReservationUserId(arrayTemp[0].member_id);
+    setLabelActive('active');
+    setExistantUser(true);
+  };
+
+  const handleReservation = (index) => {
+    setNewActivities(activities[index].name);
+    setLabelActive('active') 
+  };
+  console.log(addReservation)
+
   return (
 
     <div className="container">
       <h1>Réservation</h1>
       <div className="row">
         <div className="input-field  col s8">
-       
-          <select id="activity" className="browser-default color_select" onChange={(event)=>
-            handleReservation(event.target.value)
-          
-          }>
-          {activities.map((activity, index)=>
-              <option value={index}>{activity.name}</option> 
-              )};
 
+          <select id="activity" className="browser-default color_select"  onChange={(event)=>handleReservation(event.target.value)}>
+            {activities.map((activity, index) =>
+              <option value={index}>{activity.name}/>
+            )};
           </select>
 
 
@@ -103,15 +114,15 @@ function Reservation() {
             className="waves-effect waves-light btn-small teal white-text right "
             onClick={sendForm}
           >
-              Envoyer
+            Envoyer
           </button>
         </div>
       </div>
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">event_busy</i>
-          <input id="event_name" type="text" className="validate" value={newActivities} onChange={(e)=>setNewActivities(e.target.value)} />
-          <label htmlFor="event_name">Nom de l&apos;évènement</label>
+          <input id="event_name" type="text" className="validate" value={newActivities} onChange={(e) => setNewActivities(e.target.value)} />
+          <label  id="event_name"htmlFor="event_name" className={labelActive} >Nom de l&apos;évènement</label>
         </div>
 
         <div className="input-field col s6">
@@ -125,8 +136,9 @@ function Reservation() {
           <p>Places à réserver</p>
         </div>
         <div className="input-field col s4">
-          <select  onChange={(e)=> setnumberAdultReservation(e.target.value)}>
-            <option value="" disabled selected>Nombre Adultes</option>
+          <p> nombres d'Adultes</p>
+          <select onChange={(e) => setnumberAdultReservation(e.target.value)}>
+            <option value="0" disabled selected>Nombre Adultes</option>
             <option value='1'>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -137,8 +149,9 @@ function Reservation() {
 
         </div>
         <div className="input-field col s4">
-          <select onChange={(e)=>setnumbeChildrenRegistration(e.target.value)}>
-            <option value="" disabled selected>Nombres Enfants</option>
+          <p>Nombres d'enfants</p>
+          <select onChange={(e) => setnumbeChildrenRegistration(e.target.value)}>
+            <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -148,112 +161,113 @@ function Reservation() {
           </select>
 
 
+
         </div>
-        <div className="input-field  col s8">
-         <select className="browser-default color_select" id="activity" 
-         onChange={(event)=>{handleUser(event.target.value)}} 
-         
-         >
-            {users.map((user, index)=>
-              <option value={index}>{user.firstname} {user.lastname}</option> 
-              )}
-          </select>
-          </div>
+        <Search
+          onSearchChange={(event) => setSearchValue(event.target.value)}
+          type='text'
+          value={searchValue}
+          results={searchResults}
+          onResultSelect={ handleUser}
+          size='big'
+          icon="none"
+          placeholder='nom de famille' />
+
 
       </div>
       {/* choose event collaps bar */}
       <div className="row">
-      
-          <div className="input-field col s6">
-            <i className="material-icons prefix">account_circle</i>
-            <input id="last_name" type="text" className="validate"
-             value={newReservationName}
-               onChange={(e)=>{
-                setNewReservationName(e.target.value);
-               }}
-             />
-            <label id="last_name" htmlFor="last_name">
+
+        <div className="input-field col s6">
+          <i className="material-icons prefix">account_circle</i>
+          <input id="last_name" type="text" className="validate"
+            value={newReservationName}
+            onChange={(e) => {
+              setNewReservationName(e.target.value);
+            }}
+          />
+          <label id="last_name" htmlFor="last_name" className={labelActive}>
             Nom
             </label>
         </div>
-        <div  className="row">
+        <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
-            <input type="text" id="firstname" className="validate" 
-            onChange={(e)=>setNewReservationFirstName(e.target.value)} 
-            value={newReservationFirstName}/>
-            <label htmlFor="firstname">Prénom</label>
-          </div>
+            <input type="text" id="firstname" className="validate"
+              onChange={(e) => setNewReservationFirstName(e.target.value)}
+              value={newReservationFirstName} />
+            <label htmlFor="firstname"className={labelActive} >Prénom</label>
           </div>
         </div>
+      </div>
 
 
-        {/* row name mail and tel */}
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">email</i>
-            <input id="email" type="email" className="validate" 
-            onChange={(e)=>setNewReservationMail(e.target.value)}
+      {/* row name mail and tel */}
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">email</i>
+          <input id="email" type="email" className="validate"
+            onChange={(e) => setNewReservationMail(e.target.value)}
             value={newReservationMail} />
-            <label htmlFor="email">
-              Email
+          <label htmlFor="email"className={labelActive} >
+            Email
             </label>
-          </div>
+        </div>
 
-          <div className="input-field col s6">
-            <i className="material-icons prefix">phone</i>
-            <input id="icon_telephone" type="tel" className="validate"
-            onChange={(e)=>setPhoneNumber(e.target.value)}
+        <div className="input-field col s6">
+          <i className="material-icons prefix">phone</i>
+          <input id="icon_telephone" type="tel" className="validate"
+            onChange={(e) => setPhoneNumber(e.target.value)}
             value={phoneNumber} />
-            <label htmlFor="icon_telephone">
-              Téléphone
+          <label htmlFor="icon_telephone"className={labelActive} >
+            Téléphone
             </label>
-          </div>
         </div>
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">person_add</i>
-            <input id="num_user" type="text" className="validate"
-             onChange={(e)=>setNewReservationUserId(e.target.value)}  
-             value={newReservationUserId} />
-            <label htmlFor="num_user">
-              Numéros d&apos;adhérent
+      </div>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">person_add</i>
+          <input id="num_user" type="text" className="validate"
+            onChange={(e) => setNewReservationUserId(e.target.value)}
+            value={newReservationUserId} />
+          <label htmlFor="num_user"className={labelActive} >
+            Numéros d&apos;adhérent
             </label>
-          </div>
         </div>
-  
-      
-      
+      </div>
+
+
+
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i>
-          <textarea 
-          id="allergy" className="materialize-textarea" 
-          onChange={(e)=> setReservationAllergie(e.target.value)}
-          
+          <textarea
+            id="allergy" className="materialize-textarea"
+            onChange={(e) => setReservationAllergie(e.target.value)}
+
           />
           <label htmlFor="allergy">
             Allergies
           </label>
         </div>
       </div>
-      
+
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">info</i> 
-          <input type='text' id="importantInfo" 
-          className="validate"
-           data-length="100%"
-          onChange={(e)=>setReservationInfo(e.target.value)}/>
+          <i className="material-icons prefix">info</i>
+          <input type='text' id="importantInfo"
+            className="validate"
+            data-length="100%"
+            onChange={(e) => setReservationInfo(e.target.value)} />
           <label htmlFor="importantInfo">
             Informations complémentaires
           </label>
         </div>
       </div>
     </div>
-      
 
-    
+
+
 
   );
 }
