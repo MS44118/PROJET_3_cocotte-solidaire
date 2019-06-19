@@ -50,13 +50,13 @@ function ReservationHome(props) {
               <p className="col s1">
                 { registration.email === ''
                   ? <i className="material-icons email-missing">priority_high</i>
-                  : <i className="material-icons icon-green">priority_high</i>
+                  : null
                 }
                 {/* <i className="material-icons icon-green">warning</i> */}
               </p>
               <p className="col s1">
                 { registration.allergie === ' '
-                  ? <i className="material-icons icon-green">warning</i>
+                  ? null
                   : <i className="material-icons allergie-warning">warning</i>
                 }
               </p>
