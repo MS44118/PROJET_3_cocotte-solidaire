@@ -3,8 +3,6 @@ node_modules
 package-lock.json
 .DS_Store
 api/.password.js
-/api/.private.key
-/api/.public.key
 
 # special settings visualcode (maelenn)
 .vscode
