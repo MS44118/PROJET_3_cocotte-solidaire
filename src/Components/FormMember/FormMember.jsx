@@ -80,8 +80,8 @@ function FormMember({ userSelected, dispatch }) {
     };
     setUser(userTemp);
   }, [adress, birthday, city, email, firstname, gender, imageCopyright,
-    lastname, mailingActive, memberActive, memberId, membershipDateLast,
-    membershipPlace, neighborhood, phone, zip]);
+      lastname, mailingActive, memberActive, memberId, membershipDateLast,
+      membershipPlace, neighborhood, phone, zip]);
 
   const handleSend = () => {
     if (userSelected === 'new') {
@@ -128,6 +128,14 @@ function FormMember({ userSelected, dispatch }) {
     setNeighborhood(false);
     setPhone('');
     setZip('');
+  };
+
+  const handleClose = () => {
+    if (userSelected === 'new') {
+      dispatch(displayNewUserFormAction('none'));
+    } else {
+      dispatch(displayKnownUserFormAction('none'));
+    }
   };
 
   return (
@@ -301,7 +309,7 @@ function FormMember({ userSelected, dispatch }) {
         </div>
 
         <div className="row">
-          <div className="input-field col s4">
+          <div className="input-field col s3">
             <label>
               <input
                 type="checkbox"
@@ -312,7 +320,7 @@ function FormMember({ userSelected, dispatch }) {
               <span>Droit à l&apos;image</span>
             </label>
           </div>
-          <div className="input-field col s4">
+          <div className="input-field col s3">
             <label>
               <input
                 type="checkbox"
@@ -323,7 +331,7 @@ function FormMember({ userSelected, dispatch }) {
               <span>Accepte l&apos;envoie de mail</span>
             </label>
           </div>
-          <div className="input-field col s4">
+          <div className="input-field col s3">
             <button
               type="button"
               className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
@@ -331,6 +339,15 @@ function FormMember({ userSelected, dispatch }) {
             >
               Envoyer
             </button>
+          </div>
+          <div className="input-field col s3">
+            <button
+              type="button"
+              className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
+              onClick={handleClose}
+            >
+              Fermer
+                    </button>
           </div>
         </div>
       </div>
