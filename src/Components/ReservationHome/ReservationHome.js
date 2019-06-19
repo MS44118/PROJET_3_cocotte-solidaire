@@ -2,14 +2,20 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 function ReservationHome(props) {
+  const [eventIdProps, setEventIdProps] = useState({});
   const [registrations, setRegistrations] = useState([]);
 
+  // ESLINT WARNING: to prevent definitions of unused prop types
+  useEffect(() => setEventIdProps(props));
+
+  // get the registrations details from database
   useEffect(() => {
     axios.get('http://localhost:8000/api/future-registrations')
       .then((result) => {
         setRegistrations(result.data);
       });
   }, []);
+
 
   return (
     <div>
@@ -29,7 +35,7 @@ function ReservationHome(props) {
           <p className="col s1"><i className="material-icons icon-green">comment</i></p>
         </li>
         {registrations
-          .filter(registration => registration.event_id === props.eventId)
+          .filter(registration => registration.event_id === eventIdProps.eventId)
           .map((registration, index) => (
             <li key={registrations[index]} className="registration-item row center-align">
               <p className="col s1">{registration.firstname}</p>
@@ -52,7 +58,6 @@ function ReservationHome(props) {
                   ? <i className="material-icons email-missing">priority_high</i>
                   : null
                 }
-                {/* <i className="material-icons icon-green">warning</i> */}
               </p>
               <p className="col s1">
                 { registration.allergie === ' '

@@ -53,7 +53,6 @@ function EventHome() {
     array = events.map(() => (false));
     setCollapseRegistrations(array);
   }, [events]);
-  
 
   return (
     <div>
@@ -226,7 +225,6 @@ function EventHome() {
 
     </div>
   );
-
 }
 
 export default EventHome;
