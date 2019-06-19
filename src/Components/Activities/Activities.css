@@ -61,3 +61,7 @@ p {
   word-break: break-all;
   word-wrap: break-word;
  }
+
+ .color_select{
+  color:#498e81 !important;
+ }
