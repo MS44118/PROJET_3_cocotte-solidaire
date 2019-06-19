@@ -17,6 +17,8 @@
 
 form{
   margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 span{ 
@@ -37,7 +39,13 @@ li,p{
   width: 100% !important;
 }
 
-.row,ul{
+.row{
+  margin: 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+ul{
   margin: 0;
   /* text-size-adjust: ; */
 }
@@ -62,4 +70,12 @@ li,p{
 
 .registration-item{
   display: flex;
+}
+
+.email-missing{
+  color: red !important
+}
+
+.allergie-warning{
+  color: red !important
 }
