@@ -21,15 +21,15 @@ connection.connect((err) => {
 });
 
 // to request all the datas from all the tables from the mysql DB cocotte_booking
-api.get('/', (req, res) => {
-  connection.query(
-    'SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id;',
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
-    }
-  );
-});
+// api.get('/', (req, res) => {
+//   connection.query(
+//     'SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id;',
+//     (err, result) => {
+//       if (err) throw err;
+//       res.send(result);
+//     }
+//   );
+// });
 // SELECT registrations.*, users.*, events.*, activities.* 
 // FROM registrations 
 // JOIN users ON users.id_user=registrations.user_id 
@@ -90,14 +90,6 @@ api.get('/activities', (req, res) => {
   });
 });
 
-// for registrations listing in homepage '/' (components ReservationHome.js)
-api.get('/registrations', (req, res) => {
-  connection.query('SELECT * FROM registrations', (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
-});
-
 // here explain what it is for
 api.get('/users', (req, res) => {
   connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
@@ -113,7 +105,7 @@ api.get('/users', (req, res) => {
       memberActive: user.member_active,
       membershipDateLast: moment(user.membership_date_last).format('YYYY-MM-DD HH:mm:ss'),
       membershipPlace: user.membership_place,
-      adress: user.adress,
+      adress: user.address_user,
       zip: user.zip,
       city: user.city,
       neighborhood: user.neighborhood,
@@ -124,17 +116,6 @@ api.get('/users', (req, res) => {
     if (err) throw err;
     res.json(data);
   });
-});
-
-// here explain what it is for
-api.get('/events', (req, res) => {
-  connection.query(
-    'SELECT * FROM events',
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
-    },
-  );
 });
 
 api.put('/user/:id', (req, res) => {
@@ -164,7 +145,7 @@ api.put('/user/:id', (req, res) => {
     member_active: values.memberActive,
     membership_date_last: values.membershipDateLast,
     membership_place: values.membershipPlace,
-    adress: values.adress,
+    address_user: values.adress,
     zip: values.zip,
     city: values.city,
     neighborhood: values.neighborhood,
@@ -198,7 +179,7 @@ api.post('/user/', (req, res) => {
   {values.birthday ? values.birthday = `'${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}'` : values.birthday = null}
   {values.membershipDateLast ? values.membershipDateLast = `'${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}'` : values.membershipDateLast = null}
 
-  connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, adress, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES (${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, ${values.birthday}, ${values.gender}, ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, ${values.membershipPlace}, ${values.adress}, ${values.zip}, ${values.city}, ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`, 
+  connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES (${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, ${values.birthday}, ${values.gender}, ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, ${values.membershipPlace}, ${values.adress}, ${values.zip}, ${values.city}, ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`, 
   (err, results) => {
     if (err) {
       console.log(err)
@@ -228,7 +209,7 @@ api.put('/user/anonym/:id', (req, res) => {
     member_active: values.memberActive,
     membership_date_last: values.membershipDateLast,
     membership_place: values.membershipPlace,
-    adress: 'address',
+    address_user: 'address',
     zip: '00000',
     city: values.city,
     neighborhood: values.neighborhood,

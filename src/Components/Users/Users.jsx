@@ -114,14 +114,16 @@ function Users(
 
   return (
     <div className="container">
+      <div className="row">
       <h2
-        style={{ fontSize: '3em', marginLeft: '10vw' }}
+        style={{ fontSize: '3em' }}
         className="center-align"
       >
         Liste des utilisateurs / adhérents
       </h2>
-      <div className="row">
-        <div className="left">
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ alignSelf: 'flex-start' }}>
           <Search
             onSearchChange={event => setSearchValue(event.target.value)}
             type="text"
@@ -135,9 +137,9 @@ function Users(
           />
         </div>
         <button
-          style={{ marginTop: '20px' }}
+          style={{ marginTop: '20px', alignSelf: 'flex-end' }}
           type="button"
-          className="waves-effect waves-light btn-small teal darken-1 white-text right"
+          className="waves-effect waves-light btn-small teal darken-1 white-text"
           onClick={() => dispatch(displayNewUserFormAction('block'))}
         >
           Nouvel adhérent
@@ -151,6 +153,7 @@ function Users(
           <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
           <textbox style={{ marginRight: '20px' }} className="col s2">Tel</textbox>
           <textbox style={{ marginRight: '20px' }} className="col s2">Mail</textbox>
+          <textbox style={{ marginRight: '20px' }} className="col s2"></textbox>
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
@@ -160,6 +163,7 @@ function Users(
               <p className="col s2">{user.firstname}</p>
               <p className="col s2">{user.phone}</p>
               <p className="col s2">{user.email}</p>
+              <p className="col s2">
               <button
                 type="button"
                 className="waves-effect waves-light btn-small teal darken-1 white-text col"
@@ -174,6 +178,7 @@ function Users(
               >
                 <i className="material-icons">delete</i>
               </button>
+              </p>
             </li>
             <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>
           </div>

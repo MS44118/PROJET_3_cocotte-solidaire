@@ -174,7 +174,6 @@ function FormMember({ userSelected, dispatch }) {
           />
         </div>
       </div>
-      <div className="row">
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
@@ -357,7 +356,6 @@ function FormMember({ userSelected, dispatch }) {
             </button>
           </div>
         </div>
-      </div>
     </div>
   );
 }
