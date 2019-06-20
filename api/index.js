@@ -3,6 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connection = require('./conf');
 const moment = require('moment');
+const multer = require('multer');
+// const upload = multer({ dest: 'tmp/' });
+const fs = require('fs');
 
 const api = express();
 
@@ -85,8 +88,14 @@ api.get('/api/future-registrations', (req, res) => {
 // here explain what it is for
 api.get('/activities', (req, res) => {
   connection.query('SELECT * FROM activities', (err, result) => {
+    const data = result.map((activity, index) => ({
+      id_activity: activity.id_activity,
+      name: activity.name_activity,
+      description : activity.description_activity,
+      picture: activity.picture_activity
+    }))
     if (err) throw err;
-    res.send(result);
+    res.send(data);
   });
 });
 
@@ -227,6 +236,77 @@ api.put('/user/anonym/:id', (req, res) => {
       }
     });
   }
+});
+
+api.post('/activities', (req, res) => {
+  const formData = req.body;
+  const data = {
+    id_activity: formData.id_activity,
+    name_activity: formData.name,
+    description_activity: formData.description,
+    picture_activity: formData.picture
+  }
+  connection.query('INSERT INTO activities SET ?', data, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la sauvegarde d'une nouvelle activité");
+    } else {
+      res.sendStatus(200);
+    }    
+  });
+});
+
+api.put('/activities/:id', (req, res) => {
+  const idActivity = req.params.id;
+  const formData = req.body;
+  const data = {
+    name_activity: formData.name,
+    description_activity: formData.description,
+    picture_activity: formData.picture
+  }
+  connection.query('UPDATE activities SET ? WHERE id_activity = ?', [data, idActivity], err => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la modification d'une activité");
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+api.delete('/activities/:id', (req, res) => {
+  const idActivity = req.params.id;
+  connection.query('DELETE FROM activities WHERE id_activity = ?', [idActivity], err => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la suppression d'une activité");
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+//------------------------------------------------Upload file-------------------------------------------------
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '../public/images')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname )
+  }
+})
+
+const upload = multer({ storage: storage }).single('file')
+
+api.post('/uploaddufichier',function(req, res) { 
+  upload(req, res, function (err) {
+         if (err instanceof multer.MulterError) {
+             return res.status(500).json(err)
+         } else if (err) {
+             return res.status(500).json(err)
+         }
+    return res.status(200).send(req.file)
+  })
 });
 
 api.listen(8000, 'localhost', (err) => {
