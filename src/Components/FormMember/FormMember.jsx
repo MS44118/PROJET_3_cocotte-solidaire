@@ -146,15 +146,15 @@ function FormMember({ userSelected, dispatch }) {
     <div className="container" style={{ marginBottom: '8em' }}>
       <h1>Inscription</h1>
       <div className="row">
-        <div className="input-field col s4">
+        <div className="input-field col s3">
           <select value={gender} onChange={event => setGender(event.target.value)}>
             <option className="color_select" value="" disabled selected>Genre</option>
             <option value="female">Feminin</option>
             <option value="male">Masculin</option>
           </select>
         </div>
-        <div className="input-field col s4">
-          <span style={{ color: 'black', fontSize: '1.2em' }}>Date d&apos;adhésion</span>
+        <div className="input-field col">
+          <span style={{ color: 'black', fontSize: '1.2em' }}>Date d&apos;adhésion :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"
@@ -163,8 +163,8 @@ function FormMember({ userSelected, dispatch }) {
             onChange={date => date && setMembershipDateLast(date)}
           />
         </div>
-        <div className="input-field col s4">
-          <span style={{ color: 'black', fontSize: '1.2em' }}>Date de naissance</span>
+        <div className="input-field col">
+          <span style={{ color: 'black', fontSize: '1.2em' }}>Date de naissance :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"
