@@ -13,6 +13,7 @@ function Activities() {
   const [describtion, setDescribtion] = useState('');
   const [file, setFile] = useState('');
   const [realFile, setRealFile] = useState(null);
+  const [index, setIndex] = useState(null);
   const [nameFile, setNameFile] = useState('');
   const [active, setActive] = useState('');
   const [emptyFile, setEmptyFile] = useState(0);
@@ -26,6 +27,7 @@ function Activities() {
     setNameFile(event.target);
   };
   const valueSelected = (event) => {
+    setIndex(event.target.value);
     setSelectValue(activities[event.target.value] ? activities[event.target.value] : 'default');
     setId(activities[event.target.value] ? activities[event.target.value].id_activity : null)
     setTitle(activities[event.target.value] ? activities[event.target.value].name : '');
@@ -68,11 +70,12 @@ function Activities() {
   };
 
   const modifyActivity = () => {
-    let file = nameFile;
-    let fileName = `${title}-${new Date().getTime()}.jpg`;
-    var blob = file.files[0].slice(0, file.files[0].size, 'image/jpg'); 
-    let newFile = new File([blob], fileName, {type: 'image/jpg'});
-    if(emptyFile === 0) {
+    let newFile
+    if(emptyFile === 1) {
+      let file1 = nameFile;
+      let fileName = `${title}-${new Date().getTime()}.jpg`;
+      var blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
+      newFile = new File([blob], fileName, {type: 'image/jpg'});
       const data = new FormData();
       setRealFile(newFile)
       data.append('file', newFile)
@@ -86,10 +89,11 @@ function Activities() {
           alert(`${error}`)
       })
     }
+    // const resPic = emptyFile === 1 ? activities[index].picture : `/images/${newFile.name}`
     axios.put(`http://localhost:8000/activities/${id}`, {
       name: title,
       description: describtion,
-      picture: emptyFile === 0 ? file :`images/${newFile.name}`
+      picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[index].picture
     })
     .then((response) => {
         console.log(response);
@@ -138,7 +142,7 @@ function Activities() {
           </div>
           <div className="input-field col s6">
             <i className="material-icons prefix">title</i>
-            <input id="titre_activité" type="text" className="validate" value={title} onChange={(e) => handleChange(e, setTitle)} />
+            <input id="titre_activité" type="text" required className="validate" value={title} onChange={(e) => handleChange(e, setTitle)} />
             <label className={active} htmlFor="titre_activité">Titre de l&apos;activité</label>
           </div>
         </div>
@@ -146,7 +150,7 @@ function Activities() {
         <div className="row">
           <div className="input-field col s12">
             <i className="material-icons prefix">description</i>
-            <textarea id="description" className="materialize-textarea" value={describtion} onChange={(e) => handleChange(e, setDescribtion)} />
+            <textarea id="description" required className="materialize-textarea" value={describtion} onChange={(e) => handleChange(e, setDescribtion)} />
             <label className={active} htmlFor="description">Déscription de l&apos;activité</label>
           </div>
         </div>
@@ -174,7 +178,6 @@ function Activities() {
           <div className="container mssg">
             <h1 className="center-align subtitles"><span>{title}</span></h1>
             <p className="justify text">{describtion}</p>
-            <p></p>
             {file ? <img className="activitie_pics" src={file} alt="cocotte_activite" /> : ''}
           </div>
         </div>
