@@ -2,4 +2,20 @@
   background-color: rgb(55,126,114, 1);
   color: white;  
   line-height: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.collection p{
+  margin: 20px;
+}
+
+.collection button {
+  margin-top: 10px;  
+}
+
+.collection-item-header:nth-child(3):after{
+  margin-right: 10px;
 }

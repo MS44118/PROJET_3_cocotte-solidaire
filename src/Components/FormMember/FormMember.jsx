@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
+import fr from 'date-fns/locale/fr';
+import './FormMember.css';
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 import { updateUserAction, newUserAction } from '../../Actions/userAction';
+
+registerLocale('fr', fr);
 
 function FormMember({ userSelected, dispatch }) {
   const [user, setUser] = useState({});
@@ -142,26 +146,29 @@ function FormMember({ userSelected, dispatch }) {
     <div className="container" style={{ marginBottom: '8em' }}>
       <h1>Inscription</h1>
       <div className="row">
-        <div className="input-field  offset 2 col s8">
-          <i className="material-icons prefix">wc</i>
-          <select onChange={event => setGender(event.target.value)}>
-            <option className="color_select" value="" disabled>Genre</option>
+        <div className="input-field col s3">
+          <select value={gender} onChange={event => setGender(event.target.value)}>
+            <option className="color_select" value="" disabled selected>Genre</option>
             <option value="female">Feminin</option>
             <option value="male">Masculin</option>
           </select>
         </div>
-      </div>
-      <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col">
+          <span style={{ color: 'black', fontSize: '1.2em' }}>Date d&apos;adhésion :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
-            selected={membershipDateLast && new Date(membershipDateLast)}
+            locale="fr"
+            dateFormat="dd/MM/yyyy"
+            selected={membershipDateLast ? new Date(membershipDateLast) : new Date()}
             onChange={date => date && setMembershipDateLast(date)}
           />
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col">
+          <span style={{ color: 'black', fontSize: '1.2em' }}>Date de naissance :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
+            locale="fr"
+            dateFormat="dd/MM/yyyy"
             selected={birthday && new Date(birthday)}
             onChange={date => date && setBirthday(date)}
           />
