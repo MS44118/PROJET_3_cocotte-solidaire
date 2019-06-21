@@ -308,6 +308,22 @@ api.delete('/activities/:id', (req, res) => {
     }
   });
 });
+
+api.delete('/events/:id', (req, res) => {
+  // if ( s'il n'existe pas de registrations liés à l'event) {
+  const idEvent = req.params.id;
+  connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], err => {
+    if (err) {
+      res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+    } else {
+      res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${res.affectedRows} affectedRows, ${res.warningCount} warnings)`)
+    }
+  });
+  // } else {
+  //   res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+  // }
+});
+
 //------------------------------------------------Upload file-------------------------------------------------
 
 const storage = multer.diskStorage({
@@ -323,11 +339,11 @@ const upload = multer({ storage: storage }).single('file')
 
 api.post('/uploaddufichier',function(req, res) { 
   upload(req, res, function (err) {
-         if (err instanceof multer.MulterError) {
-             return res.status(500).json(err)
-         } else if (err) {
-             return res.status(500).json(err)
-         }
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err)
+        } else if (err) {
+            return res.status(500).json(err)
+        }
     return res.status(200).send(req.file)
   })
 });

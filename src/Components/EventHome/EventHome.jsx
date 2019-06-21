@@ -90,7 +90,6 @@ function EventHome() {
         <li>actions supprimer évenement</li>
         <li>actions supprimer reservation</li>
         <li>lier les actions de filtrages au calendrier</li>
-        <li>desactiver la creation si workshop complet</li>
       </ul>
       {/* <Calendar /> */}
 
