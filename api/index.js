@@ -33,6 +33,13 @@ api.get('/activities', (req, res) => {
     res.send(result);
   });
 });
+api.get('/events', (req, res) => {
+  connection.query('SELECT * FROM events', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 
 api.get('/registrations', (req, res) => {
   connection.query('SELECT * FROM registrations', (err, result) => {

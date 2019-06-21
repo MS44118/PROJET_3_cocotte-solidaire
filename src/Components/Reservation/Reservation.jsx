@@ -35,13 +35,14 @@ function Reservation() {
       .then((result) => {
         setUsers(result.data);
       });
-    axios.get('http://localhost:8000/activities')
+    axios.get('http://localhost:8000/events')
       .then((result) => {
+      
         setActivities(result.data);
       });
+     
   },
   []);
-
 
   const addReservation = {
     numberAdultReservation,
@@ -87,12 +88,12 @@ function Reservation() {
     setIdUser(arrayTemp[0].member_id);
     setLabelActive('active');
     setExistantUser(true);
+  }
 
-  };
-console.log(activities.filter(activity => activity.name_activity))
-  const handleReservation = (index, ) => 
-  {
-    setNewActivities(activities[index].name);
+  const handleReservation = (e,{result}  ) =>  {
+    const activitiesfilter = activities.filter(activity =>activity.name_activity)
+    console.log(activitiesfilter)
+    setNewActivities(activities[0].name);
     setLabelActive('active') ;        
   };
 
@@ -103,11 +104,7 @@ console.log(activities.filter(activity => activity.name_activity))
       <div className="row">
         <div className="input-field  col s8">
 
-          <select id="activity" className="browser-default color_select" onChange={event => handleReservation(event.target.value)}>
-            {activities.map((activity, index) =>
-              <option value={index}>{activity.name}</option>
-            )};
-           </select>
+        
 
 
         </div>
@@ -123,9 +120,12 @@ console.log(activities.filter(activity => activity.name_activity))
       </div>
       <div className="row">
         <div className="input-field col s6">
-          <i className="material-icons prefix">event_busy</i>
-          <input id="event_name" type="text" className="validate" value={newActivities} onChange={e => setNewActivities(e.target.value)} />
-          <label  id="event_name"htmlFor="event_name" className={labelActive} >Nom de l&apos;évènement</label>
+        <select id="activity" className="browser-default color_select" value= {newActivities} onChange={event => {setLabelActive(true);setNewActivities(event.target.value)}}>
+            {activities.map((activity, index) =>
+              <option key={activity[index]} value={activity.name_activity}>{activity.name_activity}</option>
+            )};
+           </select>
+
         </div>
 
         <div className="input-field col s6">
