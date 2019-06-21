@@ -1,45 +1,46 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
+import M from 'materialize-css/dist/js/materialize';
+import React, { useEffect, useState } from 'react';
 import { Search } from 'semantic-ui-react';
-import './Reservation.css';
 import 'semantic-ui/dist/semantic.min.css';
-
+import './Reservation.css';
 
 
 function Reservation() {
 
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
-  const [newReservationName, setNewReservationName] = useState('');
-  const [newReservationFirstName, setNewReservationFirstName] = useState('');
-  const [newReservationUserId, setNewReservationUserId] = useState('');
-  const [numberAdultReservation, setnumberAdultReservation] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [memberId, setMemberId] = useState('');
+  const [phone, setPhone] = useState('');
+  const [idUser, setIdUser] = useState('');
+  const [numberAdultReservation, setnumberAdultReservation] = useState(1);
   const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
-  const [newReservationMail, setNewReservationMail] = useState('');
   const [reservationAllergie, setReservationAllergie] = useState('');
   const [reservationInfo, setReservationInfo] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [newActivities, setNewActivities] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([{ title: '' }]);
-  const[labelActive, setLabelActive] = useState('')
-  const [existantUser, setExistantUser]= useState (false)
+  const [labelActive, setLabelActive] = useState('');
+  const [existantUser, setExistantUser] = useState(false);
+  
 
   useEffect(() => {
     M.AutoInit();
 
-    axios.get("http://localhost:8000/users")
+    axios.get('http://localhost:8000/users')
       .then((result) => {
-        setUsers(result.data)
+        setUsers(result.data);
       });
-    axios.get("http://localhost:8000/activities")
+    axios.get('http://localhost:8000/activities')
       .then((result) => {
-        setActivities(result.data)
+        setActivities(result.data);
       });
-
-  }, []);
+  },
+  []);
 
 
   const addReservation = {
@@ -47,12 +48,12 @@ function Reservation() {
     numberchildrenReservation,
     reservationAllergie,
     reservationInfo,
-    newReservationName,
-    newReservationFirstName,
-    newReservationMail,
-    phoneNumber,
-    newReservationUserId,
-    existantUser
+    lastname,
+    firstname,
+    email,
+    phone,
+    idUser,
+    existantUser,
   };
 
   const sendForm = () => {
@@ -72,28 +73,28 @@ function Reservation() {
         resultTemp = [...resultTemp, { title: arrayTemp[i].lastname, description: arrayTemp[i].id_user }];
       }
       setSearchResults(resultTemp);
-      console.log(searchResults.description)
+   
     }
   }, [searchValue]);
 
   const handleUser = (e, { result })=> {
-    const arrayTemp = users.filter(user =>user.id_user===result.description)
-    setNewReservationFirstName(arrayTemp[0].firstname);
-    setNewReservationName(arrayTemp[0].lastname);
-    setNewReservationMail(arrayTemp[0].email);
-    setPhoneNumber(arrayTemp[0].phone);
-    setNewReservationUserId(arrayTemp[0].member_id);
+    const arrayTemp = users.filter(user => user.idUser  === result.description);
+    
+    setFirstname(arrayTemp[0].firstname);
+    setLastname(arrayTemp[0].lastname);
+    setEmail(arrayTemp[0].email);
+    setPhone(arrayTemp[0].phone);
+    setIdUser(arrayTemp[0].member_id);
     setLabelActive('active');
     setExistantUser(true);
-  };
 
-  const handleReservation = (index) => 
+  };
+console.log(activities.filter(activity => activity.name_activity))
+  const handleReservation = (index, ) => 
   {
     setNewActivities(activities[index].name);
-    setLabelActive('active')          
+    setLabelActive('active') ;        
   };
-
-  console.log(addReservation)
 
   return (
 
@@ -106,7 +107,7 @@ function Reservation() {
             {activities.map((activity, index) =>
               <option value={index}>{activity.name}</option>
             )};
-          </select>
+           </select>
 
 
         </div>
@@ -138,7 +139,7 @@ function Reservation() {
           <p>Places à réserver</p>
         </div>
         <div className="input-field col s4">
-          <p> nombres d&aposAdultes</p>
+          <p> nombres d&apos;Adultes</p>
           <select onChange={e => setnumberAdultReservation(e.target.value)}>
             <option value="0" disabled selected>Nombre Adultes</option>
             <option value="1">1</option>
@@ -151,7 +152,7 @@ function Reservation() {
 
         </div>
         <div className="input-field col s4">
-          <p>Nombres d&aposenfants</p>
+          <p>Nombres d&apo;senfants</p>
           <select onChange={e => setnumbeChildrenRegistration(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
@@ -184,9 +185,9 @@ function Reservation() {
             id="last_name"
             type="text"
             className="validate"
-            value={newReservationName}
+            value={lastname}
             onChange={(e) => {
-              setNewReservationName(e.target.value);
+              setLastname(e.target.value);
             }}
           />
           <label id="last_name" htmlFor="last_name" className={labelActive}>
@@ -200,8 +201,8 @@ function Reservation() {
               type="text" 
               id="firstname" 
               className="validate"
-              onChange={e => setNewReservationFirstName(e.target.value)}
-              value={newReservationFirstName} 
+              onChange={e => setFirstname(e.target.value)}
+              value={firstname} 
             />
             <label htmlFor="firstname"className={labelActive} >Prénom</label>
           </div>
@@ -217,8 +218,8 @@ function Reservation() {
             id="email"
             type="email"
             className="validate"
-            onChange={e => setNewReservationMail(e.target.value)}
-            value={newReservationMail}
+            onChange={e => setEmail(e.target.value)}
+            value={email}
           />
           <label htmlFor="email"className={labelActive} >
             Email
@@ -230,8 +231,8 @@ function Reservation() {
           <input
             id="icon_telephone"
             type="tel" className="validate"
-            onChange={e => setPhoneNumber(e.target.value)}
-            value={phoneNumber}
+            onChange={e => setPhone(e.target.value)}
+            value={phone}
           />
           <label htmlFor="icon_telephone"className={labelActive} >
             Téléphone
@@ -245,8 +246,8 @@ function Reservation() {
             id="num_user"
             type="text" 
             className="validate"
-            onChange={e => setNewReservationUserId(e.target.value)}
-            value={newReservationUserId} 
+            onChange={e => setIdUser(e.target.value)}
+            value={idUser} 
           />
           <label htmlFor="num_user"className={labelActive} >
             Numéros d&apos;adhérent
@@ -286,6 +287,6 @@ function Reservation() {
     </div>
 
   );
-}
+};
 
 export default Reservation;
