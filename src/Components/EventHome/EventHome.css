@@ -1,15 +1,35 @@
 /* A supprimer quand page terminée*/
-
 .RAF{
   color: red;
   margin: 20px auto 20px auto;
 }
 
 /* settings for calendar */
-
 .react-calendar{
   vertical-align: middle;
   margin: 20px auto 20px auto;
+}
+
+/* settings for the whole page (titles etc...) */
+html{
+  margin: 0;
+  padding:0
+}
+
+h3,h5 {
+  display: flex;
+  justify-content: center;
+}
+
+ul{
+  margin: 0;
+}
+
+li{
+  text-align: center;
+  vertical-align: middle;
+  margin-bottom: 1px;
+  margin-top: 1px;
 }
 
 
@@ -28,12 +48,6 @@ span{
 
 /* settings for list of events then registrations */
 
-li,p{
-  text-align: center;
-  vertical-align: middle;
-  margin-bottom: 1px;
-  margin-top: 1px;
-}
 
 .container{
   width: 100% !important;
@@ -42,14 +56,11 @@ li,p{
 .row{
   margin: 0;
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
 }
 
-ul{
-  margin: 0;
-  /* text-size-adjust: ; */
-}
 
+/* events list settings */
 .event-header{
   background-color: rgb(55,126,114, 1);
   color: white;  
@@ -59,17 +70,6 @@ ul{
 
 .event-item{
   background-color:rgb(248, 200, 190, 0.5);
-}
-
-.registration-header{
-  background-color: rgb(55,126,114, 0.3);
-  color: rgba(0, 0, 0, 0.7);
-  line-height: 20px;
-  display: flex;
-}
-
-.registration-item{
-  display: flex;
 }
 
 .email-missing{

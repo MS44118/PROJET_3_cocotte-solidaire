@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import Calendar from 'react-calendar';
+// import _ from 'underscore';
+// import Calendar from 'react-calendar';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 
@@ -14,8 +15,9 @@ import ReservationHome from '../ReservationHome/ReservationHome';
 function EventHome() {
   // to store api response
   const [events, setEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   // to collapse all the registrations for a specific event
-  const [collapseRegistrations, setCollapseRegistrations] = useState([]);
+  const [collapses, setCollapses] = useState([]);
 
   // { filtre_xxxxx: true, check_xxxxx: true }
   const [filterCuisiner, setFilterCuisiner] = useState(true);
@@ -44,93 +46,100 @@ function EventHome() {
     axios.get('http://localhost:8000/api/future-events')
       .then((result) => {
         setEvents(result.data);
+        setFilteredEvents(result.data);
       });
   }, []);
+
+  // set filters according to checkboxes
+  useEffect(() => {
+    if (events.length>0){
+      setFilteredEvents(events.filter( (event) => {
+        if (filterManger) {
+          if (event.name_event === 'manger') {
+            return event;
+          }
+        };
+        if (filterCuisiner) {
+          if (event.name_event === 'cuisiner & manger') {
+            return event;
+          }
+        };
+        if (filterAutres) {
+          if (event.name_event !== 'manger' && event.name_event !== 'cuisiner & manger') {
+            return event;
+          }
+        };
+      }))
+    }
+  }, [filterManger, filterCuisiner, filterAutres]);
 
   // set for a specific event, if the list of registrations is visible or not
   useEffect(() => {
     let array = [];
     array = events.map(() => (false));
-    setCollapseRegistrations(array);
-  }, [events]);
+    setCollapses(array);
+  }, [filteredEvents]);
 
   return (
     <div>
-      <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages au calendrier </p>
-      <Calendar />
-
-      <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
-      <p>filtrer par activités</p>
+      <h3>Liste des evenements</h3>
+      <ul className="RAF">
+        <p>RESTE A FAIRE: </p>
+        <li>lien vers modifier évènement</li>
+        <li>lien vers modifier reservation</li>
+        <li>actions supprimer évenement</li>
+        <li>actions supprimer reservation</li>
+        <li>lier les actions de filtrages au calendrier</li>
+        <li>desactiver la creation si workshop complet</li>
+      </ul>
+      {/* <Calendar /> */}
 
       <div className="container">
         <div className="row">
+          <p>filtres : </p>
 
-          <div className="col">
-            <div className="input-field col s6">
-              <label htmlFor="filterAll">
-                <input
-                  type="checkbox"
-                  id="filterAll"
-                  checked={filterCuisiner === true && filterManger === true && filterAutres === true ? 'checked' : ''}
-                  onChange={() => checkAll()}
-                />
-                <span>Tous</span>
-              </label>
-            </div>
-          </div>
+          <label htmlFor="filterAll">
+            <input
+              type="checkbox"
+              id="filterAll"
+              checked={filterCuisiner === true && filterManger === true && filterAutres === true ? 'checked' : ''}
+              onChange={() => checkAll()}
+            />
+            <span>Tous</span>
+          </label>
 
-          <div className="col">
-            <div className="input-field col s6">
-              <label htmlFor="filterCuisiner">
-                <input
-                  type="checkbox"
-                  id="filterCuisiner"
-                  checked={filterCuisiner ? 'checked' : ''}
-                  onChange={event => setFilterCuisiner(event.target.checked)}
-                />
-                <span>Cuisiner et Manger</span>
-              </label>
-            </div>
-          </div>
+          <label htmlFor="filterCuisiner">
+            <input
+              type="checkbox"
+              id="filterCuisiner"
+              checked={filterCuisiner ? 'checked' : ''}
+              onChange={e => setFilterCuisiner(e.target.checked)}
+            />
+            <span>Cuisiner et Manger</span>
+          </label>
 
-          <div className="col">
-            <div className="input-field col s6">
-              <label htmlFor="filterManger">
-                <input
-                  type="checkbox"
-                  id="filterManger"
-                  checked={filterManger ? 'checked' : ''}
-                  onChange={event => setFilterManger(event.target.checked)}
-                />
-                <span>Manger</span>
-              </label>
-            </div>
-          </div>
+          <label htmlFor="filterManger">
+            <input
+              type="checkbox"
+              id="filterManger"
+              checked={filterManger ? 'checked' : ''}
+              onChange={e => setFilterManger(e.target.checked)}
 
-          <div className="col">
-            <div className="input-field col s6">
-              <label htmlFor="filterAutres">
-                <input
-                  type="checkbox"
-                  id="filterAutres"
-                  checked={filterAutres ? 'checked' : ''}
-                  onChange={event => setFilterAutres(event.target.checked)}
-                />
-                <span>Autres</span>
-              </label>
-            </div>
-          </div>
+            />
+            <span>Manger</span>
+          </label>
+
+          <label htmlFor="filterAutres">
+            <input
+              type="checkbox"
+              id="filterAutres"
+              checked={filterAutres ? 'checked' : ''}
+              onChange={e => setFilterAutres(e.target.checked)}
+            />
+            <span>Autres</span>
+          </label>
 
         </div>
-      </div>
-
-      <div className="events-registrations-list container">
-        <h3>Liste des evenements</h3>
-        <ul className="RAF">
-          <p> RESTE A FAIRE: </p>
-          <li> actions supprimer/modifier évènement</li>
-          <li> actions supprimer/modifier reservation</li>
-        </ul>
 
         {/* entetes liste des évenements */}
         <ul className="events with-header">
@@ -151,8 +160,8 @@ function EventHome() {
         </ul>
 
         {/* liste des evenements */}
-        {events.map((event, index) => (
-          <ul className="event-ul" key={events[index]} data-genre={event.name_event}>
+        {filteredEvents.map((event, index) => (
+          <ul className="event-ul" key={filteredEvents[index]} data-genre={event.name_event}>
             <li className="event-item row valign-wrapper center-align">
               <p className="col s1">{event.name_event}</p>
               <p className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</p>
@@ -189,24 +198,24 @@ function EventHome() {
               <p className="col s1">
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapseRegistrations(
+                  onClick={() => setCollapses(
                     [
-                      ...collapseRegistrations.slice(0, [index]),
-                      !collapseRegistrations[index],
-                      ...collapseRegistrations.slice([index + 1], collapseRegistrations.length),
+                      ...collapses.slice(0, [index]),
+                      !collapses[index],
+                      ...collapses.slice([index + 1], collapses.length),
                     ],
                   )}
                   type="submit"
                   name="action"
                 >
-                  { collapseRegistrations[index] === false
+                  { collapses[index] === false
                     ? <i className="material-icons">expand_more</i>
                     : <i className="material-icons">expand_less</i>
                   }
                 </button>
               </p>
             </li>
-            { collapseRegistrations[index] === false
+            { collapses[index] === false
               ? null
               : (
                 <div>
