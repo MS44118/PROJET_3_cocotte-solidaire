@@ -230,6 +230,8 @@ api.post('/user/', (req, res) => {
         res.send(result);
       })
     }
+  })
+})
 
 
 
@@ -354,6 +356,7 @@ api.post('/uploaddufichier',function(req, res) {
         }
     return res.status(200).send(req.file)
   })
+})
 api.get('/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
