@@ -1,5 +1,5 @@
 .input-field .prefix ~ .select-wrapper {
-  margin-left:3rem; 
-  width:92%; 
-  width:calc(100% - 3rem);
-}
+    margin-left:3rem;
+    width:92%;
+    width:calc(100% - 3rem);
+   }

@@ -1,4 +1,3 @@
--- la cocotte solidaire booking DATABASE CREATION
 CREATE DATABASE cocotte_booking;
 
 USE cocotte_booking;
@@ -78,6 +77,7 @@ CREATE TABLE events (
 -- mock datas for events TABLE
 INSERT INTO cocotte_booking.events 
   (date_b, date_e, name_event, capacity, address_event, activity_id, description_event, picture_event)
+
 VALUES
   (NOW(),NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
   (NOW(),NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
@@ -112,4 +112,15 @@ VALUES
   (1, 0, "cacahuètes", " ", 3, 4),
   (1, 0, " ", " ", 4, 6),
   (3, 0, " ", " ", 1, 6),
-  (1, 0, " ", " ", 2, 2);
+(1, 0, " ", " ", 2, 2);
+
+ 'SELECT registrations.id_registration,
+  users.firstname, users.lastname, users.email, 
+  users.phone, users.member_id, registrations.quantity_adult, 
+  registrations.quantity_children, registrations.event_id, registrations.allergie, 
+  registrations.comment 
+  FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id GROUP BY registrations.id_registration;',
+
+
+
+

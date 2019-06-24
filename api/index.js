@@ -9,6 +9,7 @@ const fs = require('fs');
 
 const api = express();
 
+
 // Support JSON-encoded bodies
 api.use(bodyParser.json());
 // Support URL-encoded bodies
@@ -121,6 +122,13 @@ api.get('/activities', (req, res) => {
     res.send(data);
   });
 });
+api.get('/events', (req, res) => {
+  connection.query('SELECT * FROM events', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
 
 // here explain what it is for
 api.get('/users', (req, res) => {
@@ -222,8 +230,8 @@ api.post('/user/', (req, res) => {
         res.send(result);
       })
     }
-  });
-});
+
+
 
 api.put('/user/anonym/:id', (req, res) => {
   const idUser = req.params.id;
@@ -346,7 +354,60 @@ api.post('/uploaddufichier',function(req, res) {
         }
     return res.status(200).send(req.file)
   })
+api.get('/events', (req, res) => {
+  connection.query(
+    'SELECT * FROM events',
+    (err, result) => {
+      if (err) throw err; 
+      res.send(result);
+    },
+  );
 });
+
+api.post('/zboub/', (req,res)=>{
+  const reservation = req.body
+ 
+  if (reservation.existantUser === false){
+    connection.query(`INSERT INTO users (firstname,lastname,email,phone,member_id,anonym) VALUES ("${reservation.firstName}","${reservation.lastname}","${reservation.email}","${reservation.phone}","${reservation.idUser}",false)`, reservation, (err, result)=>{
+      if (err){
+        console.log(err)
+        res.status(500).send("error while saving")
+      } else{
+    connection.query(`SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1` ,(err, result) => {
+        if(err){
+          console.log(err)
+  
+        }else{
+          console.log(result[0].id_user)
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}")`, 
+            reservation, (err, result)=>{
+              if (err) {
+                console.log(err)
+                res.status(500).send("error while saving")
+              }else {
+                res.status(200)
+              }
+            });
+        }
+      })
+      }
+    })
+  }
+});
+    
+//   connection.query(
+ 
+
+// api.post('/newReservation/', (req,res)=>{
+//   const reservation= req.body
+//   console.log(req.body)
+
+// });
+
+// api.put('/changeUser', (req,res)=>{
+//   const reservationData = req.body
+
+// })
 
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
