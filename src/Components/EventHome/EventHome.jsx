@@ -69,6 +69,7 @@ function EventHome() {
             return event;
           }
         }
+        return false;
       }));
     }
   }, [events, filterManger, filterCuisiner, filterAutres]);
@@ -237,7 +238,7 @@ function EventHome() {
               {collapses[index] === true && event.nb_persons < event.capacity
                 ? (
                   <li className="create-registration col s12">
-                    <Link to="/reservation">
+                    <Link to="/reservation" registrationId={event.registrationId}>
                       il reste de la place: créer une nouvelle réservation
                     </Link>
                   </li>
