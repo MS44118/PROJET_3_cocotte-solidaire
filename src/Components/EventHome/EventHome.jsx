@@ -238,7 +238,7 @@ function EventHome() {
               {collapses[index] === true && event.nb_persons < event.capacity
                 ? (
                   <li className="create-registration col s12">
-                    <Link to="/reservation" eventId={event.id_event}>
+                    <Link to="/reservation" event-id={event.id_event}>
                       il reste de la place: créer une nouvelle réservation
                     </Link>
                   </li>
