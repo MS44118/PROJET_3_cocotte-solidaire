@@ -18,7 +18,7 @@ function Menu() {
       <nav>
         <div className="nav-wrapper white">
           <a href="/#" className="brand-logo"><img src="https://www.lacocottesolidaire.fr/build/images/logo-brand.png" alt="logo" /></a>
-          <a href="/#" data-target="mobile-demo" className="sidenav-trigger">
+          <a href="#navbar" data-target="mobile-demo" className="sidenav-trigger">
             <i className="material-icons icon-green" role="button" tabIndex={0} onClick={handleClick} onKeyDown={handleClick}>menu</i>
           </a>
           <ul className="right hide-on-med-and-down">
