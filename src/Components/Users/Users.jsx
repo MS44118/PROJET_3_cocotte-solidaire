@@ -4,7 +4,10 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { Search } from 'semantic-ui-react';
 import _ from 'underscore';
+import toaster from 'toasted-notes';
 import FormMember from '../FormMember/FormMember';
+import setHeaderToken from '../../Utils/tokenUtil';
+import 'toasted-notes/src/styles.css';
 import 'semantic-ui/dist/semantic.min.css';
 import './Users.css';
 
@@ -26,12 +29,20 @@ function Users(
   const [searchResults, setSearchResults] = useState([{ title: '' }]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/users')
-      .then((data) => {
-        setUserList(data.data);
-        setUsers(data.data);
-      });
+    setHeaderToken(() => {
+      axios.get('http://localhost:8000/users')
+        .then((data) => {
+          setUserList(data.data);
+          setUsers(data.data);
+        })
+        .catch(() => {
+          toaster.notify('Problème lors de la récupération des utilisateurs.', {
+            duration: 3000,
+          });
+        });
+    });
   }, []);
+
 
   useEffect(() => {
     const arrayTemp = [];
@@ -63,18 +74,24 @@ function Users(
   };
 
   const handleDelete = (index) => {
-    axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
-      .then((res) => {
-        console.log(res.statusText);
-        if (res.status === 200) {
-          const arrayTemp = [...userList];
-          arrayTemp.splice(index, 1);
-          setUserList(arrayTemp);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setHeaderToken(() => {
+      axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+        .then((res) => {
+          if (res.status === 200) {
+            const arrayTemp = [...userList];
+            arrayTemp.splice(index, 1);
+            setUserList(arrayTemp);
+            toaster.notify('Utilisateur anonymisé avec succès.', {
+              duration: 3000,
+            });
+          }
+        })
+        .catch(() => {
+          toaster.notify("Erreur lors de la suppression de l'utilisateur.", {
+            duration: 3000,
+          });
+        });
+    });
   };
 
   const filterUsers = (tag, [param, setFunc]) => {
@@ -91,12 +108,12 @@ function Users(
       const arrayFilter = userList.filter((user) => {
         let usersFilter = [];
         if (user.lastname && user.firstname) {
-          usersFilter = user.lastname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`)
-          || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
+          usersFilter = user.lastname.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().startsWith(`${searchValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()}`)
+          || user.firstname.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().startsWith(`${searchValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()}`);
         } else if (user.lastname === null) {
-          usersFilter = user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
+          usersFilter = user.firstname.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().startsWith(`${searchValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()}`);
         } else {
-          usersFilter = user.lastname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
+          usersFilter = user.lastname.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().startsWith(`${searchValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()}`);
         }
         return usersFilter;
       });
@@ -114,15 +131,24 @@ function Users(
 
   return (
     <div className="container">
-      <div className="row">
-      <h2
-        style={{ fontSize: '3em' }}
-        className="center-align"
-      >
-        Liste des utilisateurs / adhérents
-      </h2>
+      <div className="row" style={{ width: '100vw' }}>
+        <h2 style={{
+          fontSize: '3em',
+          margin: 'auto',
+          marginBottom: '5vh',
+          marginTop: '5vh',
+        }}
+        >
+            Liste des utilisateurs / adhérents
+        </h2>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+      >
         <div style={{ alignSelf: 'flex-start' }}>
           <Search
             onSearchChange={event => setSearchValue(event.target.value)}
@@ -137,7 +163,6 @@ function Users(
           />
         </div>
         <button
-          style={{ marginTop: '20px', alignSelf: 'flex-end' }}
           type="button"
           className="waves-effect waves-light btn-small teal darken-1 white-text"
           onClick={() => dispatch(displayNewUserFormAction('block'))}
@@ -153,7 +178,7 @@ function Users(
           <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
           <textbox style={{ marginRight: '20px' }} className="col s2">Tel</textbox>
           <textbox style={{ marginRight: '20px' }} className="col s2">Mail</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2"></textbox>
+          <textbox style={{ marginRight: '20px' }} className="col s2" />
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
@@ -164,20 +189,20 @@ function Users(
               <p className="col s2">{user.phone}</p>
               <p className="col s2">{user.email}</p>
               <p className="col s2">
-              <button
-                type="button"
-                className="waves-effect waves-light btn-small teal darken-1 white-text col"
-                onClick={() => handleCreate(index)}
-              >
-                <i className="material-icons">create</i>
-              </button>
-              <button
-                type="button"
-                className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                onClick={() => handleDelete(index)}
-              >
-                <i className="material-icons">delete</i>
-              </button>
+                <button
+                  type="button"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col"
+                  onClick={() => handleCreate(index)}
+                >
+                  <i className="material-icons">create</i>
+                </button>
+                <button
+                  type="button"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                  onClick={() => handleDelete(index)}
+                >
+                  <i className="material-icons">delete</i>
+                </button>
               </p>
             </li>
             <li style={{ display: activeFormMember[index] ? 'block' : 'none' }}><FormMember userSelected={activeFormMember[index] ? { user } : ''} /></li>

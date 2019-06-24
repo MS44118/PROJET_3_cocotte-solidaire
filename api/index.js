@@ -3,8 +3,24 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const connection = require('./conf');
 const moment = require('moment');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 const api = express();
+
+const privateKEY = fs.readFileSync('./.private.key', 'utf8');
+const publicKEY = fs.readFileSync('./.public.key', 'utf8');
+
+const signOptions = {
+  expiresIn: "12h",
+  algorithm: "RS256"
+};
+
+const verifyOptions = {
+  expiresIn: "12h",
+  algorithm: ["RS256"]
+};
 
 // Support JSON-encoded bodies
 api.use(bodyParser.json());
@@ -91,145 +107,246 @@ api.get('/activities', (req, res) => {
 });
 
 // here explain what it is for
-api.get('/users', (req, res) => {
-  connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
-    const data = result.map((user, index) => ({
-      idUser: user.id_user,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-      phone: user.phone,
-      birthday: moment(user.birthday).format('YYYY-MM-DD HH:mm:ss'),
-      gender: user.gender,
-      memberId: user.member_id,
-      memberActive: user.member_active,
-      membershipDateLast: moment(user.membership_date_last).format('YYYY-MM-DD HH:mm:ss'),
-      membershipPlace: user.membership_place,
-      adress: user.address_user,
-      zip: user.zip,
-      city: user.city,
-      neighborhood: user.neighborhood,
-      imageCopyright: user.image_copyright,
-      mailingActive: user.mailing_active,
-      anonym: user.anonym,
-    }))
-    if (err) throw err;
-    res.json(data);
+api.get('/users', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
+        const data = result.map((user, index) => ({
+          idUser: user.id_user,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          phone: user.phone,
+          birthday: moment(user.birthday).format('YYYY-MM-DD HH:mm:ss'),
+          gender: user.gender,
+          memberId: user.member_id,
+          memberActive: user.member_active,
+          membershipDateLast: moment(user.membership_date_last).format('YYYY-MM-DD HH:mm:ss'),
+          membershipPlace: user.membership_place,
+          adress: user.address_user,
+          zip: user.zip,
+          city: user.city,
+          neighborhood: user.neighborhood,
+          imageCopyright: user.image_copyright,
+          mailingActive: user.mailing_active,
+          anonym: user.anonym,
+        }))
+        if (err) throw err;
+        res.json(data);
+      });
+    }
   });
 });
 
-api.put('/user/:id', (req, res) => {
-  const idUser = req.params.id;
-  const values = req.body;
-  {values.firstname ? null : values.firstname = null}
-  {values.lastname ? null : values.lastname = null}
-  {values.email ? null : values.email = null}
-  {values.phone ? null : values.phone = null}
-  {values.gender ? null : values.gender = null}
-  {values.memberId ? null : values.memberId = null}
-  {values.membershipPlace ? null : values.membershipPlace = null}
-  {values.adress ? null : values.adress = null}
-  {values.zip ? null : values.zip = null}
-  {values.city ? null : values.city = null}
-  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
-
-  const data = {
-    firstname: values.firstname,
-    lastname: values.lastname,
-    email: values.email,
-    phone: values.phone,
-    birthday: values.birthday,
-    gender: values.gender,
-    member_id: values.memberId,
-    member_active: values.memberActive,
-    membership_date_last: values.membershipDateLast,
-    membership_place: values.membershipPlace,
-    address_user: values.adress,
-    zip: values.zip,
-    city: values.city,
-    neighborhood: values.neighborhood,
-    image_copyright: values.imageCopyright,
-    mailing_active: values.mailingActive,
-  }
-  if (idUser) {
-    connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Erreur lors de la modification d'un adhérent");
-      } else {
-        res.sendStatus(200);
-      }
-    });
-  }
-});
-
-api.post('/user/', (req, res) => {
-  const values = req.body;
-  {values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null}
-  {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
-  {values.email ? values.email = `'${values.email}'` : values.email = null}
-  {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}
-  {values.gender ? values.gender = `'${values.gender}'` : values.gender = null}
-  {values.memberId ? values.memberId = `'${values.memberId}'` : values.memberId = null}
-  {values.membershipPlace ? values.membershipPlace = `'${values.membershipPlace}'` : values.membershipPlace = null}
-  {values.adress ? values.adress = `'${values.adress}'` : values.adress = null}
-  {values.zip ? values.zip = `'${values.zip}'` : values.zip = null}
-  {values.city ? values.city = `'${values.city}'` : values.city = null}
-  {values.birthday ? values.birthday = `'${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}'` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `'${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}'` : values.membershipDateLast = null}
-
-  connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES (${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, ${values.birthday}, ${values.gender}, ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, ${values.membershipPlace}, ${values.adress}, ${values.zip}, ${values.city}, ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`, 
-  (err, results) => {
+api.put('/user/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
-      res.status(500).send("Erreur lors de l'enregistrement d'un utilisateur.");
+      res.sendStatus(403);
     } else {
-      connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
-        if (err) throw err;
-        res.send(result);
+      const idUser = req.params.id;
+      const values = req.body;
+      { values.firstname ? null : values.firstname = null }
+      { values.lastname ? null : values.lastname = null }
+      { values.email ? null : values.email = null }
+      { values.phone ? null : values.phone = null }
+      { values.gender ? null : values.gender = null }
+      { values.memberId ? null : values.memberId = null }
+      { values.membershipPlace ? null : values.membershipPlace = null }
+      { values.adress ? null : values.adress = null }
+      { values.zip ? null : values.zip = null }
+      { values.city ? null : values.city = null }
+      { values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null }
+      { values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null }
+
+      const data = {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        email: values.email,
+        phone: values.phone,
+        birthday: values.birthday,
+        gender: values.gender,
+        member_id: values.memberId,
+        member_active: values.memberActive,
+        membership_date_last: values.membershipDateLast,
+        membership_place: values.membershipPlace,
+        address_user: values.adress,
+        zip: values.zip,
+        city: values.city,
+        neighborhood: values.neighborhood,
+        image_copyright: values.imageCopyright,
+        mailing_active: values.mailingActive,
+      }
+      if (idUser) {
+        connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Erreur lors de la modification d'un adhérent");
+          } else {
+            res.sendStatus(200);
+          }
+        });
+      }
+    }
+  });
+});
+
+api.post('/user/', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const values = req.body;
+      { values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null }
+      { values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null }
+      { values.email ? values.email = `'${values.email}'` : values.email = null }
+      { values.phone ? values.phone = `'${values.phone}'` : values.phone = null }
+      { values.gender ? values.gender = `'${values.gender}'` : values.gender = null }
+      { values.memberId ? values.memberId = `'${values.memberId}'` : values.memberId = null }
+      { values.membershipPlace ? values.membershipPlace = `'${values.membershipPlace}'` : values.membershipPlace = null }
+      { values.adress ? values.adress = `'${values.adress}'` : values.adress = null }
+      { values.zip ? values.zip = `'${values.zip}'` : values.zip = null }
+      { values.city ? values.city = `'${values.city}'` : values.city = null }
+      { values.birthday ? values.birthday = `'${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}'` : values.birthday = null }
+      { values.membershipDateLast ? values.membershipDateLast = `'${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}'` : values.membershipDateLast = null }
+
+      connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES (${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, ${values.birthday}, ${values.gender}, ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, ${values.membershipPlace}, ${values.adress}, ${values.zip}, ${values.city}, ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`,
+        (err, results) => {
+          if (err) {
+            console.log(err)
+            res.status(500).send("Erreur lors de l'enregistrement d'un utilisateur.");
+          } else {
+            connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
+              if (err) throw err;
+              res.send(result);
+            })
+          }
+        });
+    }
+  });
+});
+
+api.put('/user/anonym/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const idUser = req.params.id;
+      const values = req.body;
+      { values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null }
+      { values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null }
+      const data = {
+        firstname: 'firstname',
+        lastname: 'lastname',
+        email: 'email@toto.com',
+        phone: 'phone',
+        birthday: values.birthday,
+        gender: values.gender,
+        member_id: values.memberId,
+        member_active: values.memberActive,
+        membership_date_last: values.membershipDateLast,
+        membership_place: values.membershipPlace,
+        address_user: 'address',
+        zip: '00000',
+        city: values.city,
+        neighborhood: values.neighborhood,
+        image_copyright: values.imageCopyright,
+        mailing_active: values.mailingActive,
+        anonym: true,
+      }
+      if (idUser) {
+        connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Erreur lors de l'anonymisation");
+          } else {
+            res.sendStatus(200);
+          }
+        });
+      }
+    }
+  });
+});
+
+api.post('/login/SignUp/', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const values = req.body;
+      bcrypt.hash(values.passwordSignUp, 10, (err, hash) => {
+        connection.query(`INSERT INTO admins (email, password, name) VALUES ('${values.emailSignUp}', '${hash}', '${values.nameSignUp}')`,
+          (err, results) => {
+            if (err) {
+              console.log(err)
+              res.status(500).send("Erreur lors de l'enregistrement d'un nouvel admin.");
+            } else {
+              console.log('signUp OK')
+              res.sendStatus(200);
+            }
+          });
       })
     }
   });
 });
 
-api.put('/user/anonym/:id', (req, res) => {
-  const idUser = req.params.id;
+api.post('/login/', (req, res) => {
   const values = req.body;
-  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
-  const data = {
-    firstname: 'firstname',
-    lastname: 'lastname',
-    email: 'email@toto.com',
-    phone: 'phone',
-    birthday: values.birthday,
-    gender: values.gender,
-    member_id: values.memberId,
-    member_active: values.memberActive,
-    membership_date_last: values.membershipDateLast,
-    membership_place: values.membershipPlace,
-    address_user: 'address',
-    zip: '00000',
-    city: values.city,
-    neighborhood: values.neighborhood,
-    image_copyright: values.imageCopyright,
-    mailing_active: values.mailingActive,
-    anonym: true,
-  }
-  if (idUser) {
-    connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Erreur lors de l'anonymisation");
+  console.log('login')
+  connection.query(`SELECT * FROM admins WHERE email='${values.emailSignIn}'`,
+    (err, result) => {
+      if (result.length === 0) {
+        console.log(err)
+        res.status(500).send("Erreur dans l'email.");
       } else {
-        res.sendStatus(200);
+        if (result.length > 0) {
+          bcrypt.compare(values.passwordSignIn, result[0].password, (err, result) => {
+            if (result === true) {
+              console.log('signIn OK')
+              const payload = { email: values.emailSignIn };
+              const token = jwt.sign(payload, privateKEY, signOptions);
+              res.send(token);
+            } else {
+              console.log('mauvais mot de passe')
+              res.status(500).send("Erreur dans le mot de passe.");
+            }
+          });
+        }
       }
     });
-  }
+});
+
+api.post('/auth/', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      res.sendStatus(200)
+    }
+  });
 });
 
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
   console.log('API is running on localhost:8000');
 });
+
+function verifyToken(req, res, next) {
+  const bearerHeader = req.headers['authorization'];
+  if (typeof bearerHeader !== 'undefined') {
+    const bearer = bearerHeader.split(' ');
+    const bearerToken = bearer[1];
+    req.token = bearerToken;
+    next();
+  } else {
+    console.log("ERROR VERIFY TOKEN")
+    res.sendStatus(403);
+  }
+};

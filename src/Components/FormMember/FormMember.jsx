@@ -3,12 +3,16 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
+import fr from 'date-fns/locale/fr';
+import toaster from 'toasted-notes';
+import 'toasted-notes/src/styles.css';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
-import fr from 'date-fns/locale/fr';
 import './FormMember.css';
+import setHeaderToken from '../../Utils/tokenUtil';
+
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 import { updateUserAction, newUserAction } from '../../Actions/userAction';
 
@@ -95,25 +99,38 @@ function FormMember({ userSelected, dispatch }) {
     }
     if (idUser) {
       dispatch(updateUserAction(user));
-      axios.put(`http://localhost:8000/user/${idUser}`, user)
-        .then((res) => {
-          console.log(res.statusText);
-          if (res.status === 200) {
-            dispatch(updateUserAction(user));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      setHeaderToken(() => {
+        axios.put(`http://localhost:8000/user/${idUser}`, user)
+          .then((res) => {
+            if (res.status === 200) {
+              dispatch(updateUserAction(user));
+              toaster.notify('Nouvelles informations bien enregistrées.', {
+                duration: 3000,
+              });
+            }
+          })
+          .catch(() => {
+            toaster.notify('Problème lors de la mise à jour des informations.', {
+              duration: 3000,
+            });
+          });
+      });
     } else {
-      axios.post('http://localhost:8000/user/', user)
-        .then((data) => {
-          const userTemp = { ...user, idUser: data.data[0].id_user };
-          dispatch(newUserAction(userTemp));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      setHeaderToken(() => {
+        axios.post('http://localhost:8000/user/', user)
+          .then((data) => {
+            const userTemp = { ...user, idUser: data.data[0].id_user };
+            dispatch(newUserAction(userTemp));
+            toaster.notify('Nouvel utilisateur bien enregistré.', {
+              duration: 3000,
+            });
+          })
+          .catch(() => {
+            toaster.notify("Problème lors de l'enregistrement du nouvel utilisateur.", {
+              duration: 3000,
+            });
+          });
+      });
     }
     setIdUser('');
     setAdress('');
@@ -174,188 +191,188 @@ function FormMember({ userSelected, dispatch }) {
           />
         </div>
       </div>
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">account_circle</i>
-            <input
-              id="last_name"
-              value={lastname !== null ? lastname : ''}
-              onChange={event => setLastname(event.target.value)}
-              type="text"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="last_name">
-              Nom
-            </label>
-          </div>
-          <div className="input-field col s6">
-            <i className="material-icons prefix">account_circle</i>
-            <input
-              id="first_name"
-              value={firstname !== null ? firstname : ''}
-              onChange={event => setFirstname(event.target.value)}
-              type="text"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="first_name">
-              Prénom
-            </label>
-          </div>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">account_circle</i>
+          <input
+            id="last_name"
+            value={lastname !== null ? lastname : ''}
+            onChange={event => setLastname(event.target.value)}
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="last_name">
+            Nom
+          </label>
         </div>
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">email</i>
-            <input
-              value={email !== null ? email : ''}
-              onChange={event => setEmail(event.target.value)}
-              id="email"
-              type="email"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="email">
-              Email
-            </label>
-          </div>
-          <div className="input-field col s6">
-            <i className="material-icons prefix">phone</i>
-            <input
-              value={phone !== null ? phone : ''}
-              onChange={event => setPhone(event.target.value)}
-              id="icon_telephone"
-              type="tel"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="icon_telephone">
-              Téléphone
-            </label>
-          </div>
+        <div className="input-field col s6">
+          <i className="material-icons prefix">account_circle</i>
+          <input
+            id="first_name"
+            value={firstname !== null ? firstname : ''}
+            onChange={event => setFirstname(event.target.value)}
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="first_name">
+            Prénom
+          </label>
         </div>
+      </div>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">email</i>
+          <input
+            value={email !== null ? email : ''}
+            onChange={event => setEmail(event.target.value)}
+            id="email"
+            type="email"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="email">
+            Email
+          </label>
+        </div>
+        <div className="input-field col s6">
+          <i className="material-icons prefix">phone</i>
+          <input
+            value={phone !== null ? phone : ''}
+            onChange={event => setPhone(event.target.value)}
+            id="icon_telephone"
+            type="tel"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="icon_telephone">
+            Téléphone
+          </label>
+        </div>
+      </div>
 
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">location_on</i>
-            <input
-              value={adress !== null ? adress : ''}
-              onChange={event => setAdress(event.target.value)}
-              id="adress"
-              type="text"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="adress">
-              Adresse
-            </label>
-          </div>
-          <div className="input-field col s6">
-            <i className="material-icons prefix">location_on</i>
-            <input
-              value={zip !== null ? zip : ''}
-              onChange={event => setZip(event.target.value)}
-              id="zip_code"
-              type="text"
-              className="validate"
-            />
-            <label className={labelActive} htmlFor="zip_code">
-              Code postal
-            </label>
-          </div>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">location_on</i>
+          <input
+            value={adress !== null ? adress : ''}
+            onChange={event => setAdress(event.target.value)}
+            id="adress"
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="adress">
+            Adresse
+          </label>
         </div>
+        <div className="input-field col s6">
+          <i className="material-icons prefix">location_on</i>
+          <input
+            value={zip !== null ? zip : ''}
+            onChange={event => setZip(event.target.value)}
+            id="zip_code"
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="zip_code">
+            Code postal
+          </label>
+        </div>
+      </div>
 
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">location_on</i>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">location_on</i>
+          <input
+            value={city && city}
+            onChange={event => setCity(event.target.value)}
+            id="city"
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="city">
+            Ville
+          </label>
+        </div>
+        <div className="input-field col s6">
+          <label>
             <input
-              value={city && city}
-              onChange={event => setCity(event.target.value)}
-              id="city"
-              type="text"
-              className="validate"
+              type="checkbox"
+              id="check_neighborhood"
+              checked={neighborhood ? 'checked' : ''}
+              onChange={event => setNeighborhood(event.target.checked)}
             />
-            <label className={labelActive} htmlFor="city">
-              Ville
-            </label>
-          </div>
-          <div className="input-field col s6">
-            <label>
-              <input
-                type="checkbox"
-                id="check_neighborhood"
-                checked={neighborhood ? 'checked' : ''}
-                onChange={event => setNeighborhood(event.target.checked)}
-              />
-              <span>Habite dans le quartier</span>
-            </label>
-          </div>
+            <span>Habite dans le quartier</span>
+          </label>
         </div>
+      </div>
 
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">person_add</i>
+      <div className="row">
+        <div className="input-field col s6">
+          <i className="material-icons prefix">person_add</i>
+          <input
+            value={memberId && memberId}
+            onChange={event => setMemberId(event.target.value)}
+            id="member_id"
+            type="text"
+            className="validate"
+          />
+          <label className={labelActive} htmlFor="member_id">
+            Numéro d&apos;adhérent
+          </label>
+        </div>
+        <div className="input-field col s6">
+          <label>
             <input
-              value={memberId && memberId}
-              onChange={event => setMemberId(event.target.value)}
-              id="member_id"
-              type="text"
-              className="validate"
+              type="checkbox"
+              id="check_member_active"
+              checked={memberActive ? 'checked' : ''}
+              onChange={event => setMemberActive(event.target.checked)}
             />
-            <label className={labelActive} htmlFor="member_id">
-              Numéro d&apos;adhérent
-            </label>
-          </div>
-          <div className="input-field col s6">
-            <label>
-              <input
-                type="checkbox"
-                id="check_member_active"
-                checked={memberActive ? 'checked' : ''}
-                onChange={event => setMemberActive(event.target.checked)}
-              />
-              <span>Membre actif</span>
-            </label>
-          </div>
+            <span>Membre actif</span>
+          </label>
         </div>
+      </div>
 
-        <div className="row">
-          <div className="input-field col s3">
-            <label>
-              <input
-                type="checkbox"
-                id="check_image_copyright"
-                checked={imageCopyright ? 'checked' : ''}
-                onChange={event => setImageCopyright(event.target.checked)}
-              />
-              <span>Droit à l&apos;image</span>
-            </label>
-          </div>
-          <div className="input-field col s3">
-            <label>
-              <input
-                type="checkbox"
-                id="check_mailing_active"
-                checked={mailingActive ? 'checked' : ''}
-                onChange={event => setMailingActive(event.target.checked)}
-              />
-              <span>Accepte l&apos;envoie de mail</span>
-            </label>
-          </div>
-          <div className="input-field col s3">
-            <button
-              type="button"
-              className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
-              onClick={handleSend}
-            >
-              Envoyer
-            </button>
-          </div>
-          <div className="input-field col s3">
-            <button
-              type="button"
-              className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
-              onClick={handleClose}
-            >
-              Fermer
-            </button>
-          </div>
+      <div className="row">
+        <div className="input-field col s3">
+          <label>
+            <input
+              type="checkbox"
+              id="check_image_copyright"
+              checked={imageCopyright ? 'checked' : ''}
+              onChange={event => setImageCopyright(event.target.checked)}
+            />
+            <span>Droit à l&apos;image</span>
+          </label>
         </div>
+        <div className="input-field col s3">
+          <label>
+            <input
+              type="checkbox"
+              id="check_mailing_active"
+              checked={mailingActive ? 'checked' : ''}
+              onChange={event => setMailingActive(event.target.checked)}
+            />
+            <span>Accepte l&apos;envoie de mail</span>
+          </label>
+        </div>
+        <div className="input-field col s3">
+          <button
+            type="button"
+            className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
+            onClick={handleSend}
+          >
+            Envoyer
+          </button>
+        </div>
+        <div className="input-field col s3">
+          <button
+            type="button"
+            className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
+            onClick={handleClose}
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
