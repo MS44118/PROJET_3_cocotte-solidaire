@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-// import _ from 'underscore';
 // import Calendar from 'react-calendar';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
@@ -52,149 +52,157 @@ function EventHome() {
 
   // set filters according to checkboxes
   useEffect(() => {
-    if (events.length>0){
-      setFilteredEvents(events.filter( (event) => {
+    if (events.length > 0) {
+      setFilteredEvents(events.filter((event) => {
         if (filterManger) {
           if (event.name_event === 'manger') {
             return event;
           }
-        };
+        }
         if (filterCuisiner) {
           if (event.name_event === 'cuisiner & manger') {
             return event;
           }
-        };
+        }
         if (filterAutres) {
           if (event.name_event !== 'manger' && event.name_event !== 'cuisiner & manger') {
             return event;
           }
-        };
-      }))
+        }
+        return false;
+      }));
     }
-  }, [filterManger, filterCuisiner, filterAutres]);
+  }, [events, filterManger, filterCuisiner, filterAutres]);
 
   // set for a specific event, if the list of registrations is visible or not
   useEffect(() => {
     let array = [];
     array = events.map(() => (false));
     setCollapses(array);
-  }, [filteredEvents]);
+  }, [events, filteredEvents]);
 
   return (
-    <div>
-      <h3>Liste des evenements</h3>
-      <ul className="RAF">
-        <p>RESTE A FAIRE: </p>
-        <li>lien vers modifier évènement</li>
-        <li>lien vers modifier reservation</li>
-        <li>actions supprimer évenement</li>
-        <li>actions supprimer reservation</li>
-        <li>lier les actions de filtrages au calendrier</li>
-      </ul>
-      {/* <Calendar /> */}
+    <div className="container">
 
-      <div className="container">
-        <div className="row">
-          <p>filtres : </p>
+      {/* <div className="row reste-a-faire">
+        <ul>
+          <li>RESTE A FAIRE: </li>
+          <li>lien vers modifier évènement</li>
+          <li>lien vers modifier reservation</li>
+          <li>actions supprimer évenement</li>
+          <li>actions supprimer reservation</li>
+          <li>hoover allergies</li>
+          <li>hoover commentaires</li>
+          <li>lier les actions de filtrages au calendrier</li>
+        </ul>
+      </div> */}
 
-          <label htmlFor="filterAll">
-            <input
-              type="checkbox"
-              id="filterAll"
-              checked={filterCuisiner === true && filterManger === true && filterAutres === true ? 'checked' : ''}
-              onChange={() => checkAll()}
-            />
-            <span>Tous</span>
-          </label>
+      <div className="row title">
+        <h1>Evènements à venir</h1>
+      </div>
 
-          <label htmlFor="filterCuisiner">
-            <input
-              type="checkbox"
-              id="filterCuisiner"
-              checked={filterCuisiner ? 'checked' : ''}
-              onChange={e => setFilterCuisiner(e.target.checked)}
-            />
-            <span>Cuisiner et Manger</span>
-          </label>
+      <div className="row calendar">
+        {/* <Calendar /> */}
+      </div>
 
-          <label htmlFor="filterManger">
-            <input
-              type="checkbox"
-              id="filterManger"
-              checked={filterManger ? 'checked' : ''}
-              onChange={e => setFilterManger(e.target.checked)}
+      <div className="row checkbox">
+        <label htmlFor="filterAll">
+          <input
+            type="checkbox"
+            id="filterAll"
+            checked={filterCuisiner === true && filterManger === true && filterAutres === true ? 'checked' : ''}
+            onChange={() => checkAll()}
+          />
+          <span>Tous</span>
+        </label>
 
-            />
-            <span>Manger</span>
-          </label>
+        <label htmlFor="filterCuisiner">
+          <input
+            type="checkbox"
+            id="filterCuisiner"
+            checked={filterCuisiner ? 'checked' : ''}
+            onChange={e => setFilterCuisiner(e.target.checked)}
+          />
+          <span>Cuisiner et Manger</span>
+        </label>
 
-          <label htmlFor="filterAutres">
-            <input
-              type="checkbox"
-              id="filterAutres"
-              checked={filterAutres ? 'checked' : ''}
-              onChange={e => setFilterAutres(e.target.checked)}
-            />
-            <span>Autres</span>
-          </label>
+        <label htmlFor="filterManger">
+          <input
+            type="checkbox"
+            id="filterManger"
+            checked={filterManger ? 'checked' : ''}
+            onChange={e => setFilterManger(e.target.checked)}
 
-        </div>
+          />
+          <span>Manger</span>
+        </label>
+
+        <label htmlFor="filterAutres">
+          <input
+            type="checkbox"
+            id="filterAutres"
+            checked={filterAutres ? 'checked' : ''}
+            onChange={e => setFilterAutres(e.target.checked)}
+          />
+          <span>Autres</span>
+        </label>
+      </div>
+
+      <div className="row list-events">
 
         {/* entetes liste des évenements */}
-        <ul className="events with-header">
-          <li className="event-header row">
-            <p className="col s1">Evènement</p>
-            <p className="col s1">Date</p>
-            <p className="col s1">Heure</p>
-            <p className="col s1">adultes</p>
-            <p className="col s1">enfants</p>
-            <p className="col s1">capacité</p>
-            <p className="col s1">modifier</p>
-            <p className="col s1">supprimer</p>
-            <p className="col s1">email</p>
-            <p className="col s1">allergies</p>
-            <p className="col s1">commentaires</p>
-            <p className="col s1"> </p>
-          </li>
+        <ul className="event-header">
+          <li className="col s1">Evènement</li>
+          <li className="col s1">Date</li>
+          <li className="col s1">Heure</li>
+          <li className="col s1">adultes</li>
+          <li className="col s1">enfants</li>
+          <li className="col s1">capacité</li>
+          <li className="col s1">modifier</li>
+          <li className="col s1">supprimer</li>
+          <li className="col s1">email</li>
+          <li className="col s1">allergies</li>
+          <li className="col s1">commentaires</li>
+          <li className="col s1"> </li>
         </ul>
 
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
-          <ul className="event-ul" key={filteredEvents[index]} data-genre={event.name_event}>
-            <li className="event-item row valign-wrapper center-align">
-              <p className="col s1">{event.name_event}</p>
-              <p className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</p>
-              <p className="col s1">{moment(event.date_b).format('HH:mm')}</p>
-              <p className="col s1">{event.nb_adults}</p>
-              <p className="col s1">{event.nb_children}</p>
-              <p className="col s1">
+          <div className="event" key={event.id_event} data-genre={event.name_event}>
+            <ul className="event-item row valign-wrapper center-align">
+              <li className="col s1">{event.name_event}</li>
+              <li className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</li>
+              <li className="col s1">{moment(event.date_b).format('HH:mm')}</li>
+              <li className="col s1">{event.nb_adults}</li>
+              <li className="col s1">{event.nb_children}</li>
+              <li className="col s1">
                 {event.nb_persons}
                 /
                 {event.capacity}
-              </p>
-              <p className="col s1">
+              </li>
+              <li className="col s1">
                 <i className="material-icons icon-green">create</i>
-              </p>
-              <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-              <p className="col s1">
-                { event.nb_emails < event.NB_REG
-                  ? <i className="material-icons email-missing">priority_high</i>
+              </li>
+              <li className="col s1"><i className="material-icons icon-green">delete_forever</i></li>
+              <li className="col s1">
+                {event.nb_emails < event.NB_REG
+                  ? <i className="material-icons warning-icon">priority_high</i>
                   : null
                 }
-              </p>
-              <p className="col s1">
-                { event.nb_allergies > 0
-                  ? <i className="material-icons allergie-warning">warning</i>
+              </li>
+              <li className="col s1">
+                {event.nb_allergies > 0
+                  ? <i className="material-icons warning-icon">warning</i>
                   : null
                 }
-              </p>
-              <p className="col s1">
-                { event.nb_comments > 0
+              </li>
+              <li className="col s1">
+                {event.nb_comments > 0
                   ? <i className="material-icons icon-green">comment</i>
                   : null
                 }
-              </p>
-              <p className="col s1">
+              </li>
+              <li className="col s1">
                 <button
                   className="btn-floating waves-effect waves-light valign-wrapper"
                   onClick={() => setCollapses(
@@ -207,30 +215,42 @@ function EventHome() {
                   type="submit"
                   name="action"
                 >
-                  { collapses[index] === false
+                  {collapses[index] === false
                     ? <i className="material-icons">expand_more</i>
                     : <i className="material-icons">expand_less</i>
                   }
                 </button>
-              </p>
-            </li>
-            { collapses[index] === false
-              ? null
-              : (
-                <div>
-                  <ReservationHome eventId={event.id_event} />
-                  { event.nb_persons < event.capacity
-                    ? <p>il reste de la place: créer une nouvelle réservation</p>
-                    : null
-                  }
-                </div>
-              )
-            }
-          </ul>
-        ))
-        }
-      </div>
+              </li>
+            </ul>
 
+            {/* s'affiche si collapse activé */}
+            <ul>
+              {collapses[index] === false
+                ? null
+                : (
+                  <ReservationHome eventId={event.id_event} />
+                )
+              }
+            </ul>
+
+            {/* affiche lien pour nouvelle résa si collapse activé et si évènement pas complet */}
+            <ul>
+              {collapses[index] === true && event.nb_persons < event.capacity
+                ? (
+                  <li className="create-registration col s12">
+                    <Link to="/reservation" event-id={event.id_event}>
+                      il reste de la place: créer une nouvelle réservation
+                    </Link>
+                  </li>
+                )
+                : null
+              }
+            </ul>
+
+          </div>
+        ))}
+
+      </div>
     </div>
   );
 }
