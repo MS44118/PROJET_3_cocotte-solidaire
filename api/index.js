@@ -366,7 +366,7 @@ api.get('/events', (req, res) => {
     },
   );
 });
-
+ //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
  
@@ -382,6 +382,7 @@ api.post('/zboub/', (req,res)=>{
   
         }else{
           console.log(result[0].id_user)
+          connection.query(`INSERT INTO events()`)
           connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}")`, 
             reservation, (err, result)=>{
               if (err) {
