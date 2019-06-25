@@ -8,7 +8,6 @@ import './Reservation.css';
 
 
 function Reservation() {
-
   const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
@@ -26,7 +25,6 @@ function Reservation() {
   const [searchResults, setSearchResults] = useState([{ title: '' }]);
   const [labelActive, setLabelActive] = useState('');
   const [existantUser, setExistantUser] = useState(false);
-  
 
   useEffect(() => {
     M.AutoInit();
@@ -37,10 +35,8 @@ function Reservation() {
       });
     axios.get('http://localhost:8000/events')
       .then((result) => {
-      
         setActivities(result.data);
       });
-     
   },
   []);
 
@@ -59,28 +55,31 @@ function Reservation() {
 
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
-      .then(function (response) {
-        console.log(response)})
-      .then(function (err) {
-        console.log(err)})  
+      .then((response) => {
+        console.log(response);
+      })
+      .then((err) => {
+        console.log(err);
+      });
   };
 
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`));
-
       let resultTemp = [];
-      for (let i = 0; i < arrayTemp.length; i++) {
-        resultTemp = [...resultTemp, { title: arrayTemp[i].lastname, description: arrayTemp[i].id_user }];
+      for (let i = 0; i < arrayTemp.length; i += 1) {
+        resultTemp = [
+          ...resultTemp,
+          { title: arrayTemp[i].lastname, description: arrayTemp[i].id_user },
+        ];
       }
       setSearchResults(resultTemp);
-   
     }
   }, [searchValue]);
 
   const handleUser = (e, { result })=> {
     const arrayTemp = users.filter(user => user.idUser  === result.description);
-    
+
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
@@ -88,13 +87,13 @@ function Reservation() {
     setIdUser(arrayTemp[0].member_id);
     setLabelActive('active');
     setExistantUser(true);
-  }
+  };
 
-  const handleReservation = (e,{result}  ) =>  {
-    const activitiesfilter = activities.filter(activity =>activity.name_activity)
-    console.log(activitiesfilter)
+  const handleReservation = (e, { result }) => {
+    const activitiesfilter = activities.filter(activity => activity.name_activity);
+    console.log(activitiesfilter);
     setNewActivities(activities[0].name);
-    setLabelActive('active') ;        
+    setLabelActive('active');
   };
 
   return (
@@ -102,12 +101,9 @@ function Reservation() {
     <div className="container">
       <h1>Réservation</h1>
       <div className="row">
-        <div className="input-field  col s8">
+        {/* <div className="input-field  col s8">
 
-        
-
-
-        </div>
+        </div> */}
         <div className="input-field col s4 mr-8">
           <button
             type="submit"
@@ -120,12 +116,18 @@ function Reservation() {
       </div>
       <div className="row">
         <div className="input-field col s6">
-        <select id="activity" className="browser-default color_select" value= {newActivities} onChange={event => {setLabelActive(true);setNewActivities(event.target.value)}}>
-            {activities.map((activity, index) =>
-              <option key={activity[index]} value={activity.name_activity}>{activity.name_activity}</option>
-            )};
-           </select>
-
+          <select
+            id="activity"
+            className="browser-default color_select"
+            value={newActivities}
+            onChange={(event) => { setLabelActive(true); setNewActivities(event.target.value); }}
+          >
+            {activities.map((activity, index) => (
+              <option key={activity[index]} value={activity.name_activity}>
+                {activity.name_activity}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="input-field col s6">
@@ -192,7 +194,7 @@ function Reservation() {
           />
           <label id="last_name" htmlFor="last_name" className={labelActive}>
             Nom
-            </label>
+          </label>
         </div>
         <div className="row">
           <div className="input-field col s6">
@@ -204,7 +206,7 @@ function Reservation() {
               onChange={e => setFirstname(e.target.value)}
               value={firstname} 
             />
-            <label htmlFor="firstname"className={labelActive} >Prénom</label>
+            <label htmlFor="firstname" className={labelActive}>Prénom</label>
           </div>
         </div>
       </div>
@@ -221,37 +223,39 @@ function Reservation() {
             onChange={e => setEmail(e.target.value)}
             value={email}
           />
-          <label htmlFor="email"className={labelActive} >
+          <label htmlFor="email" className={labelActive}>
             Email
-            </label>
+          </label>
         </div>
 
         <div className="input-field col s6">
           <i className="material-icons prefix">phone</i>
           <input
             id="icon_telephone"
-            type="tel" className="validate"
+            type="tel"
+            className="validate"
             onChange={e => setPhone(e.target.value)}
             value={phone}
           />
-          <label htmlFor="icon_telephone"className={labelActive} >
+          <label htmlFor="icon_telephone" className={labelActive}>
             Téléphone
-            </label>
+          </label>
         </div>
       </div>
+
       <div className="row">
         <div className="input-field col s6">
           <i className="material-icons prefix">person_add</i>
           <input
             id="num_user"
-            type="text" 
+            type="text"
             className="validate"
             onChange={e => setIdUser(e.target.value)}
-            value={idUser} 
+            value={idUser}
           />
-          <label htmlFor="num_user"className={labelActive} >
+          <label htmlFor="num_user" className={labelActive}>
             Numéros d&apos;adhérent
-            </label>
+          </label>
         </div>
       </div>
 
@@ -287,6 +291,6 @@ function Reservation() {
     </div>
 
   );
-};
+}
 
 export default Reservation;
