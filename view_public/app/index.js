@@ -247,14 +247,14 @@ function App() {
               <div className='row'>
                 <div className='row'>
                   <p className="col s10">Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton. Sinon ce sera directement sur place !</p>
-                  <button
-                    type="button"
+                  <a
                     style={{ marginTop: '15px' }}
+                    target="_blank"
                     className="waves-effect waves-light btn-small teal darken-1 white-text col s2 right"
-                    onClick={''}
+                    href="https://www.lacocottesolidaire.fr/adhesion"
                   >
                     ADHERER
-                </button>
+                  </a>
                 </div>
                 <p className='col'>Pour les groupes de plus de six personnes, réservez par téléphone au 06 51 49 20 82 !</p>
                 <h4 className='col' style={{ color: '#F8C8BE' }}>MERCI ET A TRES VITE</h4>
@@ -262,7 +262,7 @@ function App() {
               <div className='row' style={{ display: 'grid', width: '20%' }}>
                 <button
                   type="button"
-                  className="waves-effect waves-light btn-small teal darken-1 white-text col center"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text"
                   onClick={() => sendReservation(index)}
                 >
                   ENVOYER
