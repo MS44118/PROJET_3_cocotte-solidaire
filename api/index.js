@@ -412,6 +412,45 @@ api.post('/zboub/', (req,res)=>{
 
 // })
 
+api.get('/api/event/type/:id', (req, res) => {
+  const idActivity = req.params.id;
+  if(idActivity>2){
+    connection.query(
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      (err, result) => {
+        if (err) throw err;
+        res.send(result);
+      }
+    );
+  } else {
+    connection.query(
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      (err, result) => {
+        if (err) throw err;
+        res.send(result);
+      }
+    );
+  }
+});
+
+//   SELECT 
+//   events.id_event, 
+//   events.name_event, 
+//   events.date_b, 
+//   events.address_event,
+//   events.description_event,
+//   events.picture_event,
+//   activities.id_activity,
+//   activities.name_activity,
+//   activities.description_activity,
+//   activities.picture_activity,
+//   SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons,
+//   events.capacity
+//   FROM events 
+//   JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=1
+//   LEFT JOIN registrations ON registrations.event_id = events.id_event
+//   GROUP BY events.id_event;
+
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
   console.log('API is running on localhost:8000');
