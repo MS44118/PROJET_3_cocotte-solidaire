@@ -29,9 +29,9 @@ INSERT INTO cocotte_booking.users
   (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym)
 VALUES
   ('maelenn', 'sallic', '', '0677251296', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Einstein', 44300, 'Nantes', true, true, false, false),
-  ('cedric', 'gardianot', 'cedric@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false, false),
-  ('aurelia', 'roumesy', 'aurelia@gmail.com', '', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false, false),
-  ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false, false);
+  ('cedric', 'gardianot', 'cedric@gmail.com', '0655983322', NOW(), 'male', 550067, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false, false),
+  ('aurelia', 'roumesy', 'aurelia@gmail.com', '', NOW(), 'female', 550068, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false, false),
+  ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550069, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false, false);
   
 -- controls
 SELECT firstname, lastname, email, phone, birthday, gender, anonym FROM users;

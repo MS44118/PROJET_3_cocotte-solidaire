@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import moment from 'moment';
+
 const type = document.getElementById('app').getAttribute('type');
+
 function App() {
-  // const [type, setType] = useState('');
   const [events, setEvents] = useState([]);
   const [numberAdults, setNumberAdult] = useState(0);
   const [numberChildrens, setNumberChildren] = useState(0);
@@ -21,7 +22,6 @@ function App() {
   const [displayForm, setDisplayForm] = useState('none');
 
   useEffect(() => {
-    console.log(type)
     axios.get(`http://localhost:8000/api/event/type/${type}`)
       .then((data) => {
         setEvents(data.data);
@@ -65,6 +65,13 @@ function App() {
   const sendReservation = () => {
     setDisplayForm('none');
     console.log(reservation)
+    reservation.numberAdults >0 && axios.post('http://localhost:8000/api/reservation/public/', reservation)
+    .then((res) => {
+      console.log(res.statusText);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
     setNumberAdult(0);
     setNumberChildren(0);
     setAllergie('');
@@ -75,6 +82,8 @@ function App() {
     setPhone('');
     setMemberId('');
     setEventId(null);
+    setAllergie('');
+    setInformation('');
   }
 
   return (
