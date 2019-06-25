@@ -369,9 +369,9 @@ api.get('/events', (req, res) => {
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
- 
+ console.log(reservation)
   if (reservation.existantUser === false){
-    connection.query(`INSERT INTO users (firstname,lastname,email,phone,member_id,anonym) VALUES ("${reservation.firstName}","${reservation.lastname}","${reservation.email}","${reservation.phone}","${reservation.idUser}",false)`, reservation, (err, result)=>{
+    connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false)`, reservation, (err, result)=>{
       if (err){
         console.log(err)
         res.status(500).send("error while saving")
@@ -382,8 +382,8 @@ api.post('/zboub/', (req,res)=>{
   
         }else{
           console.log(result[0].id_user)
-          connection.query(`INSERT INTO events()`)
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}")`, 
+        
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -396,6 +396,17 @@ api.post('/zboub/', (req,res)=>{
       })
       }
     })
+  } else {
+    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${reservation.idUser}",${reservation.eventId})`, 
+            reservation, (err, result)=>{
+              if (err) {
+                console.log(err)
+                res.status(500).send("error while saving")
+              }else {
+                res.status(200)
+              }
+            });
+
   }
 });
     

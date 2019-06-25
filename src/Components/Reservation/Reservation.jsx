@@ -70,12 +70,12 @@ moment.locale('fr', {
 
 function Reservation() {
 
-  const [event, setEvent] = useState([]);
+  const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState(['']);
   const [lastname, setLastname] = useState('');
-  const [memberId, setMemberId] = useState('');
+const[]
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState('');
   const [numberAdultReservation, setnumberAdultReservation] = useState(0);
@@ -84,9 +84,9 @@ function Reservation() {
   const [reservationInfo, setReservationInfo] = useState('');
   const [eventReservation, setEventReservation] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState([{ title: '' }]);
+  const [searchResults, setSearchResults] = useState([{ title: '' , id:''}]);
   const [labelActive, setLabelActive] = useState('');
-  // const[dateEvent, setDateEvent]  = useState('')
+  const [eventId , setEventId] = useState(0)
   const [existantUser, setExistantUser] = useState(false);
   
 
@@ -99,17 +99,15 @@ function Reservation() {
       }); 
     axios.get('http://localhost:8000/events')
       .then((result) => {
+        console.log(result.data)
       
         setEvent(  result.data );
-   
-       
+
       });
      
   },
   []);
 
-  const numberReservation = (numberAdultReservation/1+ (numberchildrenReservation/2));
-  
   const addReservation = {
     numberAdultReservation,
     numberchildrenReservation,  
@@ -121,9 +119,13 @@ function Reservation() {
     phone,
     idUser,
     existantUser,
+    eventId,
 
   };
+  
+console.log(addReservation)
   const sendForm = () => {
+    
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then(function (response) {
         console.log(response)})
@@ -132,32 +134,35 @@ function Reservation() {
   };
 
   
-  
+ 
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
       
       let resultTemp = [];
       for (let i = 0; i < arrayTemp.length; i++) {
-        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, description: arrayTemp[i].id_user }];
+      
+        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
       }
       setSearchResults(resultTemp);
+
       
     }
   }, [searchValue]);
-  
-  const handleUser = (e, { result })=> {
-    const arrayTemp = users.filter(user => user.idUser  === result.description);
+
+  const handleUser = (e, { result } )=> {
     
+    const arrayTemp = users.filter(user => user.idUser  === result.id);
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
     setPhone(arrayTemp[0].phone);
-    setIdUser(arrayTemp[0].member_id);
+    setIdUser(arrayTemp[0].idUser);
     setLabelActive('active');
     setExistantUser(true);
-  
-  }
+
+   }
+
   return (
 
     <div className="container">
@@ -175,15 +180,18 @@ function Reservation() {
             Envoyer
           </button>
         </div>
-      </div>
+      </div>  
       <div className="row">
       <div className="input-field col s6">
-      <p>place disponibles :{event.capacity}</p>
+      <p>place disponibles :{events.capacity}</p>
          </div>
         <div className="input-field col s6">
-        <select id="event" className="browser-default color_select" value= {eventReservation} onChange={event => {setEventReservation(event.target.value)}}>
-            {event.map((event, index) =>
-              <option key={event[index]} value={event.name_event}>{event.name_event} : {moment(event.date_b).calendar()}</option>
+        <select id="events" className="browser-default color_select" value= {eventId} onChange={(events) => setEventId(events.target.value)}>
+            {events.map((event, index) =>
+        
+        <option key={event[index]}  value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
+
+              
             )};
            </select> 
 
@@ -227,7 +235,7 @@ function Reservation() {
           type="text"
           value={searchValue}
           results={searchResults}
-          onResultSelect={handleUser}
+          onResultSelect={(e,{result}) =>handleUser(e,{result})}
           size="big"
           icon="none"
           placeholder="nom de famille"
@@ -243,7 +251,7 @@ function Reservation() {
             id="last_name"
             type="text"
             className="validate"
-            value=""
+            value={lastname}
             onChange={(e) => {
               setLastname(e.target.value);
             }}
