@@ -4,26 +4,89 @@ import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui/dist/semantic.min.css';
+import  moment from 'moment';
 import './Reservation.css';
 
+moment.locale('fr', {
+  months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
+  monthsShort : 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
+  monthsParseExact : true,
+  weekdays : 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
+  weekdaysShort : 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
+  weekdaysMin : 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
+  weekdaysParseExact : true,
+  longDateFormat : {
+      LT : 'HH:mm',
+      LTS : 'HH:mm:ss',
+      L : 'DD/MM/YYYY',
+      LL : 'D MMMM YYYY',
+      LLL : 'D MMMM YYYY HH:mm',
+      LLLL : 'dddd D MMMM YYYY HH:mm'
+  },
+  calendar : {
+      sameDay : '[Aujourd’hui à] LT',
+      nextDay : '[Demain à] LT',
+      nextWeek : 'dddd [à] LT',
+      lastDay : '[Hier à] LT',
+      lastWeek : 'dddd [dernier à] LT',
+      sameElse : 'L'
+  },
+  relativeTime : {
+      future : 'dans %s',
+      past : 'il y a %s',
+      s : 'quelques secondes',
+      m : 'une minute',
+      mm : '%d minutes',
+      h : 'une heure',
+      hh : '%d heures',
+      d : 'un jour',
+      dd : '%d jours',
+      M : 'un mois',
+      MM : '%d mois',
+      y : 'un an',
+      yy : '%d ans'
+  },
+  dayOfMonthOrdinalParse : /\d{1,2}(er|e)/,
+  ordinal : function (number) {
+      return number + (number === 1 && 'er' );
+  },
+  meridiemParse : /PD|MD/,
+  isPM : function (input) {
+      return input.charAt(0) === 'M';
+  },
+  // In case the meridiem units are not separated around 12, then implement
+  // this function (look at locale/id.js for an example).
+  // meridiemHour : function (hour, meridiem) {
+  //     return /* 0-23 hour, given meridiem token and hour 1-12 */ ;
+  // },
+  meridiem : function (hours, minutes, isLower) {
+      return hours < 12 ? 'PD' : 'MD';
+  },
+  week : {
+      dow : 1, // Monday is the first day of the week.
+      doy : 4  // Used to determine first week of the year.
+  }
+});
 
 function Reservation() {
-  const [activities, setActivities] = useState([]);
+
+  const [event, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
-  const [firstname, setFirstname] = useState('');
+  const [firstname, setFirstname] = useState(['']);
   const [lastname, setLastname] = useState('');
   const [memberId, setMemberId] = useState('');
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState('');
-  const [numberAdultReservation, setnumberAdultReservation] = useState(1);
+  const [numberAdultReservation, setnumberAdultReservation] = useState(0);
   const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
   const [reservationAllergie, setReservationAllergie] = useState('');
   const [reservationInfo, setReservationInfo] = useState('');
-  const [newActivities, setNewActivities] = useState('');
+  const [eventReservation, setEventReservation] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([{ title: '' }]);
   const [labelActive, setLabelActive] = useState('');
+  // const[dateEvent, setDateEvent]  = useState('')
   const [existantUser, setExistantUser] = useState(false);
 
   useEffect(() => {
@@ -32,17 +95,22 @@ function Reservation() {
     axios.get('http://localhost:8000/users')
       .then((result) => {
         setUsers(result.data);
-      });
+      }); 
     axios.get('http://localhost:8000/events')
       .then((result) => {
-        setActivities(result.data);
+      
+        setEvent(  result.data );
+   
+       
       });
   },
   []);
 
+  const numberReservation = (numberAdultReservation/1+ (numberchildrenReservation/2));
+  
   const addReservation = {
     numberAdultReservation,
-    numberchildrenReservation,
+    numberchildrenReservation,  
     reservationAllergie,
     reservationInfo,
     lastname,
@@ -51,8 +119,8 @@ function Reservation() {
     phone,
     idUser,
     existantUser,
-  };
 
+  };
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
@@ -63,20 +131,21 @@ function Reservation() {
       });
   };
 
+  
+  
   useEffect(() => {
     if (searchValue.length > 0) {
-      const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`));
+      const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
+      
       let resultTemp = [];
-      for (let i = 0; i < arrayTemp.length; i += 1) {
-        resultTemp = [
-          ...resultTemp,
-          { title: arrayTemp[i].lastname, description: arrayTemp[i].id_user },
-        ];
+      for (let i = 0; i < arrayTemp.length; i++) {
+        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, description: arrayTemp[i].id_user }];
       }
       setSearchResults(resultTemp);
+      
     }
   }, [searchValue]);
-
+  
   const handleUser = (e, { result })=> {
     const arrayTemp = users.filter(user => user.idUser  === result.description);
 
@@ -87,23 +156,16 @@ function Reservation() {
     setIdUser(arrayTemp[0].member_id);
     setLabelActive('active');
     setExistantUser(true);
-  };
-
-  const handleReservation = (e, { result }) => {
-    const activitiesfilter = activities.filter(activity => activity.name_activity);
-    console.log(activitiesfilter);
-    setNewActivities(activities[0].name);
-    setLabelActive('active');
-  };
-
+  
+  }
   return (
 
     <div className="container">
       <h1>Réservation</h1>
       <div className="row">
-        {/* <div className="input-field  col s8">
+        <div className="input-field  col s8">
 
-        </div> */}
+        </div>
         <div className="input-field col s4 mr-8">
           <button
             type="submit"
@@ -115,25 +177,19 @@ function Reservation() {
         </div>
       </div>
       <div className="row">
+      <div className="input-field col s6">
+      <p>place disponibles :{event.capacity}</p>
+         </div>
         <div className="input-field col s6">
-          <select
-            id="activity"
-            className="browser-default color_select"
-            value={newActivities}
-            onChange={(event) => { setLabelActive(true); setNewActivities(event.target.value); }}
-          >
-            {activities.map((activity, index) => (
-              <option key={activity[index]} value={activity.name_activity}>
-                {activity.name_activity}
-              </option>
-            ))}
-          </select>
+        <select id="event" className="browser-default color_select" value= {eventReservation} onChange={event => {setEventReservation(event.target.value)}}>
+            {event.map((event, index) =>
+              <option key={event[index]} value={event.name_event}>{event.name_event} : {moment(event.date_b).calendar()}</option>
+            )};
+           </select> 
+
         </div>
 
-        <div className="input-field col s6">
-          <i className="material-icons prefix">calendar_today</i>
-          <input type="text" className="datepicker" />
-        </div>
+       
 
       </div>
       <div className=" row ">
@@ -154,7 +210,7 @@ function Reservation() {
 
         </div>
         <div className="input-field col s4">
-          <p>Nombres d&apo;senfants</p>
+          <p>Nombres d&apos;enfants</p>
           <select onChange={e => setnumbeChildrenRegistration(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
@@ -187,7 +243,7 @@ function Reservation() {
             id="last_name"
             type="text"
             className="validate"
-            value={lastname}
+            value=""
             onChange={(e) => {
               setLastname(e.target.value);
             }}
