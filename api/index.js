@@ -16,7 +16,8 @@ api.use(bodyParser.urlencoded({
   extended: true,
 }));
 // allows cross origin requests (localhost:xxxx)
-api.use(cors());
+// api.use(cors());
+api.use(cors({ origin: '*' }));
 
 connection.connect((err) => {
   if (err) throw err;
@@ -287,27 +288,70 @@ api.delete('/activities/:id', (req, res) => {
 });
 //------------------------------------------------Upload file-------------------------------------------------
 
-const storage = multer.diskStorage({
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, '../public/images')
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, file.originalname )
+//   }
+// })
+
+// const upload = multer({ storage: storage }).single('file');
+
+// api.post('/uploaddufichier', function(req, res) { 
+//   console.log(req.file);
+//   upload(req, res, function (err) {
+//          if (err instanceof multer.MulterError) {
+//              return res.status(500).json(err)
+//          } else if (err) {
+//              return res.status(500).json(err)
+//          }
+//     return res.status(200).send(req.file)
+//   })
+// });
+
+var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, '../public/images')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname )
+    cb(null, file.originalname);
   }
 })
+ 
+var upload = multer({ storage: storage })
 
-const upload = multer({ storage: storage }).single('file')
+api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {
+  const file = req.file
+  console.log(file);
+  console.log(req.headers);
+  console.log(req.body);
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send(file)
+  
+})
 
-api.post('/uploaddufichier',function(req, res) { 
-  upload(req, res, function (err) {
-         if (err instanceof multer.MulterError) {
-             return res.status(500).json(err)
-         } else if (err) {
-             return res.status(500).json(err)
-         }
-    return res.status(200).send(req.file)
+//--------------------------------------------------delete file---------------------------------------------------
+api.delete('/deletefile/:file', function(req, res) {
+  let file = req.params.file;
+  fs.stat(`../public/images/${file}`, function(err) {
+    if (!err) {
+      fs.unlink(`../public/images/${file}`, function(err) {
+        if (err) throw err;
+        console.log('file deleted');
+      })
+    }
+    else if (err.code === 'ENOENT') {
+      console.log('file or directory does not exist');
+    }
   })
 });
+
 
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
