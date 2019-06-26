@@ -170,8 +170,8 @@ function EventHome() {
           <div className="event" key={event.id_event} data-genre={event.name_event}>
             <ul className="event-item row valign-wrapper center-align">
               <li className="col s1">{event.name_event}</li>
-              <li className="col s1">{moment(event.date_b).locale('fr').format('dd.Do MMM YY')}</li>
-              <li className="col s1">{moment(event.date_b).locale('fr').format('HH:mm')}</li>
+              <li className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</li>
+              <li className="col s1">{moment(event.date_b).format('HH:mm')}</li>
               <li className="col s1">{event.nb_adults}</li>
               <li className="col s1">{event.nb_children}</li>
               <li className="col s1">
