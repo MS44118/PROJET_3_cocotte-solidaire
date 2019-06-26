@@ -4,69 +4,9 @@ import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui/dist/semantic.min.css';
-import  moment from 'moment';
+import moment from 'moment';
+import 'moment/locale/fr';
 import './Reservation.css';
-
-moment.locale('fr', {
-  months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
-  monthsShort : 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
-  monthsParseExact : true,
-  weekdays : 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
-  weekdaysShort : 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
-  weekdaysMin : 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
-  weekdaysParseExact : true,
-  longDateFormat : {
-      LT : 'HH:mm',
-      LTS : 'HH:mm:ss',
-      L : 'DD/MM/YYYY',
-      LL : 'D MMMM YYYY',
-      LLL : 'D MMMM YYYY HH:mm',
-      LLLL : 'dddd D MMMM YYYY HH:mm'
-  },
-  calendar : {
-      sameDay : '[Aujourd’hui à] LT',
-      nextDay : '[Demain à] LT',
-      nextWeek : 'dddd [à] LT',
-      lastDay : '[Hier à] LT',
-      lastWeek : 'dddd [dernier à] LT',
-      sameElse : 'L'
-  },
-  relativeTime : {
-      future : 'dans %s',
-      past : 'il y a %s',
-      s : 'quelques secondes',
-      m : 'une minute',
-      mm : '%d minutes',
-      h : 'une heure',
-      hh : '%d heures',
-      d : 'un jour',
-      dd : '%d jours',
-      M : 'un mois',
-      MM : '%d mois',
-      y : 'un an',
-      yy : '%d ans'
-  },
-  dayOfMonthOrdinalParse : /\d{1,2}(er|e)/,
-  ordinal : function (number) {
-      return number + (number === 1 && 'er' );
-  },
-  meridiemParse : /PD|MD/,
-  isPM : function (input) {
-      return input.charAt(0) === 'M';
-  },
-  // In case the meridiem units are not separated around 12, then implement
-  // this function (look at locale/id.js for an example).
-  // meridiemHour : function (hour, meridiem) {
-  //     return /* 0-23 hour, given meridiem token and hour 1-12 */ ;
-  // },
-  meridiem : function (hours, minutes, isLower) {
-      return hours < 12 ? 'PD' : 'MD';
-  },
-  week : {
-      dow : 1, // Monday is the first day of the week.
-      doy : 4  // Used to determine first week of the year.
-  }
-});
 
 function Reservation() {
 
@@ -75,20 +15,20 @@ function Reservation() {
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState(['']);
   const [lastname, setLastname] = useState('');
-const[]
+  const [memberNumber, setMemberNumber] = useState();
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState('');
-  const [numberAdultReservation, setnumberAdultReservation] = useState(0);
+  const [numberAdultReservation, setnumberAdultReservation] = useState();
   const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
   const [reservationAllergie, setReservationAllergie] = useState('');
   const [reservationInfo, setReservationInfo] = useState('');
-  const [eventReservation, setEventReservation] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState([{ title: '' , id:''}]);
+  const [searchResults, setSearchResults] = useState([{ title: '', id: '' }]);
   const [labelActive, setLabelActive] = useState('');
-  const [eventId , setEventId] = useState(0)
+  const [eventId, setEventId] = useState(0);
   const [existantUser, setExistantUser] = useState(false);
-  
+  const [disableInput, setDisableInput] = useState(false);
+
 
   useEffect(() => {
     M.AutoInit();
@@ -96,15 +36,13 @@ const[]
     axios.get('http://localhost:8000/users')
       .then((result) => {
         setUsers(result.data);
-      }); 
+      });
     axios.get('http://localhost:8000/events')
       .then((result) => {
-        console.log(result.data)
-      
-        setEvent(  result.data );
+        setEvent(result.data);
 
       });
-     
+
   },
   []);
 
@@ -120,12 +58,17 @@ const[]
     idUser,
     existantUser,
     eventId,
+    memberNumber,
 
   };
-  
-console.log(addReservation)
+axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
+          .then(function (response){
+            console.log(response)
+          })
+          .then(function(err){
+            console.log(err)
+          })
   const sendForm = () => {
-    
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then(function (response) {
         console.log(response)})
@@ -133,8 +76,6 @@ console.log(addReservation)
         console.log(err)})  
   };
 
-  
- 
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
@@ -157,11 +98,14 @@ console.log(addReservation)
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
     setPhone(arrayTemp[0].phone);
+    setMemberNumber(arrayTemp[0].member_id)
     setIdUser(arrayTemp[0].idUser);
+    setMemberNumber(arrayTemp[0].memberId)
     setLabelActive('active');
     setExistantUser(true);
-
-   }
+    // setDisableInput(true);
+    console.log(arrayTemp[0]);
+  }
 
   return (
 
@@ -188,16 +132,11 @@ console.log(addReservation)
         <div className="input-field col s6">
         <select id="events" className="browser-default color_select" value= {eventId} onChange={(events) => setEventId(events.target.value)}>
             {events.map((event, index) =>
-        
-        <option key={event[index]}  value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
-
-              
+           <option key={event[index]}  value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
             )};
            </select> 
 
         </div>
-
-       
 
       </div>
       <div className=" row ">
@@ -208,7 +147,7 @@ console.log(addReservation)
           <p> nombres d&apos;Adultes</p>
           <select onChange={e => setnumberAdultReservation(e.target.value)}>
             <option value="0" disabled selected>Nombre Adultes</option>
-            <option value="1">1</option>
+            <option value={1}>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
@@ -235,7 +174,7 @@ console.log(addReservation)
           type="text"
           value={searchValue}
           results={searchResults}
-          onResultSelect={(e,{result}) =>handleUser(e,{result})}
+          onResultSelect={(e, { result }) => handleUser(e, { result })}
           size="big"
           icon="none"
           placeholder="nom de famille"
@@ -252,25 +191,27 @@ console.log(addReservation)
             type="text"
             className="validate"
             value={lastname}
+            disabled={disableInput}
             onChange={(e) => {
               setLastname(e.target.value);
             }}
           />
           <label id="last_name" htmlFor="last_name" className={labelActive}>
             Nom
-            </label>
+          </label>
         </div>
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
             <input
-              type="text" 
-              id="firstname" 
+              type="text"
+              id="firstname"
+              disabled={disableInput}
               className="validate"
               onChange={e => setFirstname(e.target.value)}
-              value={firstname} 
+              value={firstname}
             />
-            <label htmlFor="firstname"className={labelActive} >Prénom</label>
+            <label htmlFor="firstname" className={labelActive}>Prénom</label>
           </div>
         </div>
       </div>
@@ -283,11 +224,12 @@ console.log(addReservation)
           <input
             id="email"
             type="email"
+            disabled={disableInput}
             className="validate"
             onChange={e => setEmail(e.target.value)}
             value={email}
           />
-          <label htmlFor="email"className={labelActive} >
+          <label htmlFor="email" className={labelActive} >
             Email
             </label>
         </div>
@@ -296,13 +238,15 @@ console.log(addReservation)
           <i className="material-icons prefix">phone</i>
           <input
             id="icon_telephone"
-            type="tel" className="validate"
+            disabled={disableInput}
+            type="tel"
+            className="validate"
             onChange={e => setPhone(e.target.value)}
             value={phone}
           />
-          <label htmlFor="icon_telephone"className={labelActive} >
+          <label htmlFor="icon_telephone" className={labelActive} >
             Téléphone
-            </label>
+          </label>
         </div>
       </div>
       <div className="row">
@@ -310,14 +254,15 @@ console.log(addReservation)
           <i className="material-icons prefix">person_add</i>
           <input
             id="num_user"
-            type="text" 
+            type="text"
+            disabled={disableInput}
             className="validate"
-            onChange={e => setIdUser(e.target.value)}
-            value={idUser} 
+            onChange={e => setMemberNumber(e.target.value)}
+            value={memberNumber}
           />
-          <label htmlFor="num_user"className={labelActive} >
+          <label htmlFor="num_user" className={labelActive} >
             Numéros d&apos;adhérent
-            </label>
+          </label>
         </div>
       </div>
 
