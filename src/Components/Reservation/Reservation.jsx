@@ -4,67 +4,67 @@ import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui/dist/semantic.min.css';
-import  moment from 'moment';
+import moment from 'moment';
 import './Reservation.css';
 
 moment.locale('fr', {
-  months : 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
-  monthsShort : 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
-  monthsParseExact : true,
-  weekdays : 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
-  weekdaysShort : 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
-  weekdaysMin : 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
-  weekdaysParseExact : true,
-  longDateFormat : {
-      LT : 'HH:mm',
-      LTS : 'HH:mm:ss',
-      L : 'DD/MM/YYYY',
-      LL : 'D MMMM YYYY',
-      LLL : 'D MMMM YYYY HH:mm',
-      LLLL : 'dddd D MMMM YYYY HH:mm'
+  months: 'janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre'.split('_'),
+  monthsShort: 'janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.'.split('_'),
+  monthsParseExact: true,
+  weekdays: 'dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi'.split('_'),
+  weekdaysShort: 'dim._lun._mar._mer._jeu._ven._sam.'.split('_'),
+  weekdaysMin: 'Di_Lu_Ma_Me_Je_Ve_Sa'.split('_'),
+  weekdaysParseExact: true,
+  longDateFormat: {
+    LT: 'HH:mm',
+    LTS: 'HH:mm:ss',
+    L: 'DD/MM/YYYY',
+    LL: 'D MMMM YYYY',
+    LLL: 'D MMMM YYYY HH:mm',
+    LLLL: 'dddd D MMMM YYYY HH:mm'
   },
-  calendar : {
-      sameDay : '[Aujourd’hui à] LT',
-      nextDay : '[Demain à] LT',
-      nextWeek : 'dddd [à] LT',
-      lastDay : '[Hier à] LT',
-      lastWeek : 'dddd [dernier à] LT',
-      sameElse : 'L'
+  calendar: {
+    sameDay: '[Aujourd’hui à] LT',
+    nextDay: '[Demain à] LT',
+    nextWeek: 'dddd [à] LT',
+    lastDay: '[Hier à] LT',
+    lastWeek: 'dddd [dernier à] LT',
+    sameElse: 'L'
   },
-  relativeTime : {
-      future : 'dans %s',
-      past : 'il y a %s',
-      s : 'quelques secondes',
-      m : 'une minute',
-      mm : '%d minutes',
-      h : 'une heure',
-      hh : '%d heures',
-      d : 'un jour',
-      dd : '%d jours',
-      M : 'un mois',
-      MM : '%d mois',
-      y : 'un an',
-      yy : '%d ans'
+  relativeTime: {
+    future: 'dans %s',
+    past: 'il y a %s',
+    s: 'quelques secondes',
+    m: 'une minute',
+    mm: '%d minutes',
+    h: 'une heure',
+    hh: '%d heures',
+    d: 'un jour',
+    dd: '%d jours',
+    M: 'un mois',
+    MM: '%d mois',
+    y: 'un an',
+    yy: '%d ans'
   },
-  dayOfMonthOrdinalParse : /\d{1,2}(er|e)/,
-  ordinal : function (number) {
-      return number + (number === 1 && 'er' );
+  dayOfMonthOrdinalParse: /\d{1,2}(er|e)/,
+  ordinal: function (number) {
+    return number + (number === 1 && 'er');
   },
-  meridiemParse : /PD|MD/,
-  isPM : function (input) {
-      return input.charAt(0) === 'M';
+  meridiemParse: /PD|MD/,
+  isPM: function (input) {
+    return input.charAt(0) === 'M';
   },
   // In case the meridiem units are not separated around 12, then implement
   // this function (look at locale/id.js for an example).
   // meridiemHour : function (hour, meridiem) {
   //     return /* 0-23 hour, given meridiem token and hour 1-12 */ ;
   // },
-  meridiem : function (hours, minutes, isLower) {
-      return hours < 12 ? 'PD' : 'MD';
+  meridiem: function (hours, minutes, isLower) {
+    return hours < 12 ? 'PD' : 'MD';
   },
-  week : {
-      dow : 1, // Monday is the first day of the week.
-      doy : 4  // Used to determine first week of the year.
+  week: {
+    dow: 1, // Monday is the first day of the week.
+    doy: 4  // Used to determine first week of the year.
   }
 });
 
@@ -95,22 +95,22 @@ function Reservation() {
     axios.get('http://localhost:8000/users')
       .then((result) => {
         setUsers(result.data);
-      }); 
+      });
     axios.get('http://localhost:8000/events')
       .then((result) => {
-      
-        setEvent(  result.data );
-   
-       
+
+        setEvent(result.data);
+
+
       });
   },
-  []);
+    []);
 
-  const numberReservation = (numberAdultReservation/1+ (numberchildrenReservation/2));
-  
+  const numberReservation = (numberAdultReservation / 1 + (numberchildrenReservation / 2));
+
   const addReservation = {
     numberAdultReservation,
-    numberchildrenReservation,  
+    numberchildrenReservation,
     reservationAllergie,
     reservationInfo,
     lastname,
@@ -131,23 +131,23 @@ function Reservation() {
       });
   };
 
-  
-  
+
+
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
-      
+
       let resultTemp = [];
       for (let i = 0; i < arrayTemp.length; i++) {
         resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, description: arrayTemp[i].id_user }];
       }
       setSearchResults(resultTemp);
-      
+
     }
   }, [searchValue]);
-  
-  const handleUser = (e, { result })=> {
-    const arrayTemp = users.filter(user => user.idUser  === result.description);
+
+  const handleUser = (e, { result }) => {
+    const arrayTemp = users.filter(user => user.idUser === result.description);
 
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
@@ -156,7 +156,7 @@ function Reservation() {
     setIdUser(arrayTemp[0].member_id);
     setLabelActive('active');
     setExistantUser(true);
-  
+
   }
   return (
 
@@ -177,19 +177,23 @@ function Reservation() {
         </div>
       </div>
       <div className="row">
-      <div className="input-field col s6">
-      <p>place disponibles :{event.capacity}</p>
-         </div>
         <div className="input-field col s6">
-        <select id="event" className="browser-default color_select" value= {eventReservation} onChange={event => {setEventReservation(event.target.value)}}>
-            {event.map((event, index) =>
-              <option key={event[index]} value={event.name_event}>{event.name_event} : {moment(event.date_b).calendar()}</option>
-            )};
-           </select> 
-
+          <p>
+            {'place disponibles :'}
+            {event.capacity}
+          </p>
         </div>
-
-       
+        <div className="input-field col s6">
+          <select id="event" className="browser-default color_select" value={eventReservation} onChange={(e) => { setEventReservation(e.target.value); }}>
+            {event.map((event, index) => (
+              <option key={event[index]} value={event.name_event}>
+                {event.name_event}
+                {' : '}
+                {moment(event.date_b).calendar()}
+              </option>
+            ))}
+          </select>
+        </div>
 
       </div>
       <div className=" row ">
@@ -256,11 +260,11 @@ function Reservation() {
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>
             <input
-              type="text" 
-              id="firstname" 
+              type="text"
+              id="firstname"
               className="validate"
               onChange={e => setFirstname(e.target.value)}
-              value={firstname} 
+              value={firstname}
             />
             <label htmlFor="firstname" className={labelActive}>Prénom</label>
           </div>

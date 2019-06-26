@@ -122,6 +122,9 @@ api.get('/activities', (req, res) => {
     res.send(data);
   });
 });
+
+
+// here explain what it is for
 api.get('/events', (req, res) => {
   connection.query('SELECT * FROM events', (err, result) => {
     if (err) throw err;
@@ -311,8 +314,7 @@ api.delete('/activities/:id', (req, res) => {
   const idActivity = req.params.id;
   connection.query('DELETE FROM activities WHERE id_activity = ?', [idActivity], err => {
     if (err) {
-      console.log(err);
-      res.status(500).send("Erreur lors de la suppression d'une activité");
+      res.status(500).send(`Erreur lors de la suppression d'une activité: ${err}`);
     } else {
       res.sendStatus(200);
     }
@@ -320,19 +322,36 @@ api.delete('/activities/:id', (req, res) => {
 });
 
 api.delete('/events/:id', (req, res) => {
-  // if ( s'il n'existe pas de registrations liés à l'event) {
   const idEvent = req.params.id;
-  connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], err => {
+  connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
     if (err) {
-      res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+      res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
     } else {
-      res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${res.affectedRows} affectedRows, ${res.warningCount} warnings)`)
+      if (result[0].nb_persons === 0) {
+        connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
+          if (err) {
+            res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+          } else {
+            res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
+          }
+        });
+      } else {
+        res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+      }
     }
   });
-  // } else {
-  //   res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-  // }
 });
+
+
+// SELECT 
+//   IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons,
+//   events.id_event
+// FROM events 
+// LEFT JOIN registrations ON registrations.event_id=events.id_event
+// WHERE events.id_event = ?
+// GROUP BY events.id_event
+// ;
+
 
 //------------------------------------------------Upload file-------------------------------------------------
 
