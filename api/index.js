@@ -322,24 +322,41 @@ api.delete('/activities/:id', (req, res) => {
 });
 
 api.delete('/events/:id', (req, res) => {
+  
   const idEvent = req.params.id;
-  connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
+
+  connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
     if (err) {
       res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+    };
+
+    if (result[0].nb_event === 0) {
+      console.log(result[0].nb_event)
+      res.status(304).send(`l'évènement n°${idEvent} n'existe pas.`)
     } else {
-      if (result[0].nb_persons === 0) {
-        connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
-          if (err) {
-            res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
-          } else {
-            res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
-          }
-        });
-      } else {
-        res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-      }
+      
+      connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
+        if (err) {
+          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+        };
+          
+        if (result[0].nb_persons === 0) {
+          connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
+            if (err) {
+              res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+            } else {
+              res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
+            }
+          });
+        } else {
+          res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+        };
+      
+      });
     }
+    
   });
+
 });
 
 

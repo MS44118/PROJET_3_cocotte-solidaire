@@ -6,7 +6,6 @@ import moment from 'moment';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 
-
 import './EventHome.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
