@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import moment from 'moment';
+import 'moment/locale/fr';
+import 'react-dates/initialize';
+import { DayPickerSingleDateController } from 'react-dates';
+import 'react-dates/lib/css/_datepicker.css';
+import isSameDay from 'react-dates/lib/utils/isSameDay';
 
 const type = document.getElementById('app').getAttribute('type');
 
 function App() {
-  const [events, setEvents] = useState([]);
+  const [eventList, setEventList] = useState([]);
   const [numberAdults, setNumberAdult] = useState(0);
   const [numberChildrens, setNumberChildren] = useState(0);
   const [firstname, setFirstname] = useState('');
@@ -20,30 +25,54 @@ function App() {
   const [reservation, setReservation] = useState({});
   const [activeForm, setActiveForm] = useState([]);
   const [displayForm, setDisplayForm] = useState('none');
+  const [date, setDate] = useState('');
+  const [focusList, setFocusList] = useState([]);
+  const [blockedList, setBlockedList] = useState([]);
+  // const [events, setEvents] = useState([]);
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/event/type/${type}`)
       .then((data) => {
-        setEvents(data.data);
+        // setEvents(data.data);
+        // let arrayTemp = [...events];
+        // arrayTemp.splice(1, arrayTemp.length)
+        // events && setEventList(arrayTemp);
+        setEventList(data.data);
+
       });
   }, []);
 
   useEffect(() => {
+    let arrayTempFocus = [];
+    let arrayTempBlocked = [];
+    for (let i = 0; i < eventList.length; i++){
+      if (eventList[i].nb_persons >= eventList[i].capacity){
+        arrayTempBlocked = [...arrayTempBlocked, moment(eventList[i].date_b)]
+        setBlockedList(arrayTempBlocked);
+      } else {
+        console.log(eventList.date_b)
+        arrayTempFocus = [...arrayTempFocus, moment(eventList[i].date_b)]
+        setFocusList(arrayTempFocus);
+      }  
+    }
+  }, [eventList.length])
+
+  useEffect(() => {
     const arrayTemp = [];
     if (displayForm === 'none') {
-      for (let i = 0; i < events.length; i += 1) {
+      for (let i = 0; i < eventList.length; i += 1) {
         arrayTemp[i] = false;
         setActiveForm(arrayTemp);
       }
     }
-  }, [events.length, displayForm]);
+  }, [eventList.length, displayForm]);
 
   const handleCreate = (index) => {
     const arrayTemp = activeForm;
     arrayTemp[index] = !activeForm[index];
     setActiveForm(arrayTemp);
     setDisplayForm('block');
-    setEventId(events[index].id_event)
+    setEventId(eventList[index].id_event)
   };
 
   useEffect(() => {
@@ -86,11 +115,32 @@ function App() {
     setInformation('');
   }
 
+  useEffect(() => {
+    const array = eventList.filter(event => moment(event.date_b).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD'));
+    setEventList(array)
+  }, [date]);
+
   return (
 
-    <div className="container">
+    <div>
+      <div className="container center" >
       <h1>Vue publique</h1>
-      {events && events.map((event, index) => (
+      <div style={{ margin: 'auto', display: 'table' }}>
+      <DayPickerSingleDateController
+        daySize={50}
+        numberOfMonths = {2}
+        autoFocus
+        date={date ? date : moment()}
+        onDateChange={date => setDate(date)}
+        isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
+        isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
+        id="reservation_calendar"
+      /> 
+      {date && console.log(date._d)}
+      </div>
+      </div>
+      <div className="container">
+      {eventList && eventList.map((event, index) => (
         <div>
           <div className="card horizontal" key={event[index]}>
             <div className="card-image">
@@ -246,7 +296,10 @@ function App() {
               </div>
               <div className='row'>
                 <div className='row'>
-                  <p className="col s10">Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton. Sinon ce sera directement sur place !</p>
+                  <p className="col s10">
+                    Adhésion obligatoire avec participation libre.
+                    Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton. Sinon ce sera directement sur place !
+                  </p>
                   <a
                     style={{ marginTop: '15px' }}
                     target="_blank"
@@ -272,6 +325,7 @@ function App() {
           </div>
         </div>
       ))}
+      </div>
     </div>
 
 
