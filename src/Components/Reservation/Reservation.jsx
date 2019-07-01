@@ -13,7 +13,7 @@ function Reservation() {
   const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
-  const [firstname, setFirstname] = useState(['']);
+  const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [memberNumber, setMemberNumber] = useState();
   const [phone, setPhone] = useState('');
