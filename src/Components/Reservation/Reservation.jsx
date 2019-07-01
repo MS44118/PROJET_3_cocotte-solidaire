@@ -7,6 +7,7 @@ import 'semantic-ui/dist/semantic.min.css';
 import moment from 'moment';
 import 'moment/locale/fr';
 import './Reservation.css';
+import { stringLiteral } from '@babel/types';
 
 function Reservation() {
 
@@ -84,12 +85,22 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
       for (let i = 0; i < arrayTemp.length; i++) {
       
         resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
+
       }
       setSearchResults(resultTemp);
+     
+
 
       
     }
-  }, [searchValue]);
+    if ( searchValue.length ===0){
+      setDisableInput(false)
+      } else {
+        setDisableInput(true)
+        setLabelActive('active');
+      }
+  }, [searchValue]  
+);
 
   const handleUser = (e, { result } )=> {
     
@@ -101,11 +112,19 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
     setMemberNumber(arrayTemp[0].member_id)
     setIdUser(arrayTemp[0].idUser);
     setMemberNumber(arrayTemp[0].memberId)
-    setLabelActive('active');
+   
     setExistantUser(true);
     // setDisableInput(true);
     console.log(arrayTemp[0]);
   }
+
+  // if (labelActive===true){
+  //  setDisableInput(true)
+  // }
+// const inputEmpty = ()=>{
+//   if (searchValue=== '')
+//   setDisableInput(false)
+// }
 
   return (
 
@@ -190,11 +209,11 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
             id="last_name"
             type="text"
             className="validate"
-            value={lastname}
-            disabled={disableInput}
             onChange={(e) => {
               setLastname(e.target.value);
             }}
+            value={lastname}
+            disabled={disableInput}
           />
           <label id="last_name" htmlFor="last_name" className={labelActive}>
             Nom
@@ -206,10 +225,10 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
             <input
               type="text"
               id="firstname"
-              disabled={disableInput}
               className="validate"
               onChange={e => setFirstname(e.target.value)}
               value={firstname}
+              disabled={disableInput}
             />
             <label htmlFor="firstname" className={labelActive}>Prénom</label>
           </div>
@@ -224,10 +243,10 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
           <input
             id="email"
             type="email"
-            disabled={disableInput}
             className="validate"
             onChange={e => setEmail(e.target.value)}
             value={email}
+            disabled={disableInput}
           />
           <label htmlFor="email" className={labelActive} >
             Email
@@ -238,11 +257,11 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
           <i className="material-icons prefix">phone</i>
           <input
             id="icon_telephone"
-            disabled={disableInput}
             type="tel"
             className="validate"
             onChange={e => setPhone(e.target.value)}
             value={phone}
+            disabled={disableInput}
           />
           <label htmlFor="icon_telephone" className={labelActive} >
             Téléphone
@@ -255,12 +274,12 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
           <input
             id="num_user"
             type="text"
-            disabled={disableInput}
             className="validate"
             onChange={e => setMemberNumber(e.target.value)}
+            disabled={disableInput}
             value={memberNumber}
           />
-          <label htmlFor="num_user" className={labelActive} >
+          <label htmlFor="num_user" className={labelActive}>
             Numéros d&apos;adhérent
           </label>
         </div>
