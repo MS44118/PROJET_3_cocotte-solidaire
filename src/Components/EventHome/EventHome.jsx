@@ -4,7 +4,7 @@ import axios from 'axios';
 import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
 
-// import Calendar from 'react-calendar';
+import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
 
@@ -98,7 +98,7 @@ function EventHome() {
       </div>
 
       <div className="row calendar">
-        {/* <Calendar /> */}
+        <Calendar />
       </div>
 
       <div className="row checkbox">
