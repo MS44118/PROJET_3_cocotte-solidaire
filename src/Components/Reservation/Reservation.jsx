@@ -6,27 +6,31 @@ import { Search } from 'semantic-ui-react';
 import 'semantic-ui/dist/semantic.min.css';
 import moment from 'moment';
 import './Reservation.css';
+import 'moment/locale/fr';
+import './Reservation.css';
+import { stringLiteral } from '@babel/types';
 
 function Reservation() {
 
-  const [event, setEvent] = useState([]);
+  const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
-  const [firstname, setFirstname] = useState(['']);
+  const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
-  const [memberId, setMemberId] = useState('');
+  const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
-  const [idUser, setIdUser] = useState('');
-  const [numberAdultReservation, setnumberAdultReservation] = useState(0);
+  const [idUser, setIdUser] = useState();
+  const [numberAdultReservation, setnumberAdultReservation] = useState();
   const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
   const [reservationAllergie, setReservationAllergie] = useState('');
   const [reservationInfo, setReservationInfo] = useState('');
-  const [eventReservation, setEventReservation] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState([{ title: '' }]);
+  const [searchResults, setSearchResults] = useState([{ title: '', id: '' }]);
   const [labelActive, setLabelActive] = useState('');
-  // const[dateEvent, setDateEvent]  = useState('')
+  const [eventId, setEventId] = useState(0);
   const [existantUser, setExistantUser] = useState(false);
+  const [disableInput, setDisableInput] = useState(false);
+
 
   useEffect(() => {
     M.AutoInit();
@@ -37,11 +41,10 @@ function Reservation() {
       });
     axios.get('http://localhost:8000/events')
       .then((result) => {
-
         setEvent(result.data);
 
-
       });
+
   },
     []);
 
@@ -58,8 +61,17 @@ function Reservation() {
     phone,
     idUser,
     existantUser,
+    eventId,
+    memberNumber,
 
   };
+axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
+          .then(function (response){
+            console.log(response)
+          })
+          .then(function(err){
+            console.log(err)
+          })
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
@@ -70,33 +82,44 @@ function Reservation() {
       });
   };
 
-
-
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
 
       let resultTemp = [];
       for (let i = 0; i < arrayTemp.length; i++) {
-        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, description: arrayTemp[i].id_user }];
+      
+        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
+
       }
       setSearchResults(resultTemp);
-
+     
     }
-  }, [searchValue]);
+    if ( searchValue.length ===0) {
+            setDisableInput(false)
+        } else {
+          setDisableInput(true)
+          setLabelActive('active');
+        }
+  }, [searchValue]  
+);
 
-  const handleUser = (e, { result }) => {
-    const arrayTemp = users.filter(user => user.idUser === result.description);
-
+  const handleUser = (e, { result } )=> {
+    
+    const arrayTemp = users.filter(user => user.idUser  === result.id);
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
     setPhone(arrayTemp[0].phone);
-    setIdUser(arrayTemp[0].member_id);
-    setLabelActive('active');
+    setMemberNumber(arrayTemp[0].member_id)
+    setIdUser(arrayTemp[0].idUser);
+    setMemberNumber(arrayTemp[0].memberId)
+   
     setExistantUser(true);
-
+    // setDisableInput(true);
+    console.log(arrayTemp[0]);
   }
+
   return (
 
     <div className="container">
@@ -114,24 +137,18 @@ function Reservation() {
             Envoyer
           </button>
         </div>
-      </div>
+      </div>  
       <div className="row">
+      <div className="input-field col s6">
+      <p>place disponibles :{events.capacity}</p>
+         </div>
         <div className="input-field col s6">
-          <p>
-            {'place disponibles :'}
-            {event.capacity}
-          </p>
-        </div>
-        <div className="input-field col s6">
-          <select id="event" className="browser-default color_select" value={eventReservation} onChange={(e) => { setEventReservation(e.target.value); }}>
-            {event.map((event, index) => (
-              <option key={event[index]} value={event.name_event}>
-                {event.name_event}
-                {' : '}
-                {moment(event.date_b).calendar()}
-              </option>
-            ))}
-          </select>
+        <select id="events" className="browser-default color_select" value= {eventId} onChange={(events) => setEventId(events.target.value)}>
+            {events.map((event, index) =>
+           <option key={event[index]}  value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
+            )};
+           </select> 
+
         </div>
 
       </div>
@@ -143,7 +160,7 @@ function Reservation() {
           <p> nombres d&apos;Adultes</p>
           <select onChange={e => setnumberAdultReservation(e.target.value)}>
             <option value="0" disabled selected>Nombre Adultes</option>
-            <option value="1">1</option>
+            <option value={1}>1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
@@ -170,7 +187,7 @@ function Reservation() {
           type="text"
           value={searchValue}
           results={searchResults}
-          onResultSelect={handleUser}
+          onResultSelect={(e, { result }) => handleUser(e, { result })}
           size="big"
           icon="none"
           placeholder="nom de famille"
@@ -186,10 +203,11 @@ function Reservation() {
             id="last_name"
             type="text"
             className="validate"
-            value=""
             onChange={(e) => {
               setLastname(e.target.value);
             }}
+            value={lastname}
+            disabled={disableInput}
           />
           <label id="last_name" htmlFor="last_name" className={labelActive}>
             Nom
@@ -204,6 +222,7 @@ function Reservation() {
               className="validate"
               onChange={e => setFirstname(e.target.value)}
               value={firstname}
+              disabled={disableInput}
             />
             <label htmlFor="firstname" className={labelActive}>Prénom</label>
           </div>
@@ -221,8 +240,9 @@ function Reservation() {
             className="validate"
             onChange={e => setEmail(e.target.value)}
             value={email}
+            disabled={disableInput}
           />
-          <label htmlFor="email" className={labelActive}>
+          <label htmlFor="email" className={labelActive} >
             Email
           </label>
         </div>
@@ -235,8 +255,9 @@ function Reservation() {
             className="validate"
             onChange={e => setPhone(e.target.value)}
             value={phone}
+            disabled={disableInput}
           />
-          <label htmlFor="icon_telephone" className={labelActive}>
+          <label htmlFor="icon_telephone" className={labelActive} >
             Téléphone
           </label>
         </div>
@@ -249,8 +270,9 @@ function Reservation() {
             id="num_user"
             type="text"
             className="validate"
-            onChange={e => setIdUser(e.target.value)}
-            value={idUser}
+            onChange={e => setMemberNumber(e.target.value)}
+            disabled={disableInput}
+            value={memberNumber}
           />
           <label htmlFor="num_user" className={labelActive}>
             Numéros d&apos;adhérent

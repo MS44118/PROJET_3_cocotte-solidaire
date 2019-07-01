@@ -323,6 +323,7 @@ api.delete('/activities/:id', (req, res) => {
 
 // to delete a specific activity from activity page or home admin
 api.delete('/events/:id', (req, res) => {
+  // if ( s'il n'existe pas de registrations liés à l'evenhttps://developer.mozilla.org/fr/docs/Web/API/GlobalEventHandlers/onkeypresst) {
   const idEvent = req.params.id;
   // controle si l'evenement existe
   connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
@@ -400,13 +401,14 @@ api.get('/events', (req, res) => {
       res.send(result);
     },
   );
-});
+}); 
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
- 
+  {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
+ console.log(reservation)
   if (reservation.existantUser === false){
-    connection.query(`INSERT INTO users (firstname,lastname,email,phone,member_id,anonym) VALUES ("${reservation.firstName}","${reservation.lastname}","${reservation.email}","${reservation.phone}","${reservation.idUser}",false)`, reservation, (err, result)=>{
+    connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result)=>{
       if (err){
         console.log(err)
         res.status(500).send("error while saving")
@@ -417,8 +419,8 @@ api.post('/zboub/', (req,res)=>{
   
         }else{
           console.log(result[0].id_user)
-          connection.query(`INSERT INTO events()`)
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id) VALUES("${reservation.numberAdultReservation}","${reservation.numberchildrenReservation}","${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}")`, 
+        
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.numberAdultReservation,10)},${parseInt(reservation.numberchildrenReservation, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -431,8 +433,31 @@ api.post('/zboub/', (req,res)=>{
       })
       }
     })
+  } else {
+    connection.query(`INSERT INTO registrations(quantityd_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.numberAdultReservation,10)},${parseInt(reservation.numberchildrenReservation, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${reservation.idUser}",${reservation.eventId})`, 
+            reservation, (err, result)=>{
+              if (err) {
+                console.log(err)
+                res.status(500).send("error while saving")
+              }else {
+                res.status(200)
+              }
+            });
+
   }
 });
+// api.put('/zob/:id',(req, res)=>{
+//   const idUser= req.param.id
+//   const changeInfo = req.query
+ 
+//   connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,[changeInfo, idUser],err=>{
+//     if (err){
+//       res.status(500).send("raté pov tanche")
+//     }else{
+//       res.sendStatus(200)
+//     }
+//   })
+// })
     
 //   connection.query(
  
