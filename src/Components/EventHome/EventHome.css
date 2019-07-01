@@ -51,18 +51,15 @@
   padding:0
 } */
 
-
 ul{
   margin: 0;
 }
 
-li{
-  text-align: justify;
-  vertical-align: middle;
-  margin-bottom: 1px;
-  margin-top: 1px;
+.col-icon{
+  display: flex;
+  justify-content: center;
+  align-self: center;
 }
-
 
 /* events list settings */
 .event-header{
@@ -96,3 +93,4 @@ li{
 .warning-icon{
   color: red !important
 }
+

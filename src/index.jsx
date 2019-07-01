@@ -10,6 +10,7 @@ import rootReducer from './Reducers/rootReducer';
 import './index.css';
 import 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
+import 'moment/locale/fr';
 
 const store = createStore(
   rootReducer,

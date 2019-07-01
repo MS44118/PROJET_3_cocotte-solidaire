@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-// import Calendar from 'react-calendar';
-import 'materialize-css/dist/css/materialize.min.css';
-import M from 'materialize-css/dist/js/materialize';
+import ReactTooltip from 'react-tooltip';
 
+// import Calendar from 'react-calendar';
+// import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
@@ -35,9 +35,9 @@ function EventHome() {
   };
 
   // Auto Init allows you to initialize all of the Materialize Components
-  useEffect(() => {
-    M.AutoInit();
-  }, []);
+  // useEffect(() => {
+  //   M.AutoInit();
+  // }, []);
 
   // api call
   useEffect(() => {
@@ -89,8 +89,6 @@ function EventHome() {
           <li>lien vers modifier reservation</li>
           <li>actions supprimer évenement</li>
           <li>actions supprimer reservation</li>
-          <li>hoover allergies</li>
-          <li>hoover commentaires</li>
           <li>lier les actions de filtrages au calendrier</li>
         </ul>
       </div>
@@ -153,15 +151,15 @@ function EventHome() {
           <li className="col s1">Evènement</li>
           <li className="col s1">Date</li>
           <li className="col s1">Heure</li>
-          <li className="col s1">adultes</li>
-          <li className="col s1">enfants</li>
+          <li className="col col-icon s1">adultes</li>
+          <li className="col col-icon s1">enfants</li>
           <li className="col s1">capacité</li>
-          <li className="col s1">modifier</li>
-          <li className="col s1">supprimer</li>
-          <li className="col s1">email</li>
-          <li className="col s1">allergies</li>
-          <li className="col s1">commentaires</li>
-          <li className="col s1"> </li>
+          <li className="col col-icon s1">email</li>
+          <li className="col col-icon s1">allergies</li>
+          <li className="col col-icon s1">commentaires</li>
+          <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
+          <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
+          <li className="col col-icon s1"> </li>
         </ul>
 
         {/* liste des evenements */}
@@ -171,38 +169,61 @@ function EventHome() {
               <li className="col s1">{event.name_event}</li>
               <li className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</li>
               <li className="col s1">{moment(event.date_b).format('HH:mm')}</li>
-              <li className="col s1">{event.nb_adults}</li>
-              <li className="col s1">{event.nb_children}</li>
+              <li className="col col-icon s1">{event.nb_adults}</li>
+              <li className="col col-icon s1">{event.nb_children}</li>
               <li className="col s1">
                 {event.nb_persons}
                 /
                 {event.capacity}
               </li>
-              <li className="col s1">
+              <li className="col col-icon s1">
+                {event.nb_emails < event.NB_REG
+                  ? (
+                    <p data-tip data-for="email">
+                      <i className="material-icons warning-icon">priority_high</i>
+                      <ReactTooltip id="email" type="error" effect="solid">
+                        <span>{event.nb_emails}</span>
+                      </ReactTooltip>
+                    </p>
+                  )
+                  : null
+                }
+              </li>
+              <li className="col col-icon s1">
+                {event.nb_allergies > 0
+                  ? (
+                    <p data-tip data-for="allergies">
+                      <i className="material-icons warning-icon">warning</i>
+                      <ReactTooltip id="allergies" type="error" effect="solid">
+                        <span>{event.nb_allergies}</span>
+                      </ReactTooltip>
+                    </p>
+                  )
+                  : null
+                }
+              </li>
+              <li className="col col-icon s1">
+                {event.nb_comments > 0
+                  ? (
+                    <p data-tip data-for="commentaires">
+                      <i className="material-icons icon-green">comment</i>
+                      <ReactTooltip id="commentaires" type="error" effect="solid">
+                        <span>{event.nb_comments}</span>
+                      </ReactTooltip>
+                    </p>
+                  )
+                  : null
+                }
+              </li>
+              <li className="col col-icon s1">
                 <i className="material-icons icon-green">create</i>
               </li>
-              <li className="col s1"><i className="material-icons icon-green">delete_forever</i></li>
-              <li className="col s1">
-                {event.nb_emails < event.NB_REG
-                  ? <i className="material-icons warning-icon">priority_high</i>
-                  : null
-                }
+              <li className="col col-icon s1">
+                <i className="material-icons icon-green">delete_forever</i>
               </li>
-              <li className="col s1">
-                {event.nb_allergies > 0
-                  ? <i className="material-icons warning-icon">warning</i>
-                  : null
-                }
-              </li>
-              <li className="col s1">
-                {event.nb_comments > 0
-                  ? <i className="material-icons icon-green">comment</i>
-                  : null
-                }
-              </li>
-              <li className="col s1">
+              <li className="col col-icon s1">
                 <button
-                  className="btn-floating waves-effect waves-light valign-wrapper"
+                  className="btn-floating btn-small waves-effect waves-light valign-wrapper"
                   onClick={() => setCollapses(
                     [
                       ...collapses.slice(0, [index]),

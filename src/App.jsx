@@ -7,7 +7,6 @@ import Reservation from './Components/Reservation/Reservation';
 import Users from './Components/Users/Users';
 import Home from './Components/Home/Home';
 import Footer from './Components/Footer/Footer';
-import 'moment/locale/fr';
 
 function App() {
   return (
