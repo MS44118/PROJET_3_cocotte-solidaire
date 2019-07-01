@@ -321,6 +321,7 @@ api.delete('/activities/:id', (req, res) => {
   });
 });
 
+// to delete a specific activity from activity page or home admin
 api.delete('/events/:id', (req, res) => {
   const idEvent = req.params.id;
   // controle si l'evenement existe
