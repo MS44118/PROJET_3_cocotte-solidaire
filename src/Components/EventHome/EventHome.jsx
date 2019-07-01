@@ -86,8 +86,6 @@ function EventHome() {
       <div className="row reste-a-faire">
         <ul>
           <li>RESTE A FAIRE: </li>
-          <li>lien vers modifier évènement</li>
-          <li>lien vers modifier reservation</li>
           <li>actions supprimer évenement</li>
           <li>actions supprimer reservation</li>
           <li>lier les actions de filtrages au calendrier</li>
@@ -217,10 +215,14 @@ function EventHome() {
                 }
               </li>
               <li className="col col-icon s1">
-                <i className="material-icons icon-green">create</i>
+                <Link to={`/event/${event.id_event}`}>
+                  <i className="material-icons icon-green">create</i>
+                </Link>
               </li>
               <li className="col col-icon s1">
+                {/* <Link to={`/event/${event.id_event}`}> */}
                 <i className="material-icons icon-green">delete_forever</i>
+                {/* </Link> */}
               </li>
               <li className="col col-icon s1">
                 <button

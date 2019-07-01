@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ReactTooltip from 'react-tooltip';
 
@@ -60,7 +61,7 @@ function ReservationHome(props) {
                   <p data-tip data-for={`email-registration-${registration.id_registration}`}>
                     <i className="material-icons warning-icon">priority_high</i>
                     <ReactTooltip id={`email-registration-${registration.id_registration}`} type="error">
-                      <span>{registration.email}</span>
+                      <span>email non renseigné: envoyer un SMS</span>
                     </ReactTooltip>
                   </p>
                 )
@@ -93,8 +94,16 @@ function ReservationHome(props) {
                 )
               }
             </li>
-            <li className="col col-icon s1"><i className="material-icons icon-green">create</i></li>
-            <li className="col col-icon s1"><i className="material-icons icon-green">delete_forever</i></li>
+            <li className="col col-icon s1">
+              <Link to={`/registration/${registration.id_registration}`}>
+                <i className="material-icons icon-green">create</i>
+              </Link>
+            </li>
+            <li className="col col-icon s1">
+              {/* <Link to={`/registration/${registration.id_registration}`}> */}
+              <i className="material-icons icon-green">delete_forever</i>
+              {/* </Link> */}
+            </li>
             <li className="col col-icon s1"> </li>
           </ul>
         ))
