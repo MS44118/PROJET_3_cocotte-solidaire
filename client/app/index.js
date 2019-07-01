@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import moment from 'moment';
+import toaster from 'toasted-notes';
 import 'moment/locale/fr';
 import 'react-dates/initialize';
 import { DayPickerSingleDateController } from 'react-dates';
 import 'react-dates/lib/css/_datepicker.css';
 import isSameDay from 'react-dates/lib/utils/isSameDay';
-import './index.css'
+import './index.css';
 
 const type = document.getElementById('app').getAttribute('type');
 
@@ -26,11 +27,11 @@ function App() {
   const [reservation, setReservation] = useState({});
   const [activeForm, setActiveForm] = useState([]);
   const [displayForm, setDisplayForm] = useState('none');
-  const [date, setDate] = useState('');
+  const [dateSelected, setDateSelected] = useState('');
   const [focusList, setFocusList] = useState([]);
   const [blockedList, setBlockedList] = useState([]);
   const [events, setEvents] = useState([]);
-  const [isOccuped, setIsOccuped] = useState(false)
+  const [isOccuped, setIsOccuped] = useState(false);
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/event/type/${type}`)
@@ -43,16 +44,16 @@ function App() {
   useEffect(() => {
     let arrayTempFocus = [];
     let arrayTempBlocked = [];
-    for (let i = 0; i < eventList.length; i++) {
+    for (let i = 0; i < eventList.length; i += 1) {
       if (eventList[i].nb_persons >= eventList[i].capacity) {
-        arrayTempBlocked = [...arrayTempBlocked, moment(eventList[i].date_b)]
+        arrayTempBlocked = [...arrayTempBlocked, moment(eventList[i].date_b)];
         setBlockedList(arrayTempBlocked);
       } else {
-        arrayTempFocus = [...arrayTempFocus, moment(eventList[i].date_b)]
+        arrayTempFocus = [...arrayTempFocus, moment(eventList[i].date_b)];
         setFocusList(arrayTempFocus);
       }
     }
-  }, [events.length])
+  }, [events.length]);
 
   useEffect(() => {
     const arrayTemp = [];
@@ -69,7 +70,7 @@ function App() {
     arrayTemp[index] = !activeForm[index];
     setActiveForm(arrayTemp);
     setDisplayForm('block');
-    setEventId(eventList[index].id_event)
+    setEventId(eventList[index].id_event);
   };
 
   useEffect(() => {
@@ -86,18 +87,26 @@ function App() {
       eventId,
     };
     setReservation(reservationTemp);
-  }, [numberAdults, numberChildrens, allergie, information, lastname, firstname, email, phone, memberId, eventId]);
+  }, [numberAdults, numberChildrens, allergie, information,
+    lastname, firstname, email, phone, memberId, eventId]);
 
   const sendReservation = () => {
     setDisplayForm('none');
-    console.log(reservation)
-    reservation.numberAdults > 0 && axios.post('http://localhost:8000/api/reservation/public/', reservation)
-      .then((res) => {
-        console.log(res.statusText);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (reservation.numberAdults > 0) {
+      axios.post('http://localhost:8000/api/reservation/public/', reservation)
+        .then((res) => {
+          if (res.status === 200) {
+            toaster.notify('Réservation bien enregistrée.', {
+              duration: 3000,
+            });
+          }
+        })
+        .catch(() => {
+          toaster.notify("Problème lors de l'enregistrement de la réservation. Veuillez réessayer.", {
+            duration: 3000,
+          });
+        });
+    }
     setNumberAdult(0);
     setNumberChildren(0);
     setAllergie('');
@@ -110,43 +119,43 @@ function App() {
     setEventId(null);
     setAllergie('');
     setInformation('');
-  }
+  };
 
   useEffect(() => {
     let numDateOccuped = 0;
-    for (let i = 0; i < focusList.length; i++) {
-      if (moment(date).format('YYYY-MM-DD') === moment(focusList[i]).format('YYYY-MM-DD') || moment(date).format('YYYY-MM-DD') === moment(blockedList[i]).format('YYYY-MM-DD')) {
-        numDateOccuped += 1
+    for (let i = 0; i < focusList.length; i += 1) {
+      if (moment(dateSelected).format('YYYY-MM-DD') === moment(focusList[i]).format('YYYY-MM-DD') || moment(dateSelected).format('YYYY-MM-DD') === moment(blockedList[i]).format('YYYY-MM-DD')) {
+        numDateOccuped += 1;
       }
     }
     if (numDateOccuped > 0) {
-      setIsOccuped(true)
+      setIsOccuped(true);
     } else {
-      setIsOccuped(false)
+      setIsOccuped(false);
     }
-  }, [date]);
+  }, [dateSelected]);
 
   useEffect(() => {
     if (isOccuped) {
-      const array = events.filter(event => moment(event.date_b).format('YYYY-MM-DD') === moment(date).format('YYYY-MM-DD'));
-      setEventList(array)
+      const array = events.filter(event => moment(event.date_b).format('YYYY-MM-DD') === moment(dateSelected).format('YYYY-MM-DD'));
+      setEventList(array);
     } else {
-      setEventList(events)
+      setEventList(events);
     }
-  }, [isOccuped, date])
+  }, [isOccuped, dateSelected]);
 
   return (
 
     <div>
-      <div className="container center" >
+      <div className="container center">
         <div className="calendar">
           <DayPickerSingleDateController
             daySize={50}
             numberOfMonths={2}
             autoFocus
             hideKeyboardShortcutsPanel
-            date={date ? date : moment()}
-            onDateChange={date => setDate(date)}
+            date={dateSelected || moment()}
+            onDateChange={date => setDateSelected(date)}
             isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
             isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
             id="reservation_calendar"
@@ -154,7 +163,8 @@ function App() {
         </div>
       </div>
       <div className="container">
-        {eventList.length && type <=2 &&
+        {eventList.length && type <= 2
+        && (
           <div className="render">
             <div className="container mssg">
               <p className="center-align subtitles"><span>{eventList[0].name_activity}</span></p>
@@ -162,68 +172,85 @@ function App() {
               {eventList[0].picture_activity ? <img className="activitie_pics" src={eventList[0].picture_activity} alt="cocotte_activite" /> : ''}
             </div>
           </div>
+        )
         }
         {eventList && eventList.map((event, index) => (
           <div>
-
-            {type > 2 ?
-              <div className="card horizontal" key={event[index]}>
-                <div className="card-image">
-                  <img src={event.picture_event ? event.picture_event : event.picture_activity} />
-                </div>
-                <div className="card-stacked">
-                  <span className="card-title title" >{event.name_event ? event.name_event : event.name_activity}</span>
-                  <div className="card-content">
-                    <p>{event.description_event ? event.description_event : event.description_activity}</p>
+            {type > 2
+              ? (
+                <div className="card horizontal" key={event[index]}>
+                  <div className="card-image">
+                    <img src={event.picture_event ? event.picture_event : event.picture_activity} alt="activitie_pic" />
                   </div>
-                  <div className="card-bottom">
-                    <p>Places restantes : {event.capacity - event.nb_persons}</p>
-                    <p>Date : {moment(event.date_b).locale('fr').format('LLL')}</p>
-                  </div>
-                  {event.capacity - event.nb_persons <= 0 ? null
-                    :
-                    <button
-                      type="button"
-                      className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                      onClick={() => handleCreate(index)}
-                    >
-                      RESERVER
-                 </button>
-                  }
-
-                </div>
-              </div>
-              :
-              <div>
-                <ul className="collection">
-                  <li className="collection-item row center-align">
-                    <p className="col s3">{event.name_event ? event.name_event : event.name_activity}</p>
-                    <p className="col s3">Places restantes : {event.capacity - event.nb_persons}</p>
-                    <p className="col s3">Date : {moment(event.date_b).locale('fr').format('LLL')}</p>
-                    <p className="col s3">
-                      {event.capacity - event.nb_persons <= 0 ? null
-                        :
+                  <div className="card-stacked">
+                    <span className="card-title title">{event.name_event ? event.name_event : event.name_activity}</span>
+                    <div className="card-content">
+                      <p>
+                        {event.description_event
+                          ? event.description_event : event.description_activity}
+                      </p>
+                    </div>
+                    <div className="card-bottom">
+                      <p>
+                        Places restantes :
+                        {event.capacity - event.nb_persons}
+                      </p>
+                      <p>
+                        Date :
+                        {moment(event.date_b).locale('fr').format('LLL')}
+                      </p>
+                    </div>
+                    {event.capacity - event.nb_persons <= 0 ? null
+                      : (
                         <button
                           type="button"
                           className="waves-effect waves-light btn-small teal darken-1 white-text col right"
                           onClick={() => handleCreate(index)}
                         >
                           RESERVER
-                 </button>
-                      }
-                    </p>
-                  </li>
-                </ul>
-              </div>
+                        </button>
+                      )
+                    }
+                  </div>
+                </div>
+              )
+              : (
+                <div>
+                  <ul className="collection">
+                    <li className="collection-item row center-align">
+                      <p className="col s3">{event.name_event ? event.name_event : event.name_activity}</p>
+                      <p className="col s3">
+                        Places restantes :
+                        {event.capacity - event.nb_persons}
+                      </p>
+                      <p className="col s3">
+                        Date :
+                        {moment(event.date_b).locale('fr').format('LLL')}
+                      </p>
+                      <p className="col s3">
+                        {event.capacity - event.nb_persons <= 0 ? null
+                          : (
+                            <button
+                              type="button"
+                              className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                              onClick={() => handleCreate(index)}
+                            >
+                              RESERVER
+                            </button>
+                          )
+                        }
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              )
             }
-
-
             <div style={{ display: activeForm[index] ? 'block' : 'none' }}>
-              <div style={{ borderColor: '#83bbb4', borderStyle: 'solid', borderWidth: '10px', padding: '20px' }}>
+              <div className="form">
                 <div className="row">
                   <div className="input-field col s6">
-                    <select className='browser-default' style={{ color: '#498e81' }} value={numberAdults} onChange={e => setNumberAdult(e.target.value)}>
-                      <option value="0" disabled selected>Nombre d'adultes</option>
+                    <select className="browser-default" value={numberAdults} onChange={e => setNumberAdult(e.target.value)}>
+                      <option value="0" disabled selected>Nombre d&apos;adultes</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -233,8 +260,8 @@ function App() {
                     </select>
                   </div>
                   <div className="input-field col s6">
-                    <select className='browser-default' style={{ color: '#498e81' }} value={numberChildrens} onChange={e => setNumberChildren(e.target.value)}>
-                      <option value="0" disabled selected>Nombres d'enfants</option>
+                    <select className="browser-default" value={numberChildrens} onChange={e => setNumberChildren(e.target.value)}>
+                      <option value="0" disabled selected>Nombres d&apos;enfants</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -244,7 +271,7 @@ function App() {
                     </select>
                   </div>
                 </div>
-                <div className="row" style={{ color: '#498e81' }}>
+                <div className="row">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">account_circle</i>
                     <input
@@ -268,29 +295,29 @@ function App() {
                         onChange={e => setFirstname(e.target.value)}
                         value={firstname}
                       />
-                      <label htmlFor="firstname" >Prénom</label>
+                      <label htmlFor="firstname">Prénom</label>
                     </div>
                   </div>
                 </div>
-                <div className='row' style={{ color: '#498e81' }}>
+                <div className="row">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">phone</i>
                     <input
                       value={phone}
-                      onChange={event => setPhone(event.target.value)}
+                      onChange={e => setPhone(e.target.value)}
                       id="icon_telephone"
                       type="tel"
                       className="validate"
                     />
                     <label htmlFor="icon_telephone">
                       Téléphone
-                  </label>
+                    </label>
                   </div>
                   <div className="input-field col s6">
                     <i className="material-icons prefix">email</i>
                     <input
                       value={email}
-                      onChange={event => setEmail(event.target.value)}
+                      onChange={e => setEmail(e.target.value)}
                       id="email"
                       type="email"
                       className="validate"
@@ -300,21 +327,21 @@ function App() {
                     </label>
                   </div>
                 </div>
-                <div className='row' style={{ color: '#498e81' }}>
+                <div className="row">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">person_add</i>
                     <input
                       value={memberId}
-                      onChange={event => setMemberId(event.target.value)}
+                      onChange={e => setMemberId(e.target.value)}
                       id="member_id"
                       type="text"
                       className="validate"
                     />
                     <label htmlFor="member_id">
-                      Numéro d'adhérent
+                      Numéro d&apos;adhérent
                     </label>
                   </div>
-                  <div className='row'>
+                  <div className="row">
                     <div className="row">
                       <div className="input-field col s12">
                         <i className="material-icons prefix">notification_important</i>
@@ -347,31 +374,32 @@ function App() {
                   </div>
 
                 </div>
-                <div className='row'>
-                  <div className='row'>
+                <div className="row">
+                  <div className="row">
                     <span className="col s10 info">
                       Adhésion obligatoire avec participation libre.
-                      Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton. Sinon ce sera directement sur place !
-                  </span>
+                      Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton.
+                      Sinon ce sera directement sur place !
+                    </span>
                     <a
-                      target="_blank"
+                      target="blank"
                       className="waves-effect waves-light btn-small teal darken-1 white-text col s2 right"
                       href="https://www.lacocottesolidaire.fr/adhesion"
                     >
                       ADHERER
-                  </a>
+                    </a>
                   </div>
-                  <span className='col info'>Pour les groupes de plus de six personnes, réservez par téléphone au 06 51 49 20 82 !</span>
-                  <span className='col merci'>merci et à très vite</span>
+                  <span className="col info">Pour les groupes de plus de six personnes, réservez par téléphone au 06 51 49 20 82 !</span>
+                  <span className="col merci">merci et à très vite</span>
                 </div>
-                <div className='row' style={{ display: 'grid', width: '20%' }}>
+                <div className="row" style={{ display: 'grid', width: '20%' }}>
                   <button
                     type="button"
                     className="waves-effect waves-light btn-small teal darken-1 white-text"
                     onClick={() => sendReservation(index)}
                   >
                     ENVOYER
-                </button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -379,9 +407,7 @@ function App() {
         ))}
       </div>
     </div>
-
-
-  )
+  );
 }
 
-ReactDOM.render(<App />, document.getElementById('app'))
+ReactDOM.render(<App />, document.getElementById('app'));

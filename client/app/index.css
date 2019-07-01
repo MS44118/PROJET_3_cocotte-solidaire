@@ -109,3 +109,12 @@ p{
   width: 100%;
   margin-top: 5vh;
 }
+.form{
+  border-color: #83bbb4;
+  border-style: solid;
+  border-width: 10px;
+  padding: 20px;
+}
+.input-field{
+  color: #498e81;
+}
