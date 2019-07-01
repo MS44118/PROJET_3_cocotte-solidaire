@@ -472,6 +472,89 @@ api.post('/zboub/', (req,res)=>{
 
 // })
 
+api.get('/api/event/type/:id', (req, res) => {
+  const idActivity = req.params.id;
+  if(idActivity>2){
+    connection.query(
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      (err, result) => {
+        if (err) throw err;
+        res.send(result);
+      }
+    );
+  } else {
+    connection.query(
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      (err, result) => {
+        if (err) throw err;
+        res.send(result);
+      }
+    );
+  }
+});
+
+api.post('/api/reservation/public/', (req, res) => {
+  const values = req.body;
+  console.log(values)
+  {values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null}
+  {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
+  {values.email ? values.email = `'${values.email}'` : values.email = null}
+  {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}
+  {values.memberId ? values.memberId = `'${values.memberId}'` : values.memberId = null}
+  {values.allergie ? values.allergie = `'${values.allergie}'` : values.allergie = null}
+  {values.information ? values.information = `'${values.information}'` : values.information = null}
+  {values.numberAdults ? values.numberAdults = `'${values.numberAdults}'` : values.numberAdults = null}
+  {values.numberChildrens ? values.numberChildrens = `'${values.numberChildrens}'` : values.numberChildrens = null}
+  {values.eventId ? values.eventId = `'${values.eventId}'` : values.eventId = null}
+  if(values.memberId){
+    connection.query(
+      `SELECT id_user FROM users WHERE member_id=${values.memberId}`,(err, result) => {
+        if(err){
+          console.log(err)
+        }else{
+          console.log(result[0].id_user)
+          connection.query(
+            `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${result[0].id_user}, ${values.eventId})`,
+            (err, result) => {
+              if(err){
+                console.log(err)
+              } else {
+                res.status(200)
+              }
+            }
+          )
+        }
+      }
+    )
+  } else {
+    connection.query(
+      `INSERT INTO users (firstname, lastname, email, phone, anonym) VALUES(${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, false)`,
+      (err, result) => {
+        if(err){
+          console.log(err)
+        } else {
+          connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
+            if(err){
+              console.log(err)
+            } else {
+              connection.query(
+                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${result[0].id_user}, ${values.eventId})`,
+                (err, result) => {
+                  if(err){
+                    console.log(err)
+                  } else {
+                    res.status(200)
+                  }
+                }
+              )
+            }
+          })
+        }
+      }
+    )
+  }
+});
+
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
   console.log('API is running on localhost:8000');

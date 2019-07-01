@@ -45,6 +45,7 @@ function EventHome() {
       .then((result) => {
         setEvents(result.data);
         setFilteredEvents(result.data);
+        console.log(result.data)
       });
   }, []);
 
