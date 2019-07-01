@@ -64,7 +64,7 @@ function ReservationHome(props) {
                     </ReactTooltip>
                   </p>
                 )
-                : registration.email
+                : null
               }
             </li>
             <li className="col col-icon s1">
