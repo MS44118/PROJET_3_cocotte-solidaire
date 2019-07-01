@@ -5,13 +5,10 @@ import React, { useEffect, useState } from 'react';
 import { Search } from 'semantic-ui-react';
 import 'semantic-ui/dist/semantic.min.css';
 import moment from 'moment';
-<<<<<<< HEAD
 import './Reservation.css';
-=======
 import 'moment/locale/fr';
 import './Reservation.css';
 import { stringLiteral } from '@babel/types';
->>>>>>> reservationBis
 
 function Reservation() {
 
