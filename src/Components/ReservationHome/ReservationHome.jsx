@@ -49,19 +49,17 @@ function ReservationHome(props) {
             <li className="col s1">{registration.lastname}</li>
             <li className="col col-icon s1">
               {registration.quantity_adult}
-              {/* {' adul.'} */}
             </li>
             <li className="col col-icon s1">
               {registration.quantity_children}
-              {/* {' enf.'} */}
             </li>
             <li className="col s1">{registration.phone}</li>
             <li className="col col-icon s1">
-              { registration.email === ''
+              { registration.email === ' ' || '' || !registration.email
                 ? (
-                  <p data-tip data-for="email-registration">
+                  <p data-tip data-for={`email-registration-${registration.id_registration}`}>
                     <i className="material-icons warning-icon">priority_high</i>
-                    <ReactTooltip id="email-registration" type="error">
+                    <ReactTooltip id={`email-registration-${registration.id_registration}`} type="error">
                       <span>{registration.email}</span>
                     </ReactTooltip>
                   </p>
@@ -70,12 +68,12 @@ function ReservationHome(props) {
               }
             </li>
             <li className="col col-icon s1">
-              { registration.allergie === ' '
+              { registration.allergie === ' ' || '' || !registration.allergie
                 ? null
                 : (
-                  <p data-tip data-for="allergies-registration">
+                  <p data-tip data-for={`allergies-registration-${registration.id_registration}`}>
                     <i className="material-icons warning-icon">warning</i>
-                    <ReactTooltip id="allergies-registration" type="error">
+                    <ReactTooltip id={`allergies-registration-${registration.id_registration}`} type="error">
                       <span>{registration.allergie}</span>
                     </ReactTooltip>
                   </p>
@@ -83,12 +81,12 @@ function ReservationHome(props) {
               }
             </li>
             <li className="col col-icon s1">
-              { registration.comment === ' '
+              { registration.comment === ' ' || '' || !registration.comment
                 ? null
                 : (
-                  <p data-tip data-for="commentaires-registration">
+                  <p data-tip data-for={`comments-registration-${registration.id_registration}`}>
                     <i className="material-icons icon-green">comment</i>
-                    <ReactTooltip id="commentaires-registration" type="error">
+                    <ReactTooltip id={`comments-registration-${registration.id_registration}`} type="error">
                       <span>{registration.comment}</span>
                     </ReactTooltip>
                   </p>
