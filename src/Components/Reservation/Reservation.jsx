@@ -16,9 +16,9 @@ function Reservation() {
   const [email, setEmail] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
-  const [memberNumber, setMemberNumber] = useState();
+  const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
-  const [idUser, setIdUser] = useState('');
+  const [idUser, setIdUser] = useState();
   const [numberAdultReservation, setnumberAdultReservation] = useState();
   const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
   const [reservationAllergie, setReservationAllergie] = useState('');
@@ -89,16 +89,13 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
       }
       setSearchResults(resultTemp);
      
-
-
-      
     }
-    if ( searchValue.length ===0){
-      setDisableInput(false)
-      } else {
-        setDisableInput(true)
-        setLabelActive('active');
-      }
+    if ( searchValue.length ===0) {
+            setDisableInput(false)
+        } else {
+          setDisableInput(true)
+          setLabelActive('active');
+        }
   }, [searchValue]  
 );
 
@@ -117,14 +114,6 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
     // setDisableInput(true);
     console.log(arrayTemp[0]);
   }
-
-  // if (labelActive===true){
-  //  setDisableInput(true)
-  // }
-// const inputEmpty = ()=>{
-//   if (searchValue=== '')
-//   setDisableInput(false)
-// }
 
   return (
 

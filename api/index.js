@@ -365,10 +365,11 @@ api.get('/events', (req, res) => {
       res.send(result);
     },
   );
-});
+}); 
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
+  {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
  console.log(reservation)
   if (reservation.existantUser === false){
     connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result)=>{
@@ -383,7 +384,7 @@ api.post('/zboub/', (req,res)=>{
         }else{
           console.log(result[0].id_user)
         
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.numberAdultReservation},${reservation.numberchildrenReservation},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.numberAdultReservation,10)},${parseInt(reservation.numberchildrenReservation, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -409,18 +410,18 @@ api.post('/zboub/', (req,res)=>{
 
   }
 });
-api.put('/zob/:id',(req, res)=>{
-  const idUser= req.param.id
-  const changeInfo = req.query
+// api.put('/zob/:id',(req, res)=>{
+//   const idUser= req.param.id
+//   const changeInfo = req.query
  
-  connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,[changeInfo, idUser],err=>{
-    if (err){
-      res.status(500).send("raté pov tanche")
-    }else{
-      res.sendStatus(200)
-    }
-  })
-})
+//   connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,[changeInfo, idUser],err=>{
+//     if (err){
+//       res.status(500).send("raté pov tanche")
+//     }else{
+//       res.sendStatus(200)
+//     }
+//   })
+// })
     
 //   connection.query(
  
