@@ -321,6 +321,7 @@ api.delete('/activities/:id', (req, res) => {
   });
 });
 
+// to delete a specific activity from activity page or home admin
 api.delete('/events/:id', (req, res) => {
   // if ( s'il n'existe pas de registrations liés à l'evenhttps://developer.mozilla.org/fr/docs/Web/API/GlobalEventHandlers/onkeypresst) {
   const idEvent = req.params.id;

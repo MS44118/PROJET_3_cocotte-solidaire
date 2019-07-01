@@ -99,7 +99,7 @@ function EventHome() {
       </div>
 
       <div className="row calendar">
-        <Calendar />
+        {/* <Calendar /> */}
       </div>
 
       <div className="row checkbox">
@@ -180,9 +180,9 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_emails < event.NB_REG
                   ? (
-                    <p data-tip data-for="email">
+                    <p data-tip data-for={`email-event-${event.id_event}`}>
                       <i className="material-icons warning-icon">priority_high</i>
-                      <ReactTooltip id="email" type="error" effect="solid">
+                      <ReactTooltip id={`email-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_emails}</span>
                       </ReactTooltip>
                     </p>
@@ -193,9 +193,9 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_allergies > 0
                   ? (
-                    <p data-tip data-for="allergies">
+                    <p data-tip data-for={`allergies-event-${event.id_event}`}>
                       <i className="material-icons warning-icon">warning</i>
-                      <ReactTooltip id="allergies" type="error" effect="solid">
+                      <ReactTooltip id={`allergies-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_allergies}</span>
                       </ReactTooltip>
                     </p>
@@ -206,9 +206,9 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_comments > 0
                   ? (
-                    <p data-tip data-for="commentaires">
+                    <p data-tip data-for={`commentaires-event-${event.id_event}`}>
                       <i className="material-icons icon-green">comment</i>
-                      <ReactTooltip id="commentaires" type="error" effect="solid">
+                      <ReactTooltip id={`commentaires-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_comments}</span>
                       </ReactTooltip>
                     </p>
