@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
-import Popup from 'reactjs-popup';
-
+import { Modal, message, Popconfirm } from 'antd';
 
 // import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
+import 'antd/dist/antd.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
 
@@ -18,6 +18,46 @@ function EventHome() {
   const [filteredEvents, setFilteredEvents] = useState([]);
   // to collapse all the registrations for a specific event
   const [collapses, setCollapses] = useState([]);
+  const [deleteModal, setDeleteModal] = useState([]);
+  // const { confirm } = Modal;
+
+  const handleStateMapped = (i, state, func) => {
+    func(
+      [
+        ...state.slice(0, [i]),
+        !state[i],
+        ...state.slice([i + 1], state.length),
+      ],
+    );
+  };
+
+  // to delete an event
+  const deleteEvent = (id) => {
+    message.config({
+      top: 150,
+      duration: 2,
+      maxCount: 3,
+    });
+    axios.delete(`http://localhost:8000/event/${id}`)
+      .then((res) => {
+        return (
+          <Popconfirm 
+            title="Are you sure delete this task?"
+            onConfirm={confirm}
+            onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          
+          message.success(`évènement ${id} supprimé avec succès: ${res}`);
+          >
+            ok
+          </Popconfirm>
+        )
+      })
+      .catch((err) => {
+        message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
+      });
+  };
 
   // { filtre_xxxxx: true, check_xxxxx: true }
   const [filterCuisiner, setFilterCuisiner] = useState(true);
@@ -50,20 +90,6 @@ function EventHome() {
       });
   }, []);
 
-  // to store the result of event deletion
-  const [deletionRes, setDeletionRes] = useState()
-
-  // to delete an event
-  const deleteEvent = (id) => {
-    axios.delete(`http://localhost:8000/event/${id}`)
-      .then((res) => { 
-        setDeletionRes(res.data);
-      })
-      .catch((err) => { 
-        setDeletionRes(err);
-      });
-  };
-
   // set filters according to checkboxes
   useEffect(() => {
     if (events.length > 0) {
@@ -92,7 +118,10 @@ function EventHome() {
   useEffect(() => {
     let array = [];
     array = events.map(() => (false));
+    // if the list of registrations is visible or not
     setCollapses(array);
+    // if the list of modale to confirm deletion is visible or not
+    setDeleteModal(array);
   }, [events, filteredEvents]);
 
   return (
@@ -200,12 +229,12 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_emails < event.NB_REG
                   ? (
-                    <p data-tip data-for={`email-event-${event.id_event}`}>
+                    <div data-tip data-for={`email-event-${event.id_event}`}>
                       <i className="material-icons warning-icon">email</i>
                       <ReactTooltip id={`email-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_emails}</span>
                       </ReactTooltip>
-                    </p>
+                    </div>
                   )
                   : null
                 }
@@ -213,12 +242,12 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_allergies > 0
                   ? (
-                    <p data-tip data-for={`allergies-event-${event.id_event}`}>
+                    <div data-tip data-for={`allergies-event-${event.id_event}`}>
                       <i className="material-icons warning-icon">warning</i>
                       <ReactTooltip id={`allergies-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_allergies}</span>
                       </ReactTooltip>
-                    </p>
+                    </div>
                   )
                   : null
                 }
@@ -226,12 +255,12 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_comments > 0
                   ? (
-                    <p data-tip data-for={`commentaires-event-${event.id_event}`}>
+                    <div data-tip data-for={`commentaires-event-${event.id_event}`}>
                       <i className="material-icons icon-green">comment</i>
                       <ReactTooltip id={`commentaires-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_comments}</span>
                       </ReactTooltip>
-                    </p>
+                    </div>
                   )
                   : null
                 }
@@ -243,97 +272,38 @@ function EventHome() {
               </li>
 
               <li className="col col-icon s1">
-                <Popup
-                  trigger={
-                    (
-                      <button type="button" className="button link-button">
-                        <i className="material-icons icon-green">delete_forever</i>
-                      </button>
-                    )
-                  }
-                  modal
-                  closeOnDocumentClick
+                <button
+                  type="submit"
+                  className="button link-button"
+                  onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}
                 >
-                  {close => (
-                    <div>
-                      <h3>vous allez supprimer l'évènement suivant: </h3>
-                      <p>
-                        {'évènement n° '}
-                        {event.id_event}
-                        {' '}
-                        {event.name_event}
-                      </p>
-                      <p>
-                        {event.NB_REG}
-                        {' participants inscrits'}
-                      </p>
-                      <p>
-                        {moment(event.date_b).format('dddd Do MMM YYYY - HH:mm -> ')}
-                        {moment(event.date_e).format('HH:mm')}
-                      </p>
-                      <button
-                        type="submit"
-                        className="close btn-small waves-effect waves-light valign-wrapper"
-                        onClick={close}
-                        submit={() => deleteEvent(event.id_event)}
-                      >
-                        confirmer suppression
-                      </button>
-                    </div>
-                  )
-                  }
-                </Popup>
-                
-                
-                {/* <Popup
-                  trigger={
-                    (
-                      <button type="button" className="button link-button">
-                        <i className="material-icons icon-green">delete_forever</i>
-                      </button>
-                    )
-                  }
-                  modal
-                  closeOnDocumentClick
+                  <i className="material-icons icon-green">delete_forever</i>
+                </button>
+                <Modal
+                  title={`Vous aller supprimer l'évènement: ${event.id_event}`}
+                  visible={deleteModal[index]}
+                  onOk={() => {
+                    handleStateMapped(index, deleteModal, setDeleteModal);
+                    deleteEvent(event.id_event);
+                  }}
+                  onCancel={() => handleStateMapped(index, deleteModal, setDeleteModal)}
                 >
-                  <h3>vous allez supprimer l'évènement suivant: </h3>
+                  <p>{event.name_event}</p>
                   <p>
-                    {'évènement n° '}
-                    {event.id_event}
-                    {' '}
-                    {event.name_event}
+                    {moment(event.date_b).format('dddDo/MM/YY HH:mm-')}
+                    {moment(event.date_e).format('HH:mm')}
                   </p>
                   <p>
                     {event.NB_REG}
-                    {' participants inscrits'}
+                    {' réservations'}
                   </p>
-                  <p>
-                    {moment(event.date_b).format('dddd Do MMM YYYY - HH:mm -> ')}
-                    {moment(event.date_e).format('HH:mm')}
-                  </p>
-                  <button
-                    className="close btn-small waves-effect waves-light valign-wrapper"
-                    type="submit"
-                    onClick={() => {
-                      deleteEvent(event.id_event);
-                      close;
-                    }}
-                  >
-                    confirmer suppression
-                  </button>
-                </Popup> */}
+                </Modal>
               </li>
 
               <li className="col col-icon s1">
                 <button
                   className="btn-floating btn-small waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapses(
-                    [
-                      ...collapses.slice(0, [index]),
-                      !collapses[index],
-                      ...collapses.slice([index + 1], collapses.length),
-                    ],
-                  )}
+                  onClick={() => handleStateMapped(index, collapses, setCollapses)}
                   type="submit"
                   name="action"
                 >
@@ -355,7 +325,7 @@ function EventHome() {
               }
             </ul>
 
-            {/* affiche lien pour nouvelle résa si collapse activé et si évènement pas complet */}
+            {/* affiche lien pour nouvelle résa si évènement pas complet */}
             <ul>
               {collapses[index] === true && event.nb_persons < event.capacity
                 ? (
