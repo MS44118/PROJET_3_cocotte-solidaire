@@ -5,6 +5,7 @@ import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
 import Popup from 'reactjs-popup';
 
+
 // import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
@@ -48,6 +49,20 @@ function EventHome() {
         setFilteredEvents(result.data);
       });
   }, []);
+
+  // to store the result of event deletion
+  const [deletionRes, setDeletionRes] = useState()
+
+  // to delete an event
+  const deleteEvent = (id) => {
+    axios.delete(`http://localhost:8000/event/${id}`)
+      .then((res) => { 
+        setDeletionRes(res.data);
+      })
+      .catch((err) => { 
+        setDeletionRes(err);
+      });
+  };
 
   // set filters according to checkboxes
   useEffect(() => {
@@ -153,12 +168,19 @@ function EventHome() {
           <li className="col col-icon s1">adultes</li>
           <li className="col col-icon s1">enfants</li>
           <li className="col s1">capacité</li>
-          <li className="col col-icon s1">email</li>
-          <li className="col col-icon s1">allergies</li>
-          <li className="col col-icon s1">commentaires</li>
+          {/* <li className="col col-icon s1">email</li> */}
+          <li className="col col-icon s1"><i className="material-icons icon-white">email</i></li>
+          {/* <li className="col col-icon s1">allergies</li> */}
+          <li className="col col-icon s1"><i className="material-icons icon-white">warning</i></li>
+          {/* <li className="col col-icon s1">commentaires</li> */}
+          <li className="col col-icon s1"><i className="material-icons icon-white">comment</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
           <li className="col col-icon s1"> </li>
+          {/* <i className="material-icons icon-white">pan_tool</i>
+          <i className="material-icons icon-white">restaurant</i>
+          <i className="material-icons icon-white">restaurant_menu</i>
+          <i className="material-icons icon-white">cake</i>  */}
         </ul>
 
         {/* liste des evenements */}
@@ -166,7 +188,7 @@ function EventHome() {
           <div className="event" key={event.id_event} data-genre={event.name_event}>
             <ul className="event-item row valign-wrapper center-align">
               <li className="col s1">{event.name_event}</li>
-              <li className="col s1">{moment(event.date_b).format('dd.Do MMM YY')}</li>
+              <li className="col s1">{moment(event.date_b).format('dddDo/MM/YY')}</li>
               <li className="col s1">{moment(event.date_b).format('HH:mm')}</li>
               <li className="col col-icon s1">{event.nb_adults}</li>
               <li className="col col-icon s1">{event.nb_children}</li>
@@ -179,7 +201,7 @@ function EventHome() {
                 {event.nb_emails < event.NB_REG
                   ? (
                     <p data-tip data-for={`email-event-${event.id_event}`}>
-                      <i className="material-icons warning-icon">priority_high</i>
+                      <i className="material-icons warning-icon">email</i>
                       <ReactTooltip id={`email-event-${event.id_event}`} type="error" effect="solid">
                         <span>{event.nb_emails}</span>
                       </ReactTooltip>
@@ -232,6 +254,48 @@ function EventHome() {
                   modal
                   closeOnDocumentClick
                 >
+                  {close => (
+                    <div>
+                      <h3>vous allez supprimer l'évènement suivant: </h3>
+                      <p>
+                        {'évènement n° '}
+                        {event.id_event}
+                        {' '}
+                        {event.name_event}
+                      </p>
+                      <p>
+                        {event.NB_REG}
+                        {' participants inscrits'}
+                      </p>
+                      <p>
+                        {moment(event.date_b).format('dddd Do MMM YYYY - HH:mm -> ')}
+                        {moment(event.date_e).format('HH:mm')}
+                      </p>
+                      <button
+                        type="submit"
+                        className="close btn-small waves-effect waves-light valign-wrapper"
+                        onClick={close}
+                        submit={() => deleteEvent(event.id_event)}
+                      >
+                        confirmer suppression
+                      </button>
+                    </div>
+                  )
+                  }
+                </Popup>
+                
+                
+                {/* <Popup
+                  trigger={
+                    (
+                      <button type="button" className="button link-button">
+                        <i className="material-icons icon-green">delete_forever</i>
+                      </button>
+                    )
+                  }
+                  modal
+                  closeOnDocumentClick
+                >
                   <h3>vous allez supprimer l'évènement suivant: </h3>
                   <p>
                     {'évènement n° '}
@@ -248,13 +312,16 @@ function EventHome() {
                     {moment(event.date_e).format('HH:mm')}
                   </p>
                   <button
-                    className="btn-small waves-effect waves-light valign-wrapper"
+                    className="close btn-small waves-effect waves-light valign-wrapper"
                     type="submit"
-                    onClick="supprimer"
+                    onClick={() => {
+                      deleteEvent(event.id_event);
+                      close;
+                    }}
                   >
                     confirmer suppression
                   </button>
-                </Popup>
+                </Popup> */}
               </li>
 
               <li className="col col-icon s1">

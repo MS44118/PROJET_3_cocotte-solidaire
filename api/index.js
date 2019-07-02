@@ -44,7 +44,7 @@ connection.connect((err) => {
 // to request all the future events from now() ==> EventHome.js
 api.get('/api/future-events', (req, res) => {
   connection.query(
-    'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id GROUP BY events.id_event;',
+    'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id GROUP BY events.id_event ORDER BY events.date_b ASC;',
     (err, result) => {
       if (err) throw err;
       res.send(result);
@@ -68,6 +68,7 @@ api.get('/api/future-events', (req, res) => {
 //   LEFT JOIN users ON users.id_user=registrations.user_id
 // ---------- CONDIITON WERE date_b > now() A RAJOUTER -----------------------
 // GROUP BY events.id_event
+// ORDER BY events.date_b ASC
 // ;
 
 // ---------- CONDIITON WERE date_b >  -----------------------
@@ -322,9 +323,10 @@ api.delete('/activities/:id', (req, res) => {
 });
 
 // to delete a specific activity from activity page or home admin
-api.delete('/events/:id', (req, res) => {
+api.delete('/event/:id', (req, res) => {
   // if ( s'il n'existe pas de registrations liés à l'evenhttps://developer.mozilla.org/fr/docs/Web/API/GlobalEventHandlers/onkeypresst) {
   const idEvent = req.params.id;
+  console.log(`test suppression sur l'evenement ${idEvent}: `)
   // controle si l'evenement existe
   connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
     if (err) {
@@ -332,7 +334,7 @@ api.delete('/events/:id', (req, res) => {
     };
     if (result[0].nb_event === 0) {
       console.log(`l'évènement n°${idEvent} n'existe pas.`)
-      res.status(304).send(`l'évènement n°${idEvent} n'existe pas.`)
+      res.status(410).send(`l'évènement n°${idEvent} n'existe pas.`)
     } else {
       // controle si l'evenement contient des inscriptions
       connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
