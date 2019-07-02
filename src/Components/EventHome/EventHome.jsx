@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
+import Popup from 'reactjs-popup';
 
-import Calendar from 'react-calendar';
+// import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
 
@@ -45,7 +46,6 @@ function EventHome() {
       .then((result) => {
         setEvents(result.data);
         setFilteredEvents(result.data);
-        console.log(result.data)
       });
   }, []);
 
@@ -219,11 +219,44 @@ function EventHome() {
                   <i className="material-icons icon-green">create</i>
                 </Link>
               </li>
+
               <li className="col col-icon s1">
-                {/* <Link to={`/event/${event.id_event}`}> */}
-                <i className="material-icons icon-green">delete_forever</i>
-                {/* </Link> */}
+                <Popup
+                  trigger={
+                    (
+                      <button type="button" className="button link-button">
+                        <i className="material-icons icon-green">delete_forever</i>
+                      </button>
+                    )
+                  }
+                  modal
+                  closeOnDocumentClick
+                >
+                  <h3>vous allez supprimer l'évènement suivant: </h3>
+                  <p>
+                    {'évènement n° '}
+                    {event.id_event}
+                    {' '}
+                    {event.name_event}
+                  </p>
+                  <p>
+                    {event.NB_REG}
+                    {' participants inscrits'}
+                  </p>
+                  <p>
+                    {moment(event.date_b).format('dddd Do MMM YYYY - HH:mm -> ')}
+                    {moment(event.date_e).format('HH:mm')}
+                  </p>
+                  <button
+                    className="btn-small waves-effect waves-light valign-wrapper"
+                    type="submit"
+                    onClick="supprimer"
+                  >
+                    confirmer suppression
+                  </button>
+                </Popup>
               </li>
+
               <li className="col col-icon s1">
                 <button
                   className="btn-floating btn-small waves-effect waves-light valign-wrapper"
