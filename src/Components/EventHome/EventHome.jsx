@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
-import ReactTooltip from 'react-tooltip';
-import { Modal, message } from 'antd';
+import { Modal, message, Tooltip } from 'antd';
 
-// import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
+import Calendar from 'react-calendar';
 import './EventHome.css';
 import 'antd/dist/antd.css';
 
@@ -40,7 +39,7 @@ function EventHome() {
     });
     axios.delete(`http://localhost:8000/event/${id}`)
       .then((res) => {
-        message.success(`évènement ${id} supprimé avec succès: ${res.data}`);
+        message.success(res.data);
       })
       .catch((err) => {
         message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
@@ -118,8 +117,6 @@ function EventHome() {
       <div className="row reste-a-faire">
         <ul>
           <li>RESTE A FAIRE: </li>
-          <li>actions supprimer évenement</li>
-          <li>actions supprimer reservation</li>
           <li>lier les actions de filtrages au calendrier</li>
         </ul>
       </div>
@@ -129,7 +126,7 @@ function EventHome() {
       </div>
 
       <div className="row calendar">
-        {/* <Calendar /> */}
+        <Calendar />
       </div>
 
       <div className="row checkbox">
@@ -221,24 +218,18 @@ function EventHome() {
                 {event.nb_emails === event.NB_REG
                   ? null
                   : (
-                    <div data-tip data-for={`email-event-${event.id_event}`}>
+                    <Tooltip title={event.NB_REG - event.nb_emails}>
                       <i className="material-icons warning-icon">email</i>
-                      <ReactTooltip id={`email-event-${event.id_event}`} type="error" effect="solid">
-                        <span>{event.NB_REG - event.nb_emails}</span>
-                      </ReactTooltip>
-                    </div>
+                    </Tooltip>
                   )
                 }
               </li>
               <li className="col col-icon s1">
                 {event.nb_allergies > 0
                   ? (
-                    <div data-tip data-for={`allergies-event-${event.id_event}`}>
+                    <Tooltip title={event.nb_allergies}>
                       <i className="material-icons warning-icon">warning</i>
-                      <ReactTooltip id={`allergies-event-${event.id_event}`} type="error" effect="solid">
-                        <span>{event.nb_allergies}</span>
-                      </ReactTooltip>
-                    </div>
+                    </Tooltip>
                   )
                   : null
                 }
@@ -246,12 +237,9 @@ function EventHome() {
               <li className="col col-icon s1">
                 {event.nb_comments > 0
                   ? (
-                    <div data-tip data-for={`commentaires-event-${event.id_event}`}>
+                    <Tooltip title={event.nb_comments}>
                       <i className="material-icons icon-green">comment</i>
-                      <ReactTooltip id={`commentaires-event-${event.id_event}`} type="error" effect="solid">
-                        <span>{event.nb_comments}</span>
-                      </ReactTooltip>
-                    </div>
+                    </Tooltip>
                   )
                   : null
                 }
@@ -271,13 +259,28 @@ function EventHome() {
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
                 <Modal
-                  title={`Vous aller supprimer l'évènement n° ${event.id_event}`}
+                  title="Vous aller supprimer l'évènement suivant: "
                   visible={deleteModal[index]}
                   onOk={() => {
                     handleStateMapped(index, deleteModal, setDeleteModal);
                     deleteEvent(event.id_event);
                   }}
                   onCancel={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+                  footer={[
+                    <button type="submit" key="back" onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}>
+                      annuler
+                    </button>,
+                    <button
+                      type="submit"
+                      key="submit"
+                      onClick={() => {
+                        handleStateMapped(index, deleteModal, setDeleteModal);
+                        deleteEvent(event.id_event);
+                      }}
+                    >
+                      Supprimer
+                    </button>,
+                  ]}
                 >
                   <p>{event.name_event}</p>
                   <p>
@@ -314,7 +317,7 @@ function EventHome() {
               {collapses[index] === false
                 ? null
                 : (
-                  <ReservationHome eventId={event.id_event} />
+                  <ReservationHome eventId={event.id_event} eventName={event.name_event} eventDate={event.date_b.format}/>
                 )
               }
             </ul>

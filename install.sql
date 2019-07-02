@@ -109,9 +109,9 @@ VALUES
   (2, 2, " ", "besoin d'1 chaise bébé", 1, 4),
   (3, 0, " ", " ", 2, 4),
   (1, 0, "cacahuètes", " ", 3, 4),
-  (1, 0, " ", " ", 4, 6),
-  (3, 0, " ", " ", 1, 6),
-  (1, 0, " ", " ", 2, 2)
+  (1, 0, "fruits de mer", " ", 4, 6),
+  (3, 0, " ", "fauteuil roulant", 1, 6),
+  (1, 0, "échalottes", " ", 2, 2)
   ;
 
 SELECT registrations.id_registration,

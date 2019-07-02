@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import ReactTooltip from 'react-tooltip';
+import moment from 'moment';
+import { Tooltip, message, Modal } from 'antd';
 
 import './ReservationHome.css';
+import 'antd/dist/antd.css';
 
 function ReservationHome(props) {
   const [registrations, setRegistrations] = useState([]);
@@ -19,6 +21,43 @@ function ReservationHome(props) {
         setRegistrations(result.data);
       });
   }, []);
+
+  // state to show/hide Modale (to confirm registrations deletion)
+  const [deleteModal, setDeleteModal] = useState([]);
+  
+  // create the list of modal State for each registration (visible true/false)
+  useEffect(() => {
+    let array = [];
+    array = registrations.map(() => (false));
+    setDeleteModal(array);
+  }, [registrations]);
+
+  // handle the show/hide Modale
+  const handleStateMapped = (i, state, func) => {
+    func(
+      [
+        ...state.slice(0, [i]),
+        !state[i],
+        ...state.slice([i + 1], state.length),
+      ],
+    );
+  };
+
+  // delete function (once you hit the confirmation button)
+  const deleteRegistration = (id) => {
+    message.config({
+      top: 150,
+      duration: 2,
+      maxCount: 3,
+    });
+    axios.delete(`http://localhost:8000/registration/${id}`)
+      .then((res) => {
+        message.success(res.data);
+      })
+      .catch((err) => {
+        message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
+      });
+  };
 
 
   return (
@@ -43,27 +82,20 @@ function ReservationHome(props) {
       {/* liste des réservations */}
       {registrations
         .filter(registration => registration.event_id === eventProps.eventId)
-        .map(registration => (
+        .map((registration, index) => (
           <ul key={registration.id_registration} className="registration-item">
             <li className="col s1">{registration.member_id}</li>
             <li className="col s1">{registration.firstname}</li>
             <li className="col s1">{registration.lastname}</li>
-            <li className="col col-icon s1">
-              {registration.quantity_adult}
-            </li>
-            <li className="col col-icon s1">
-              {registration.quantity_children}
-            </li>
+            <li className="col col-icon s1">{registration.quantity_adult}</li>
+            <li className="col col-icon s1">{registration.quantity_children}</li>
             <li className="col s1">{registration.phone}</li>
             <li className="col col-icon s1">
               { registration.email === ' ' || '' || !registration.email
                 ? (
-                  <p data-tip data-for={`email-registration-${registration.id_registration}`}>
+                  <Tooltip title="envoyer un SMS">
                     <i className="material-icons warning-icon">email</i>
-                    <ReactTooltip id={`email-registration-${registration.id_registration}`} type="error">
-                      <span>email non renseigné: envoyer un SMS</span>
-                    </ReactTooltip>
-                  </p>
+                  </Tooltip>
                 )
                 : null
               }
@@ -72,12 +104,9 @@ function ReservationHome(props) {
               { registration.allergie === ' ' || '' || !registration.allergie
                 ? null
                 : (
-                  <p data-tip data-for={`allergies-registration-${registration.id_registration}`}>
+                  <Tooltip title={registration.allergie}>
                     <i className="material-icons warning-icon">warning</i>
-                    <ReactTooltip id={`allergies-registration-${registration.id_registration}`} type="error">
-                      <span>{registration.allergie}</span>
-                    </ReactTooltip>
-                  </p>
+                  </Tooltip>
                 )
               }
             </li>
@@ -85,12 +114,9 @@ function ReservationHome(props) {
               { registration.comment === ' ' || '' || !registration.comment
                 ? null
                 : (
-                  <p data-tip data-for={`comments-registration-${registration.id_registration}`}>
+                  <Tooltip title={registration.comment}>
                     <i className="material-icons icon-green">comment</i>
-                    <ReactTooltip id={`comments-registration-${registration.id_registration}`} type="error">
-                      <span>{registration.comment}</span>
-                    </ReactTooltip>
-                  </p>
+                  </Tooltip>
                 )
               }
             </li>
@@ -99,11 +125,66 @@ function ReservationHome(props) {
                 <i className="material-icons icon-green">create</i>
               </Link>
             </li>
+
             <li className="col col-icon s1">
-              {/* <Link to={`/registration/${registration.id_registration}`}> */}
-              <i className="material-icons icon-green">delete_forever</i>
-              {/* </Link> */}
+              <button
+                type="submit"
+                className="button link-button"
+                onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+              >
+                <i className="material-icons icon-green">delete_forever</i>
+              </button>
+              <Modal
+                title={(
+                  <h3>
+                    {'atelier '}
+                    {eventProps.eventName}
+                    {' du '}
+                    {moment(eventProps.eventDate).format('dddd Do/MM/YY')}
+                  </h3>
+                )}
+                visible={deleteModal[index]}
+                onOk={() => {
+                  handleStateMapped(index, deleteModal, setDeleteModal);
+                  deleteRegistration(registration.id_registration);
+                }}
+                onCancel={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+                footer={[
+                  <button type="submit" key="back" onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}>
+                    annuler
+                  </button>,
+                  <button
+                    type="submit"
+                    key="submit"
+                    onClick={() => {
+                      handleStateMapped(index, deleteModal, setDeleteModal);
+                      deleteRegistration(registration.id_registration);
+                    }}
+                  >
+                    Supprimer
+                  </button>,
+                ]}
+              >
+                <h4>ATTENTION vous allez supprimer l'inscription de : </h4>
+                <p>
+                  {registration.firstname}
+                  {' '}
+                  {registration.lastname}
+                </p>
+                <p>
+                  {registration.quantity_adult}
+                  {' adulte(s)'}
+                </p>
+                <p>
+                  {registration.quantity_children}
+                  {' enfant(s)'}
+                </p>
+              </Modal>
             </li>
+
+
+
+
             <li className="col col-icon s1"> </li>
           </ul>
         ))
