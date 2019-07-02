@@ -242,11 +242,12 @@ api.put('/user/anonym/:id', (req, res) => {
 api.post('/activities', (req, res) => {
   const formData = req.body;
   const data = {
-    id_activity: formData.id_activity,
     name_activity: formData.name,
     description_activity: formData.description,
     picture_activity: formData.picture
   }
+  console.log(data);
+  
   connection.query('INSERT INTO activities SET ?', data, (err, results) => {
     if (err) {
       console.log(err);
@@ -326,7 +327,6 @@ api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {
   const file = req.file
   console.log(file);
   console.log(req.headers);
-  console.log(req.body);
   if (!file) {
     const error = new Error('Please upload a file')
     error.httpStatusCode = 400
@@ -337,7 +337,7 @@ api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {
 })
 
 //--------------------------------------------------delete file---------------------------------------------------
-api.delete('/deletefile/:file', function(req, res) {
+api.post('/deletefile/:file', function(req, res) {
   let file = req.params.file;
   fs.stat(`../public/images/${file}`, function(err) {
     if (!err) {

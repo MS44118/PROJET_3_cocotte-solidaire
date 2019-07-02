@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import './Activities.css';
@@ -16,6 +18,7 @@ function Activities() {
   const [nameFile, setNameFile] = useState('');
   const [active, setActive] = useState('');
   const [emptyFile, setEmptyFile] = useState(0);
+  const [recharge, setRecharge] = useState(0);
 
   // --------------------------------CHANGEMENT STATE-----------------------------------
   const handleChange = (event, setHook) => setHook(event.target.value);
@@ -37,7 +40,7 @@ function Activities() {
   // -----------------------------------------------REQUETES-------------------------------
   const submitActivity = () => {
     const file1 = nameFile;
-    const fileName = `${title}-${new Date().getTime()}.jpg`;
+    const fileName = `${title}.jpg`;
     const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
     const newFile = new File([blob], fileName, { type: 'image/jpg' });
     const data = new FormData();
@@ -49,45 +52,33 @@ function Activities() {
     })
       .then((response) => {
         console.log(response);
-        alert(`Votre activité ${title} à ete cree`);
       })
       .catch((error) => {
         console.log(error);
-        alert(`${error}`);
       });
-    const config = {
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-    };
     axios.post('http://localhost:8000/uploaddufichier/', data)
       .then((response) => {
         console.log(response);
+        toast.info('Activité crée !');
       })
       .catch((error) => {
         console.log(error);
-        alert(`${error}`);
+        toast.info(`${error}`);
       });
+    setTitle('');
+    setDescribtion('');
+    setFile('');
+    setNameFile('');
+    setSelectValue('default');
+    setEmptyFile(0);
+    setRecharge(1);
   };
 
   const modifyActivity = () => {
     let newFile;
-    axios.put(`http://localhost:8000/activities/${id}`, {
-      name: title,
-      description: describtion,
-      picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
-    })
-      .then((response) => {
-        console.log(response);
-        alert(`Votre activité ${title} à ete modifiee`);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(`${error}`);
-      });
     if (emptyFile === 1) {
       const file1 = nameFile;
-      const fileName = `${title}-${new Date().getTime()}.jpg`;
+      const fileName = `${title}.jpg`;
       const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
@@ -96,35 +87,60 @@ function Activities() {
       })
         .then((response) => {
           console.log(response);
+          toast.info(`Votre activité ${title} à ete modifiee`);
         })
         .catch((error) => {
           console.log(error);
-          alert(`${error}`);
         });
     }
+    axios.put(`http://localhost:8000/activities/${id}`, {
+      name: title,
+      description: describtion,
+      picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
+    })
+      .then((response) => {
+        console.log(response);
+        toast.info(`Votre activité ${title} à ete modifiee`);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info(`${error}`);
+      });
+    setTitle('');
+    setDescribtion('');
+    setFile('');
+    setNameFile('');
+    setSelectValue('default');
+    setRecharge(1);
+    setEmptyFile(0);
   };
 
   const removeActivity = () => {
     const sendFile = file.split('/');
-    console.log(sendFile[2]);
-    axios.delete(`http://localhost:8000/deletefile/${sendFile[2]}`)
-      .then((response) => {
-        console.log(response);
-        alert(`L'activite ${title} a ete supprimee`);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert(`${error}`);
-      });
     axios.delete(`http://localhost:8000/activities/${id}`)
       .then((response) => {
         console.log(response);
-        // alert(`L'activite ${title} a ete supprimee`);
+        toast.info(`L'activite ${title} a ete supprimee`);
       })
       .catch((error) => {
         console.log(error);
-        alert(`${error}`);
       });
+    axios.post(`http://localhost:8000/deletefile/${sendFile[2]}`)
+      .then((response) => {
+        console.log(response);
+        toast.info(`L'activite ${title} a ete supprimee`);
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.info(`${error}`);
+      });
+    setTitle('');
+    setDescribtion('');
+    setFile('');
+    setNameFile('');
+    setSelectValue('default');
+    setRecharge(1);
+    setEmptyFile(0);
   };
 
   const prevent = (e) => {
@@ -138,11 +154,16 @@ function Activities() {
         setActivities(result.data);
       });
     M.AutoInit();
-  }, []);
+    setRecharge(0);
+  }, [recharge === 1]);
 
   // ------------------------------------------------------RENDU------------------------------
   return (
     <div className="container">
+      <ToastContainer
+        autoClose={6000}
+        position="top-center"
+      />
       <h1 className="center-align marg">Création d&apos;une activité</h1>
       <div className="row">
         <div className="input-field col s6">
@@ -155,7 +176,7 @@ function Activities() {
         </div>
         <div className="input-field col s6">
           <i className="material-icons prefix">title</i>
-          <input id="titre_activité" type="text" className="validate" value={title} onChange={e => handleChange(e, setTitle)} />
+          <input id="titre_activité" type="text" value={title} onChange={e => handleChange(e, setTitle)} />
           <label className={active} htmlFor="titre_activité">Titre de l&apos;activité</label>
         </div>
       </div>
@@ -175,16 +196,16 @@ function Activities() {
             <input type="file" onChange={handleChangeFile} name="file" />
           </div>
           <div className="file-path-wrapper">
-            <input className="file-path validate" type="text" />
+            <input className="file-path" type="text" value={nameFile} />
           </div>
         </div>
       </div>
 
-      <form className="center-align">
-        {selectValue === 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={title !== '' && describtion !== '' ? submitActivity : prevent} type={title !== '' && describtion !== '' ? 'submit' : ''}>Creer</button> : ''}
+      <div className="center-align">
+        {selectValue === 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={title !== '' && describtion !== '' && file !== '' ? submitActivity : prevent} type={title !== '' && describtion !== '' ? 'submit' : ''}>Creer</button> : ''}
         {selectValue !== 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={title !== '' && describtion !== '' ? modifyActivity : prevent} type={title !== '' && describtion !== '' ? 'submit' : ''}>Modifier</button> : ''}
         {selectValue !== 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={removeActivity} type="submit">Supprimer</button> : ''}
-      </form>
+      </div>
 
       <p className="center-align renduSize">Rendu de l&apos;activité</p>
       <div className="render container mssg">
