@@ -102,11 +102,13 @@ function Reservation(props) {
       axios.get(`http://localhost:8000/registration/${registrationId}`)
       .then(data=>{
         setRegistration(data.data)
+        console.log(data.data)
       })
     .catch(err=>{
       console.log(err)
     })
     }, [props.location.search])
+
 
     useEffect(()=>{
 
@@ -115,12 +117,17 @@ function Reservation(props) {
           setQuantityChildren(registration[0].quantity_children)
           setAllergies(registration[0].allergie)
           setComment(registration[0].comment)
+          setFirstname(registration[0].firstname)
+          setLastname(registration[0].lastname)
+          setEmail(registration[0].email)
+          setPhone(registration[0].phone)
+          setMemberNumber(registration[0].member_id)
        
         }
 
     },[registration])
   
-console.log(quantityAdult)
+console.log(registration)
 
   const handleUser = (e, { result }) => {
 
@@ -134,8 +141,7 @@ console.log(quantityAdult)
     setMemberNumber(arrayTemp[0].memberId)
 
     setExistantUser(true);
-    // setDisableInput(true);
-    // console.log(arrayTemp[0]);
+
   }
 
   return (
@@ -177,14 +183,7 @@ console.log(quantityAdult)
         <div className="input-field col s4">
           <p> nombres d&apos;Adultes</p>
           <select  value ={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
-            {/* <option value="">
-            {
-                quantityAdult>0
-                ?quantityAdult
-              :0
-              }
-            </option> */}
-            
+          <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -312,6 +311,7 @@ console.log(quantityAdult)
             id="allergy"
             className="materialize-textarea"
             onChange={e => setAllergies(e.target.value)}
+            value={allergies}
           />
           <label htmlFor="allergy">
             Allergies
@@ -328,6 +328,7 @@ console.log(quantityAdult)
             className="validate"
             data-length="100%"
             onChange={e => setComment(e.target.value)}
+            value={comment}
           />
           <label htmlFor="importantInfo">
             Informations complémentaires
