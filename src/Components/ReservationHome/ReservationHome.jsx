@@ -95,14 +95,16 @@ function ReservationHome(props) {
               }
             </li>
             <li className="col col-icon s1">
-              <Link to={`/registration/${registration.id_registration}`}>
+            <Link to={{
+              pathname: '/reservation',
+              search: `id=${registration.id_registration}`,
+            }}>
                 <i className="material-icons icon-green">create</i>
               </Link>
             </li>
             <li className="col col-icon s1">
-              {/* <Link to={`/registration/${registration.id_registration}`}> */}
               <i className="material-icons icon-green">delete_forever</i>
-              {/* </Link> */}
+              
             </li>
             <li className="col col-icon s1"> </li>
           </ul>

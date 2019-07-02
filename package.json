@@ -14,6 +14,7 @@
     "multer": "^1.4.1",
     "mysql": "^2.17.1",
     "prop-types": "^15.7.2",
+    "query-string": "^6.8.1",
     "react": "^16.8.6",
     "react-calendar": "^2.19.0",
     "react-datepicker": "^2.7.0",

@@ -420,7 +420,7 @@ api.post('/zboub/', (req,res)=>{
         }else{
           console.log(result[0].id_user)
         
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.numberAdultReservation,10)},${parseInt(reservation.numberchildrenReservation, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${result[0].id_user}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -434,7 +434,7 @@ api.post('/zboub/', (req,res)=>{
       }
     })
   } else {
-    connection.query(`INSERT INTO registrations(quantityd_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.numberAdultReservation,10)},${parseInt(reservation.numberchildrenReservation, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${reservation.idUser}",${reservation.eventId})`, 
+    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.reservationAllergie}","${reservation.reservationInfo}","${reservation.idUser}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -446,13 +446,26 @@ api.post('/zboub/', (req,res)=>{
 
   }
 });
+api.get('/registration/:id', (req, res)  =>{
+  const param = req.params.id
+  const data= req.body
+  connection.query(`SELECT * FROM registrations WHERE id_registration= '${param}'`,(err,result)=>{
+    if (err){
+    res.status(500).send("penos")
+    }else{
+      res.send(result)
+    }
+  })
+
+  
+})
 // api.put('/zob/:id',(req, res)=>{
 //   const idUser= req.param.id
 //   const changeInfo = req.query
  
 //   connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,[changeInfo, idUser],err=>{
 //     if (err){
-//       res.status(500).send("raté pov tanche")
+//       res.status(500).send("raté pov tanche"):id
 //     }else{
 //       res.sendStatus(200)
 //     }
