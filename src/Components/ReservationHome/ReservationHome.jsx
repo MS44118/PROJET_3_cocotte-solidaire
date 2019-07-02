@@ -59,7 +59,7 @@ function ReservationHome(props) {
               { registration.email === ' ' || '' || !registration.email
                 ? (
                   <p data-tip data-for={`email-registration-${registration.id_registration}`}>
-                    <i className="material-icons warning-icon">priority_high</i>
+                    <i className="material-icons warning-icon">email</i>
                     <ReactTooltip id={`email-registration-${registration.id_registration}`} type="error">
                       <span>email non renseigné: envoyer un SMS</span>
                     </ReactTooltip>

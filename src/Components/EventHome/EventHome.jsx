@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import moment from 'moment';
 import ReactTooltip from 'react-tooltip';
-import { Modal, message, Popconfirm } from 'antd';
+import { Modal, message } from 'antd';
 
 // import Calendar from 'react-calendar';
 // import M from 'materialize-css/dist/js/materialize';
@@ -40,19 +40,7 @@ function EventHome() {
     });
     axios.delete(`http://localhost:8000/event/${id}`)
       .then((res) => {
-        return (
-          <Popconfirm 
-            title="Are you sure delete this task?"
-            onConfirm={confirm}
-            onCancel={cancel}
-            okText="Yes"
-            cancelText="No"
-          
-          message.success(`évènement ${id} supprimé avec succès: ${res}`);
-          >
-            ok
-          </Popconfirm>
-        )
+        message.success(`évènement ${id} supprimé avec succès: ${res.data}`);
       })
       .catch((err) => {
         message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
@@ -218,7 +206,10 @@ function EventHome() {
             <ul className="event-item row valign-wrapper center-align">
               <li className="col s1">{event.name_event}</li>
               <li className="col s1">{moment(event.date_b).format('dddDo/MM/YY')}</li>
-              <li className="col s1">{moment(event.date_b).format('HH:mm')}</li>
+              <li className="col s1">
+                {moment(event.date_b).format('HH:mm-')}
+                {moment(event.date_e).format('HH:mm')}
+              </li>
               <li className="col col-icon s1">{event.nb_adults}</li>
               <li className="col col-icon s1">{event.nb_children}</li>
               <li className="col s1">
@@ -227,16 +218,16 @@ function EventHome() {
                 {event.capacity}
               </li>
               <li className="col col-icon s1">
-                {event.nb_emails < event.NB_REG
-                  ? (
+                {event.nb_emails === event.NB_REG
+                  ? null
+                  : (
                     <div data-tip data-for={`email-event-${event.id_event}`}>
                       <i className="material-icons warning-icon">email</i>
                       <ReactTooltip id={`email-event-${event.id_event}`} type="error" effect="solid">
-                        <span>{event.nb_emails}</span>
+                        <span>{event.NB_REG - event.nb_emails}</span>
                       </ReactTooltip>
                     </div>
                   )
-                  : null
                 }
               </li>
               <li className="col col-icon s1">
@@ -280,7 +271,7 @@ function EventHome() {
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
                 <Modal
-                  title={`Vous aller supprimer l'évènement: ${event.id_event}`}
+                  title={`Vous aller supprimer l'évènement n° ${event.id_event}`}
                   visible={deleteModal[index]}
                   onOk={() => {
                     handleStateMapped(index, deleteModal, setDeleteModal);
@@ -290,7 +281,10 @@ function EventHome() {
                 >
                   <p>{event.name_event}</p>
                   <p>
-                    {moment(event.date_b).format('dddDo/MM/YY HH:mm-')}
+                    {moment(event.date_b).format('dddDo/MM/YY')}
+                  </p>
+                  <p>
+                    {moment(event.date_b).format('HH:mm-')}
                     {moment(event.date_e).format('HH:mm')}
                   </p>
                   <p>
