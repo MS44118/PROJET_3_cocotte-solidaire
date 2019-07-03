@@ -7,7 +7,6 @@ import 'semantic-ui/dist/semantic.min.css';
 import moment from 'moment';
 import './Reservation.css';
 import 'moment/locale/fr';
-import './Reservation.css';
 import { stringLiteral } from '@babel/types';
 import queryString from 'query-string';
 import { withRouter } from 'react-router';
@@ -34,6 +33,9 @@ function Reservation(props) {
   const [disableInput, setDisableInput] = useState(false);
   const [registration, setRegistration] = useState(0);
 
+  // ESLINT WARNING: to prevent definitions of unused prop types
+  const [resaProps, setResaProps] = useState({});
+  useEffect(() => setResaProps(props), [props]);
 
   useEffect(() => {
     M.AutoInit();
@@ -45,7 +47,7 @@ function Reservation(props) {
       .then((result) => {
         setEvent(result.data);
       });
-     }, []);
+  }, []);
 
   const addReservation = {
     quantityAdult,
@@ -62,12 +64,12 @@ function Reservation(props) {
     memberNumber,
   };
   axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
-    .then(function (response) {
-      console.log(response)
+    .then((response) => {
+      console.log(response);
     })
-    .then(function (err) {
-      console.log(err)
-    })
+    .then((err) => {
+      console.log(err);
+    });
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
@@ -82,79 +84,72 @@ function Reservation(props) {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
       let resultTemp = [];
-      for (let i = 0; i < arrayTemp.length; i++) {
+      for (let i = 0; i < arrayTemp.length; i += 1) {
         resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
       }
       setSearchResults(resultTemp);
     }
     if (searchValue.length === 0) {
-      setDisableInput(false)
+      setDisableInput(false);
     } else {
-      setDisableInput(true)
+      setDisableInput(true);
       setLabelActive('active');
     }
-  }, [searchValue]); 
-  
-    useEffect(() => {
-      const params = queryString.parse(props.location.search);
-      let registrationId = params.id;
-      
-      axios.get(`http://localhost:8000/registration/${registrationId}`)
-      .then(data=>{
-        setRegistration(data.data)
-        console.log(data.data)
+  }, [searchValue]);
+
+  useEffect(() => {
+    const params = queryString.parse(resaProps.location.search);
+    let registrationId = params.id;
+
+    axios.get(`http://localhost:8000/registration/${registrationId}`)
+      .then((data) => {
+        setRegistration(data.data);
+        console.log(data.data);
       })
-    .catch(err=>{
-      console.log(err)
-    })
-    }, [props.location.search])
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [resaProps.location.search]);
 
+  useEffect(() => {
+    if (registration.length > 0) {
+      setQuantityAdult(registration[0].quantity_adult);
+      setQuantityChildren(registration[0].quantity_children);
+      setAllergies(registration[0].allergie);
+      setComment(registration[0].comment);
+      setFirstname(registration[0].firstname);
+      setLastname(registration[0].lastname);
+      setEmail(registration[0].email);
+      setPhone(registration[0].phone);
+      setMemberNumber(registration[0].member_id);
+      setEventId(registration[0].id_event);
+      setLabelActive('active');
+      // setDisableInput(true)
+    }
+  }, [registration]);
 
-    useEffect(()=>{
-
-      if(registration.length > 0 ){
-          setQuantityAdult(registration[0].quantity_adult)
-          setQuantityChildren(registration[0].quantity_children)
-          setAllergies(registration[0].allergie)
-          setComment(registration[0].comment)
-          setFirstname(registration[0].firstname)
-          setLastname(registration[0].lastname)
-          setEmail(registration[0].email)
-          setPhone(registration[0].phone)
-          setMemberNumber(registration[0].member_id)
-          setEventId(registration[0].id_event)
-          setLabelActive('active')
-          // setDisableInput(true)
-       
-        }
-
-    },[registration])
-  
-console.log(registration)
+  console.log(registration);
 
   const handleUser = (e, { result }) => {
-
     const arrayTemp = users.filter(user => user.idUser === result.id);
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
     setPhone(arrayTemp[0].phone);
-    setMemberNumber(arrayTemp[0].member_id)
+    setMemberNumber(arrayTemp[0].member_id);
     setIdUser(arrayTemp[0].idUser);
-    setMemberNumber(arrayTemp[0].memberId)
-
+    setMemberNumber(arrayTemp[0].memberId);
     setExistantUser(true);
-
-  }
+  };
 
   return (
 
     <div className="container">
       <h1>Réservation</h1>
       <div className="row">
-        <div className="input-field  col s8">
+        {/* <div className="input-field  col s8">
 
-        </div>
+        </div> */}
         <div className="input-field col s4 mr-8">
           <button
             type="submit"
@@ -167,14 +162,19 @@ console.log(registration)
       </div>
       <div className="row">
         <div className="input-field col s6">
-          <p>place disponibles :{events.capacity}</p>
+          <p>
+            {'place disponibles :'}
+            {events.capacity}
+          </p>
         </div>
         <div className="input-field col s6">
-          <select id="events" className="browser-default color_select" value={eventId} onChange={(events) => setEventId(events.target.value)}>
-            {events.map((event, index) =>
-              <option key={event[index]} value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
-            )};
-           </select>
+          <select id="events" className="browser-default color_select" value={eventId} onChange={events => setEventId(events.target.value)}>
+            {events.map((event, index) => (
+              <option key={event[index]} value={event.id_event}>
+                {`${event.name_event} : ${moment(event.date_b).calendar()}`}
+              </option>
+            ))}
+          </select>
 
         </div>
 
@@ -185,8 +185,8 @@ console.log(registration)
         </div>
         <div className="input-field col s4">
           <p> nombres d&apos;Adultes</p>
-          <select  value ={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
-          <option value="0" disabled selected>Nombres Adultes</option>
+          <select value ={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
+            <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -269,7 +269,7 @@ console.log(registration)
             value={email}
             disabled={disableInput}
           />
-          <label htmlFor="email" className={labelActive} >
+          <label htmlFor="email" className={labelActive}>
             Email
           </label>
         </div>
@@ -284,7 +284,7 @@ console.log(registration)
             value={phone}
             disabled={disableInput}
           />
-          <label htmlFor="icon_telephone" className={labelActive} >
+          <label htmlFor="icon_telephone" className={labelActive}>
             Téléphone
           </label>
         </div>
@@ -309,15 +309,14 @@ console.log(registration)
 
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">notification_important</i> 
+          <i className="material-icons prefix">notification_important</i>
           <textarea
             id="allergy"
             className="materialize-textarea"
             onChange={e => setAllergies(e.target.value)}
             value={allergies}
-          
           />
-          <label htmlFor="allergy"   className={labelActive}>
+          <label htmlFor="allergy" className={labelActive}>
             Allergies
           </label>
         </div>
@@ -329,13 +328,11 @@ console.log(registration)
           <input
             type="text"
             id="importantInfo"
-          
             data-length="100%"
             onChange={e => setComment(e.target.value)}
             value={comment}
-          
           />
-          <label htmlFor="importantInfo"  className={labelActive}>
+          <label htmlFor="importantInfo" className={labelActive}>
             Informations complémentaires
           </label>
         </div>
