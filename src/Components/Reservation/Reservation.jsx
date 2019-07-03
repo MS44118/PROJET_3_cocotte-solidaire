@@ -9,8 +9,10 @@ import './Reservation.css';
 import 'moment/locale/fr';
 import './Reservation.css';
 import { stringLiteral } from '@babel/types';
+import queryString from 'query-string';
+import { withRouter } from 'react-router';
 
-function Reservation() {
+function Reservation(props) {
 
   const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
@@ -20,21 +22,21 @@ function Reservation() {
   const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState();
-  const [numberAdultReservation, setnumberAdultReservation] = useState();
-  const [numberchildrenReservation, setnumbeChildrenRegistration] = useState(0);
-  const [reservationAllergie, setReservationAllergie] = useState('');
-  const [reservationInfo, setReservationInfo] = useState('');
+  const [quantityAdult, setQuantityAdult] = useState();
+  const [quantityChildren, setQuantityChildren] = useState(0);
+  const [allergies, setAllergies] = useState('');
+  const [comment, setComment] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([{ title: '', id: '' }]);
   const [labelActive, setLabelActive] = useState('');
   const [eventId, setEventId] = useState(0);
   const [existantUser, setExistantUser] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
+  const [registration, setRegistration] = useState(0);
 
 
   useEffect(() => {
     M.AutoInit();
-
     axios.get('http://localhost:8000/users')
       .then((result) => {
         setUsers(result.data);
@@ -42,19 +44,14 @@ function Reservation() {
     axios.get('http://localhost:8000/events')
       .then((result) => {
         setEvent(result.data);
-
       });
-
-  },
-    []);
-
-  const numberReservation = (numberAdultReservation / 1 + (numberchildrenReservation / 2));
+     }, []);
 
   const addReservation = {
-    numberAdultReservation,
-    numberchildrenReservation,
-    reservationAllergie,
-    reservationInfo,
+    quantityAdult,
+    quantityChildren,
+    allergies,
+    comment,
     lastname,
     firstname,
     email,
@@ -63,15 +60,14 @@ function Reservation() {
     existantUser,
     eventId,
     memberNumber,
-
   };
-axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
-          .then(function (response){
-            console.log(response)
-          })
-          .then(function(err){
-            console.log(err)
-          })
+  axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
+    .then(function (response) {
+      console.log(response)
+    })
+    .then(function (err) {
+      console.log(err)
+    })
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
@@ -85,28 +81,60 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
   useEffect(() => {
     if (searchValue.length > 0) {
       const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
-
       let resultTemp = [];
       for (let i = 0; i < arrayTemp.length; i++) {
-      
         resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
-
       }
       setSearchResults(resultTemp);
-     
     }
-    if ( searchValue.length ===0) {
-            setDisableInput(false)
-        } else {
-          setDisableInput(true)
-          setLabelActive('active');
-        }
-  }, [searchValue]  
-);
+    if (searchValue.length === 0) {
+      setDisableInput(false)
+    } else {
+      setDisableInput(true)
+      setLabelActive('active');
+    }
+  }, [searchValue]); 
+  
+    useEffect(() => {
+      const params = queryString.parse(props.location.search);
+      let registrationId = params.id;
+      
+      axios.get(`http://localhost:8000/registration/${registrationId}`)
+      .then(data=>{
+        setRegistration(data.data)
+        console.log(data.data)
+      })
+    .catch(err=>{
+      console.log(err)
+    })
+    }, [props.location.search])
 
-  const handleUser = (e, { result } )=> {
-    
-    const arrayTemp = users.filter(user => user.idUser  === result.id);
+
+    useEffect(()=>{
+
+      if(registration.length > 0 ){
+          setQuantityAdult(registration[0].quantity_adult)
+          setQuantityChildren(registration[0].quantity_children)
+          setAllergies(registration[0].allergie)
+          setComment(registration[0].comment)
+          setFirstname(registration[0].firstname)
+          setLastname(registration[0].lastname)
+          setEmail(registration[0].email)
+          setPhone(registration[0].phone)
+          setMemberNumber(registration[0].member_id)
+          setEventId(registration[0].id_event)
+          setLabelActive('active')
+          // setDisableInput(true)
+       
+        }
+
+    },[registration])
+  
+console.log(registration)
+
+  const handleUser = (e, { result }) => {
+
+    const arrayTemp = users.filter(user => user.idUser === result.id);
     setFirstname(arrayTemp[0].firstname);
     setLastname(arrayTemp[0].lastname);
     setEmail(arrayTemp[0].email);
@@ -114,10 +142,9 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
     setMemberNumber(arrayTemp[0].member_id)
     setIdUser(arrayTemp[0].idUser);
     setMemberNumber(arrayTemp[0].memberId)
-   
+
     setExistantUser(true);
-    // setDisableInput(true);
-    console.log(arrayTemp[0]);
+
   }
 
   return (
@@ -137,17 +164,17 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
             Envoyer
           </button>
         </div>
-      </div>  
+      </div>
       <div className="row">
-      <div className="input-field col s6">
-      <p>place disponibles :{events.capacity}</p>
-         </div>
         <div className="input-field col s6">
-        <select id="events" className="browser-default color_select" value= {eventId} onChange={(events) => setEventId(events.target.value)}>
+          <p>place disponibles :{events.capacity}</p>
+        </div>
+        <div className="input-field col s6">
+          <select id="events" className="browser-default color_select" value={eventId} onChange={(events) => setEventId(events.target.value)}>
             {events.map((event, index) =>
-           <option key={event[index]}  value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
+              <option key={event[index]} value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
             )};
-           </select> 
+           </select>
 
         </div>
 
@@ -158,9 +185,9 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
         </div>
         <div className="input-field col s4">
           <p> nombres d&apos;Adultes</p>
-          <select onChange={e => setnumberAdultReservation(e.target.value)}>
-            <option value="0" disabled selected>Nombre Adultes</option>
-            <option value={1}>1</option>
+          <select  value ={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
+          <option value="0" disabled selected>Nombres Adultes</option>
+            <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4">4</option>
@@ -171,7 +198,7 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
         </div>
         <div className="input-field col s4">
           <p>Nombres d&apos;enfants</p>
-          <select onChange={e => setnumbeChildrenRegistration(e.target.value)}>
+          <select onChange={e => setQuantityChildren(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -282,13 +309,15 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
 
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">notification_important</i>
+          <i className="material-icons prefix">notification_important</i> 
           <textarea
             id="allergy"
             className="materialize-textarea"
-            onChange={e => setReservationAllergie(e.target.value)}
+            onChange={e => setAllergies(e.target.value)}
+            value={allergies}
+          
           />
-          <label htmlFor="allergy">
+          <label htmlFor="allergy"   className={labelActive}>
             Allergies
           </label>
         </div>
@@ -300,11 +329,13 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
           <input
             type="text"
             id="importantInfo"
-            className="validate"
+          
             data-length="100%"
-            onChange={e => setReservationInfo(e.target.value)}
+            onChange={e => setComment(e.target.value)}
+            value={comment}
+          
           />
-          <label htmlFor="importantInfo">
+          <label htmlFor="importantInfo"  className={labelActive}>
             Informations complémentaires
           </label>
         </div>
@@ -314,4 +345,4 @@ axios.put(`http://localhost:8000/zob/${idUser}`,addReservation)
   );
 }
 
-export default Reservation;
+export default withRouter(Reservation);
