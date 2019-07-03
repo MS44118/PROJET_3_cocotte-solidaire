@@ -34,8 +34,8 @@ function Reservation(props) {
   const [registration, setRegistration] = useState(0);
 
   // ESLINT WARNING: to prevent definitions of unused prop types
-  const [resaProps, setResaProps] = useState({});
-  useEffect(() => setResaProps(props), [props]);
+  // const [Props, setProps] = useState({});
+  // useEffect(() => setProps(props), [props]);
 
   useEffect(() => {
     M.AutoInit();
@@ -98,7 +98,7 @@ function Reservation(props) {
   }, [searchValue]);
 
   useEffect(() => {
-    const params = queryString.parse(resaProps.location.search);
+    const params = queryString.parse(props.location.search);
     let registrationId = params.id;
 
     axios.get(`http://localhost:8000/registration/${registrationId}`)
@@ -109,7 +109,7 @@ function Reservation(props) {
       .catch((err) => {
         console.log(err);
       });
-  }, [resaProps.location.search]);
+  }, [props.location.search]);
 
   useEffect(() => {
     if (registration.length > 0) {
@@ -185,7 +185,7 @@ function Reservation(props) {
         </div>
         <div className="input-field col s4">
           <p> nombres d&apos;Adultes</p>
-          <select value ={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
+          <select value={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
