@@ -1,8 +1,9 @@
-.render {
-  border: 1.7px solid gray;
-  margin: 20px;
+.container{
   width: 100%;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.2);
+}
+.render {
+  width: 70vw;
+  margin: auto;
 }
 
 .activitie_pics {
@@ -65,4 +66,73 @@ p {
 
  .color_select{
   color:#498e81 !important;
+ }
+.calendar_center{
+  margin: auto;
+  display: table;
+}
+.calendar_right{
+  float: right;
+  margin-left: 5vw;
+}
+.container-calendar_right{
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 1fr;
+}
+.calendar-calendar_right{
+  overflow-y: scroll;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 20%;
+}
+.cards-calendar_right{
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  width: 80%;
+  margin-left: 10%;
+}
+.hidden-calendar_right{
+  display: none;
+}
+.cards-calendar_center{
+  width: 70vw;
+  margin: auto;
+}
+.card-title{
+  margin-left: 20px;
+  margin-top: 5px;
+}
+.card-content-first{
+  padding-top: 5px;
+}
+.card-content-second{
+  vertical-align: bottom;
+  padding-bottom: 0;
+}
+.form{
+  border-color: #83bbb4;
+  border-style: solid;
+  border-width: 10px;
+  padding: 20px;
+}
+.merci{
+  color: #F8C8BE;
+}
+.send{
+  display: grid;
+  width: 20%;
+}
+.form-item{
+  color:#498e81 !important;
+ }
+ .card-button{
+   
  }
