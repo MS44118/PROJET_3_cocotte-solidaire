@@ -61,13 +61,13 @@ function Reservation(props) {
     eventId,
     memberNumber,
   };
-  // axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
-  //   .then(function (response) {
-  //     console.log(response)
-  //   })
-  //   .then(function (err) {
-  //     console.log(err)
-  //   })
+  axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
+    .then(function (response) {
+      console.log(response)
+    })
+    .then(function (err) {
+      console.log(err)
+    })
   const sendForm = () => {
     axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
@@ -122,6 +122,9 @@ function Reservation(props) {
           setEmail(registration[0].email)
           setPhone(registration[0].phone)
           setMemberNumber(registration[0].member_id)
+          setEventId(registration[0].id_event)
+          setLabelActive('active')
+          // setDisableInput(true)
        
         }
 
@@ -306,14 +309,15 @@ console.log(registration)
 
       <div className="row">
         <div className="input-field col s12">
-          <i className="material-icons prefix">notification_important</i>
+          <i className="material-icons prefix">notification_important</i> 
           <textarea
             id="allergy"
             className="materialize-textarea"
             onChange={e => setAllergies(e.target.value)}
             value={allergies}
+          
           />
-          <label htmlFor="allergy">
+          <label htmlFor="allergy"   className={labelActive}>
             Allergies
           </label>
         </div>
@@ -325,12 +329,13 @@ console.log(registration)
           <input
             type="text"
             id="importantInfo"
-            className="validate"
+          
             data-length="100%"
             onChange={e => setComment(e.target.value)}
             value={comment}
+          
           />
-          <label htmlFor="importantInfo">
+          <label htmlFor="importantInfo"  className={labelActive}>
             Informations complémentaires
           </label>
         </div>

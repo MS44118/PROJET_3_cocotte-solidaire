@@ -458,18 +458,18 @@ api.get('/registration/:id', (req, res)  =>{
   })
 })
 api
-// api.put('/zob/:id',(req, res)=>{
-//   const idUser= req.param.id
-//   const changeInfo = req.query
+api.put('/zob/:id',(req, res)=>{
+  const idUser= req.param.id
+  const changeInfo = req.query
  
-//   connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,[changeInfo, idUser],err=>{
-//     if (err){
-//       res.status(500).send("raté pov tanche"):id
-//     }else{
-//       res.sendStatus(200)
-//     }
-//   })
-// })
+  connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,`{ idUser}`,err=>{
+    if (err){
+      res.status(500).send("raté pov tanche")
+    }else{
+      res.sendStatus(200)
+    }
+  })
+})
     
 //   connection.query(
  
