@@ -34,11 +34,18 @@ function EventHome() {
   const deleteEvent = (id) => {
     message.config({
       top: 150,
-      duration: 2,
+      duration: 4,
       maxCount: 3,
     });
     axios.delete(`http://localhost:8000/event/${id}`)
       .then((res) => {
+        const index = filteredEvents.findIndex(i => i.id_event === id);
+        setFilteredEvents(
+          [
+            ...filteredEvents.slice(0, [index]),
+            ...filteredEvents.slice([index + 1], filteredEvents.length),
+          ],
+        );
         message.success(res.data);
       })
       .catch((err) => {
@@ -130,7 +137,7 @@ function EventHome() {
       </div>
 
       <div className="row checkbox">
-        <label htmlFor="filterAll">
+        <label className="col hide-on-small-only" htmlFor="filterAll">
           <input
             type="checkbox"
             id="filterAll"
@@ -139,29 +146,25 @@ function EventHome() {
           />
           <span>Tous</span>
         </label>
-
-        <label htmlFor="filterCuisiner">
+        <label className="col" htmlFor="filterCuisiner">
           <input
             type="checkbox"
             id="filterCuisiner"
             checked={filterCuisiner ? 'checked' : ''}
             onChange={e => setFilterCuisiner(e.target.checked)}
           />
-          <span>Cuisiner et Manger</span>
+          <span>Cuisiner</span>
         </label>
-
-        <label htmlFor="filterManger">
+        <label className="col" htmlFor="filterManger">
           <input
             type="checkbox"
             id="filterManger"
             checked={filterManger ? 'checked' : ''}
             onChange={e => setFilterManger(e.target.checked)}
-
           />
           <span>Manger</span>
         </label>
-
-        <label htmlFor="filterAutres">
+        <label className="col" htmlFor="filterAutres">
           <input
             type="checkbox"
             id="filterAutres"
@@ -176,12 +179,15 @@ function EventHome() {
 
         {/* entetes liste des évenements */}
         <ul className="event-header">
-          <li className="col s1">Evènement</li>
-          <li className="col s1">Date</li>
-          <li className="col s1">Heure</li>
-          <li className="col col-icon s1">adultes</li>
-          <li className="col col-icon s1">enfants</li>
-          <li className="col s1">capacité</li>
+          <li className="col s2 m3 l1 hide-on-large-only"> </li>
+          <li className="col s2 m3 l1 hide-on-med-and-down">Evènement</li>
+          <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">today</i></li>
+          <li className="col s1 hide-on-med-and-down">Date</li>
+          <li className="col s1 hide-on-med-and-down">Heure</li>
+          <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
+          <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
+          <li className="col s1 hide-on-med-and-down">capacité</li>
+          <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
           {/* <li className="col col-icon s1">email</li> */}
           <li className="col col-icon s1"><i className="material-icons icon-white">email</i></li>
           {/* <li className="col col-icon s1">allergies</li> */}
@@ -190,7 +196,7 @@ function EventHome() {
           <li className="col col-icon s1"><i className="material-icons icon-white">comment</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
-          <li className="col col-icon s1"> </li>
+          <li className="col col-icon s1 hide-on-med-and-down"> </li>
           {/* <i className="material-icons icon-white">pan_tool</i>
           <i className="material-icons icon-white">restaurant</i>
           <i className="material-icons icon-white">restaurant_menu</i>
@@ -201,14 +207,15 @@ function EventHome() {
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
             <ul className="event-item row valign-wrapper center-align">
-              <li className="col s1">{event.name_event}</li>
-              <li className="col s1">{moment(event.date_b).format('dddDo/MM/YY')}</li>
-              <li className="col s1">
+              <li className="col s2 m3 l1">{event.name_event}</li>
+              <li className="col s1 hide-on-med-and-down">{moment(event.date_b).format('dddDo/MM/YY')}</li>
+              <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
+              <li className="col s1 hide-on-med-and-down">
                 {moment(event.date_b).format('HH:mm-')}
                 {moment(event.date_e).format('HH:mm')}
               </li>
-              <li className="col col-icon s1">{event.nb_adults}</li>
-              <li className="col col-icon s1">{event.nb_children}</li>
+              <li className="col col-icon s1 hide-on-med-and-down">{event.nb_adults}</li>
+              <li className="col col-icon s1 hide-on-med-and-down">{event.nb_children}</li>
               <li className="col s1">
                 {event.nb_persons}
                 /
@@ -284,7 +291,7 @@ function EventHome() {
                 >
                   <p>{event.name_event}</p>
                   <p>
-                    {moment(event.date_b).format('dddDo/MM/YY')}
+                    {moment(event.date_b).format('dddd Do/MM/YY')}
                   </p>
                   <p>
                     {moment(event.date_b).format('HH:mm-')}
@@ -297,7 +304,7 @@ function EventHome() {
                 </Modal>
               </li>
 
-              <li className="col col-icon s1">
+              <li className="col col-icon s1 hide-on-med-and-down">
                 <button
                   className="btn-floating btn-small waves-effect waves-light valign-wrapper"
                   onClick={() => handleStateMapped(index, collapses, setCollapses)}
@@ -317,7 +324,11 @@ function EventHome() {
               {collapses[index] === false
                 ? null
                 : (
-                  <ReservationHome eventId={event.id_event} eventName={event.name_event} eventDate={event.date_b.format}/>
+                  <ReservationHome
+                    eventId={event.id_event}
+                    eventName={event.name_event}
+                    eventDate={event.date_b.format}
+                  />
                 )
               }
             </ul>

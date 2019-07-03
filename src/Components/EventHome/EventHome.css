@@ -64,8 +64,9 @@ ul{
 /* events list settings */
 .event-header{
   background-color: rgb(55,126,114, 1);
-  color: white;  
-  line-height: 50px;
+  color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
   display: flex;
 }
 

@@ -44,7 +44,7 @@ connection.connect((err) => {
 // to request all the future events from now() ==> EventHome.js
 api.get('/api/future-events', (req, res) => {
   connection.query(
-    'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id GROUP BY events.id_event ORDER BY events.date_b ASC;',
+    'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
     (err, result) => {
       if (err) throw err;
       res.send(result);
@@ -67,13 +67,14 @@ api.get('/api/future-events', (req, res) => {
 //   FROM events 
 // LEFT JOIN registrations ON registrations.event_id=events.id_event
 //   LEFT JOIN users ON users.id_user=registrations.user_id
-// ---------- CONDIITON WERE date_b > now() A RAJOUTER -----------------------
+// WHERE events.date_b >= CURDATE()
 // GROUP BY events.id_event
 // ORDER BY events.date_b ASC
 // ;
 
 // ---------- CONDIITON WERE date_b >  -----------------------
 // WHERE events.date_b > NOW()
+// WHERE events.date_b > CURDATE()
 // WHERE events.date_b > "2019-06-13 09:00:00"
 // WHERE events.date_b > "2019-06-14 09:00:00"
 
