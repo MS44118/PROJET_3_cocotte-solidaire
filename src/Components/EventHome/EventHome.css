@@ -45,12 +45,6 @@
   flex-direction: column;
 }
 
-/* html{
-  width: 100%;
-  margin: 0;
-  padding:0
-} */
-
 ul{
   margin: 0;
 }
@@ -60,6 +54,15 @@ ul{
   justify-content: center;
   align-self: center;
 }
+
+.btn-small{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  max-width: 15px;
+}
+
 
 /* events list settings */
 .event-header{

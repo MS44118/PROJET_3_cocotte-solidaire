@@ -133,7 +133,7 @@ function EventHome() {
       </div>
 
       <div className="row calendar">
-        <Calendar />
+        {/* <Calendar /> */}
       </div>
 
       <div className="row checkbox">
@@ -179,11 +179,10 @@ function EventHome() {
 
         {/* entetes liste des évenements */}
         <ul className="event-header">
-          <li className="col s2 m3 l1 hide-on-large-only"> </li>
-          <li className="col s2 m3 l1 hide-on-med-and-down">Evènement</li>
+          <li className="col s2 hide-on-large-only"> </li>
+          <li className="col s2 hide-on-med-and-down">Evènement</li>
           <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">today</i></li>
-          <li className="col s1 hide-on-med-and-down">Date</li>
-          <li className="col s1 hide-on-med-and-down">Heure</li>
+          <li className="col s1 hide-on-med-and-down">Date/Heure</li>
           <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
@@ -197,6 +196,7 @@ function EventHome() {
           <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
           <li className="col col-icon s1 hide-on-med-and-down"> </li>
+          <li className="col col-icon s1 hide-on-large-only"> </li>
           {/* <i className="material-icons icon-white">pan_tool</i>
           <i className="material-icons icon-white">restaurant</i>
           <i className="material-icons icon-white">restaurant_menu</i>
@@ -206,12 +206,15 @@ function EventHome() {
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
-            <ul className="event-item row valign-wrapper center-align">
-              <li className="col s2 m3 l1">{event.name_event}</li>
-              <li className="col s1 hide-on-med-and-down">{moment(event.date_b).format('dddDo/MM/YY')}</li>
+            <ul
+              className="event-item row valign-wrapper center-align"
+              // onClick={() => handleStateMapped(index, collapses, setCollapses)}
+              // onKeyUp={() => handleStateMapped(index, collapses, setCollapses)}
+            >
+              <li className="col s2">{event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">
-                {moment(event.date_b).format('HH:mm-')}
+                {moment(event.date_b).format('ddd DD/MM HH:mm-')}
                 {moment(event.date_e).format('HH:mm')}
               </li>
               <li className="col col-icon s1 hide-on-med-and-down">{event.nb_adults}</li>
@@ -304,9 +307,11 @@ function EventHome() {
                 </Modal>
               </li>
 
-              <li className="col col-icon s1 hide-on-med-and-down">
+              <li
+                className="col col-icon s1"
+              >
                 <button
-                  className="btn-floating btn-small waves-effect waves-light valign-wrapper"
+                  className="btn btn-small waves-effect waves-light"
                   onClick={() => handleStateMapped(index, collapses, setCollapses)}
                   type="submit"
                   name="action"

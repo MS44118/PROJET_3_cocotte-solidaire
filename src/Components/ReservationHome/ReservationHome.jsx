@@ -24,12 +24,10 @@ function ReservationHome(props) {
 
   // state to show/hide Modale (to confirm registrations deletion)
   const [deleteModal, setDeleteModal] = useState([]);
-  
+
   // create the list of modal State for each registration (visible true/false)
   useEffect(() => {
-    let array = [];
-    array = registrations.map(() => (false));
-    setDeleteModal(array);
+    setDeleteModal(registrations.map(() => (false)));
   }, [registrations]);
 
   // handle the show/hide Modale
@@ -52,6 +50,13 @@ function ReservationHome(props) {
     });
     axios.delete(`http://localhost:8000/registration/${id}`)
       .then((res) => {
+        const index = registrations.findIndex(i => i.id_registration === id);
+        setRegistrations(
+          [
+            ...registrations.slice(0, [index]),
+            ...registrations.slice([index + 1], registrations.length),
+          ],
+        );
         message.success(res.data);
       })
       .catch((err) => {
@@ -65,15 +70,19 @@ function ReservationHome(props) {
 
       {/* entetes liste des réservations */}
       <ul className="registration-header">
-        <li className="col s1">n°adhérent</li>
-        <li className="col s1">prénom</li>
-        <li className="col s1">nom</li>
-        <li className="col col-icon s1">adultes</li>
-        <li className="col col-icon s1">enfants</li>
-        <li className="col s1">téléphone</li>
-        <li className="col col-icon s1">email</li>
-        <li className="col col-icon s1">allergies</li>
-        <li className="col col-icon s1">commentaires</li>
+        <li className="col s1 hide-on-med-and-down">n°adhérent</li>
+        <li className="col s2 hide-on-large-only">prénom nom</li>
+        <li className="col s1 hide-on-med-and-down">prénom</li>
+        <li className="col s1 hide-on-med-and-down">nom</li>
+        <li className="col s1 hide-on-med-and-down">téléphone</li>
+        <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
+        <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb adultes">person_outline</i></li>
+        <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
+        <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb enfants">child_care</i></li>
+        {/* <li className="col s1 hide-on-med-and-down">email</li> */}
+        <li className="col col-icon s1"><i className="material-icons icon-green">email</i></li>
+        <li className="col col-icon s1"><i className="material-icons icon-green">warning</i></li>
+        <li className="col col-icon s1"><i className="material-icons icon-green">comment</i></li>
         <li className="col col-icon s1"><i className="material-icons icon-green">create</i></li>
         <li className="col col-icon s1"><i className="material-icons icon-green">delete_forever</i></li>
         <li className="col col-icon s1"> </li>
@@ -84,12 +93,18 @@ function ReservationHome(props) {
         .filter(registration => registration.event_id === eventProps.eventId)
         .map((registration, index) => (
           <ul key={registration.id_registration} className="registration-item">
-            <li className="col s1">{registration.member_id}</li>
-            <li className="col s1">{registration.firstname}</li>
-            <li className="col s1">{registration.lastname}</li>
+            <li className="col s1 hide-on-med-and-down">{registration.member_id}</li>
+            <li className="col s2 hide-on-large-only">
+              {registration.firstname}
+              {' '}
+              {registration.lastname}
+            </li>
+            <li className="col s1 hide-on-med-and-down">{registration.firstname}</li>
+            <li className="col s1 hide-on-med-and-down">{registration.lastname}</li>
+            <li className="col s1 hide-on-med-and-down">{registration.phone}</li>
             <li className="col col-icon s1">{registration.quantity_adult}</li>
             <li className="col col-icon s1">{registration.quantity_children}</li>
-            <li className="col s1">{registration.phone}</li>
+            {/* <li className="col s1 hide-on-med-and-down">{registration.email}</li> */}
             <li className="col col-icon s1">
               { registration.email === ' ' || '' || !registration.email
                 ? (
@@ -121,10 +136,11 @@ function ReservationHome(props) {
               }
             </li>
             <li className="col col-icon s1">
-            <Link to={{
-              pathname: '/reservation',
-              search: `id=${registration.id_registration}`,
-            }}>
+              <Link to={{
+                pathname: '/reservation',
+                search: `id=${registration.id_registration}`,
+              }}
+              >
                 <i className="material-icons icon-green">create</i>
               </Link>
             </li>
@@ -168,7 +184,7 @@ function ReservationHome(props) {
                   </button>,
                 ]}
               >
-                <h4>ATTENTION vous allez supprimer l'inscription de : </h4>
+                <h4>{'ATTENTION vous allez supprimer l\'inscription de : '}</h4>
                 <p>
                   {registration.firstname}
                   {' '}
@@ -184,9 +200,6 @@ function ReservationHome(props) {
                 </p>
               </Modal>
             </li>
-
-
-
 
             <li className="col col-icon s1"> </li>
           </ul>
