@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
 
 // import M from 'materialize-css/dist/js/materialize';
-import Calendar from 'react-calendar';
+// import Calendar from 'react-calendar';
 import './EventHome.css';
 import 'antd/dist/antd.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
+import updateEventsAction from '../../Actions/homeActions';
 
 function EventHome() {
   // to store api response
@@ -188,7 +190,7 @@ function EventHome() {
           <li className="col s1 hide-on-med-and-down">capacité</li>
           <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
           {/* <li className="col col-icon s1">email</li> */}
-          <li className="col col-icon s1"><i className="material-icons icon-white">email</i></li>
+          <li className="col col-icon s1"><i className="material-icons icon-white" title="email">email</i></li>
           {/* <li className="col col-icon s1">allergies</li> */}
           <li className="col col-icon s1"><i className="material-icons icon-white">warning</i></li>
           {/* <li className="col col-icon s1">commentaires</li> */}
@@ -206,11 +208,7 @@ function EventHome() {
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
-            <ul
-              className="event-item row valign-wrapper center-align"
-              // onClick={() => handleStateMapped(index, collapses, setCollapses)}
-              // onKeyUp={() => handleStateMapped(index, collapses, setCollapses)}
-            >
+            <ul className="event-item row valign-wrapper center-align">
               <li className="col s2">{event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">

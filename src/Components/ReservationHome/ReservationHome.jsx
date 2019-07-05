@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import moment from 'moment';
 import { Tooltip, message, Modal } from 'antd';
 
 import './ReservationHome.css';
 import 'antd/dist/antd.css';
+
+import updateEventsAction from '../../Actions/homeActions';
 
 function ReservationHome(props) {
   const [registrations, setRegistrations] = useState([]);
@@ -57,6 +60,7 @@ function ReservationHome(props) {
             ...registrations.slice([index + 1], registrations.length),
           ],
         );
+        props.dispatch(updateEventsAction([registrations.length]))
         message.success(res.data);
       })
       .catch((err) => {
