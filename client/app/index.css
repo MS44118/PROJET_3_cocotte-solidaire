@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville&display=swap');
-
-.render {
-  border: 1.7px solid gray;
-  margin: 20px;
+.container{
   width: 100%;
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2), 0 1px 5px 0 rgba(0,0,0,0.2);
+}
+.render {
+  width: 70vw;
+  margin: auto;
 }
 
 .activitie_pics {
@@ -55,9 +54,8 @@
   font-size: 1.2em;
   line-height: 2em;
 }
-p{
+p {
   font-family: Roboto;
-  font-size: 1em;
 }
 
 .mssg {
@@ -69,22 +67,69 @@ p{
  .color_select{
   color:#498e81 !important;
  }
-
-.info{
-  font-family: Libre Baskerville;
-  font-size: 1em;
-  font-style: italic;
-  width: 100%;
+.calendar_center{
+  margin: auto;
+  display: table;
+}
+.calendar_right{
+  float: right;
+  margin-left: 5vw;
+}
+.container-calendar_right{
+  display: grid;
+  width: 100vw;
+  height: 100vh;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 1fr;
+}
+.calendar-calendar_right{
+  overflow-y: scroll;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 20%;
+}
+.cards-calendar_right{
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  width: 75%;
+  margin-left: 10%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+.hidden-calendar_right{
+  display: none;
+}
+.cards-calendar_center{
+  width: 70vw;
+  margin: auto;
 }
 
+.form{
+  border-color: #83bbb4;
+  border-style: solid;
+  border-width: 10px;
+  padding: 20px;
+}
 .merci{
   color: #F8C8BE;
-  font-family: Simplifica;
-  font-size: 2em;
-  text-transform: uppercase;
-  margin-top: 2vh;
 }
-
+.send{
+  display: grid;
+  width: 20%;
+}
+.form-item{
+  color:#498e81 !important;
+ }
+ .card-content-second{
+  margin-left: 20px;
+  vertical-align: bottom;
+  padding-bottom: 0px;
+}
 .title{
   font-family: Simplifica;
   font-size: 1.5em;
@@ -97,24 +142,8 @@ p{
   vertical-align: bottom;
   padding-bottom: 0px;
 }
-.collection{
-  margin: 20px;
-  width: 100%;
-}
-.calendar{
-  margin: auto; 
-  display: table;
-}
-.center{
-  width: 100%;
-  margin-top: 5vh;
-}
-.form{
-  border-color: #83bbb4;
-  border-style: solid;
-  border-width: 10px;
-  padding: 20px;
-}
-.input-field{
-  color: #498e81;
+
+.cards-calendar_right::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Chrome/Safari/Webkit */
 }
