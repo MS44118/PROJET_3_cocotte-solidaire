@@ -1,13 +1,12 @@
-const homeReducer = (store = [], action) => {
+
+const updateEventsReducer = (store = [], action) => {
   switch (action.type) {
     case 'UPDATE_EVENTS': {
-      const newstore = { ...store };
-      newstore.updateEvents = action.payload;
-      return newstore;
+      return [...store, action.payload];
     }
     default:
       return store;
   }
 };
 
-export default homeReducer;
+export default updateEventsReducer;

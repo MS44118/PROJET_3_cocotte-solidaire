@@ -8,14 +8,15 @@ import { Tooltip, message, Modal } from 'antd';
 import './ReservationHome.css';
 import 'antd/dist/antd.css';
 
+// REDUX ACTIONS
 import updateEventsAction from '../../Actions/homeActions';
 
 function ReservationHome(props) {
   const [registrations, setRegistrations] = useState([]);
+  const [homeProps, setHomeProps] = useState({});
 
   // ESLINT WARNING: to prevent definitions of unused prop types
-  const [eventProps, setEventProps] = useState({});
-  useEffect(() => setEventProps(props), [props]);
+  useEffect(() => setHomeProps(props), [props]);
 
   // get the registrations details from database
   useEffect(() => {
@@ -33,7 +34,7 @@ function ReservationHome(props) {
     setDeleteModal(registrations.map(() => (false)));
   }, [registrations]);
 
-  // handle the show/hide Modale
+  // handle the show/hide Modale to confirm deletion
   const handleStateMapped = (i, state, func) => {
     func(
       [
@@ -51,8 +52,10 @@ function ReservationHome(props) {
       duration: 2,
       maxCount: 3,
     });
+    console.log(registrations.length);
     axios.delete(`http://localhost:8000/registration/${id}`)
       .then((res) => {
+        message.success(res.data);
         const index = registrations.findIndex(i => i.id_registration === id);
         setRegistrations(
           [
@@ -60,8 +63,8 @@ function ReservationHome(props) {
             ...registrations.slice([index + 1], registrations.length),
           ],
         );
-        props.dispatch(updateEventsAction([registrations.length]))
-        message.success(res.data);
+        console.log(registrations.length);
+        homeProps.methodUpdateRegistrationsLength({ registrations.length });
       })
       .catch((err) => {
         message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
@@ -78,12 +81,11 @@ function ReservationHome(props) {
         <li className="col s2 hide-on-large-only">prénom nom</li>
         <li className="col s1 hide-on-med-and-down">prénom</li>
         <li className="col s1 hide-on-med-and-down">nom</li>
-        <li className="col s1 hide-on-med-and-down">téléphone</li>
         <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
         <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb adultes">person_outline</i></li>
         <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
         <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb enfants">child_care</i></li>
-        {/* <li className="col s1 hide-on-med-and-down">email</li> */}
+        <li className="col s1 hide-on-med-and-down">téléphone</li>
         <li className="col col-icon s1"><i className="material-icons icon-green">email</i></li>
         <li className="col col-icon s1"><i className="material-icons icon-green">warning</i></li>
         <li className="col col-icon s1"><i className="material-icons icon-green">comment</i></li>
@@ -94,7 +96,7 @@ function ReservationHome(props) {
 
       {/* liste des réservations */}
       {registrations
-        .filter(registration => registration.event_id === eventProps.eventId)
+        .filter(registration => registration.event_id === homeProps.eventId)
         .map((registration, index) => (
           <ul key={registration.id_registration} className="registration-item">
             <li className="col s1 hide-on-med-and-down">{registration.member_id}</li>
@@ -105,10 +107,9 @@ function ReservationHome(props) {
             </li>
             <li className="col s1 hide-on-med-and-down">{registration.firstname}</li>
             <li className="col s1 hide-on-med-and-down">{registration.lastname}</li>
-            <li className="col s1 hide-on-med-and-down">{registration.phone}</li>
             <li className="col col-icon s1">{registration.quantity_adult}</li>
             <li className="col col-icon s1">{registration.quantity_children}</li>
-            {/* <li className="col s1 hide-on-med-and-down">{registration.email}</li> */}
+            <li className="col s1 hide-on-med-and-down">{registration.phone}</li>
             <li className="col col-icon s1">
               { registration.email === ' ' || '' || !registration.email
                 ? (
@@ -161,9 +162,9 @@ function ReservationHome(props) {
                 title={(
                   <h3>
                     {'atelier '}
-                    {eventProps.eventName}
+                    {homeProps.eventName}
                     {' du '}
-                    {moment(eventProps.eventDate).format('dddd Do/MM/YY')}
+                    {moment(homeProps.eventDate).format('dddd Do/MM/YY')}
                   </h3>
                 )}
                 visible={deleteModal[index]}
@@ -214,4 +215,4 @@ function ReservationHome(props) {
   );
 }
 
-export default ReservationHome;
+export default connect()(ReservationHome);

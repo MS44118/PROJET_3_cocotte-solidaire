@@ -11,26 +11,32 @@ import './EventHome.css';
 import 'antd/dist/antd.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
-import updateEventsAction from '../../Actions/homeActions';
 
-function EventHome() {
+function EventHome(props) {
   // to store api response
   const [events, setEvents] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
   // to collapse all the registrations for a specific event
   const [collapses, setCollapses] = useState([]);
+  // to show modale asking confirmation to delete event
   const [deleteModal, setDeleteModal] = useState([]);
-  // const { confirm } = Modal;
-
-  const handleStateMapped = (i, state, func) => {
-    func(
-      [
-        ...state.slice(0, [i]),
-        !state[i],
-        ...state.slice([i + 1], state.length),
-      ],
-    );
+  // get the number of registrations to refresh the list of events if some change
+  const [registrationLength, setRegistrationLength] = useState({});
+  const handleUpdateRegistrations = (regLength) => {
+    setRegistrationLength(regLength);
   };
+
+
+  // events filtered with checkboxes
+  // and one day with date picked on the calendar
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  // checkboxes filters
+  const [filterCuisiner, setFilterCuisiner] = useState(true);
+  const [filterManger, setFilterManger] = useState(true);
+  const [filterAutres, setFilterAutres] = useState(true);
+
+
+  // ESLINT WARNING: to prevent definitions of unused prop types
+  useEffect(() => setStoreProps(props), [props]);
 
   // to delete an event
   const deleteEvent = (id) => {
@@ -56,10 +62,6 @@ function EventHome() {
   };
 
   // { filtre_xxxxx: true, check_xxxxx: true }
-  const [filterCuisiner, setFilterCuisiner] = useState(true);
-  const [filterManger, setFilterManger] = useState(true);
-  const [filterAutres, setFilterAutres] = useState(true);
-
   const checkAll = () => {
     if (!filterCuisiner || !filterManger || !filterAutres) {
       setFilterCuisiner(true);
@@ -72,19 +74,24 @@ function EventHome() {
     }
   };
 
-  // Auto Init allows you to initialize all of the Materialize Components
-  // useEffect(() => {
-  //   M.AutoInit();
-  // }, []);
+  const handleStateMapped = (i, state, func) => {
+    func(
+      [
+        ...state.slice(0, [i]),
+        !state[i],
+        ...state.slice([i + 1], state.length),
+      ],
+    );
+  };
 
-  // api call
+  // api call (or refresh if registrations deleted)
   useEffect(() => {
     axios.get('http://localhost:8000/api/future-events')
       .then((result) => {
         setEvents(result.data);
         setFilteredEvents(result.data);
       });
-  }, []);
+  }, [registrationLength]);
 
   // set filters according to checkboxes
   useEffect(() => {
@@ -331,6 +338,7 @@ function EventHome() {
                     eventId={event.id_event}
                     eventName={event.name_event}
                     eventDate={event.date_b.format}
+                    methodUpdateRegistrationsLength={handleUpdateRegistrations()}
                   />
                 )
               }
@@ -358,4 +366,9 @@ function EventHome() {
   );
 }
 
-export default EventHome;
+
+const mapStateToProps = store => ({
+  storeProps: store.registrationLength,
+});
+
+export default connect(mapStateToProps)(EventHome);

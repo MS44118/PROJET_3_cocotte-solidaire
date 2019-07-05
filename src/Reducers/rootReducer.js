@@ -6,7 +6,7 @@ import homeReducer from './homeReducer';
 const rootReducer = combineReducers({
   displayUserForm: displayUserFormReducer,
   user: userReducer,
-  home: homeReducer,
+  registrationLength: homeReducer,
 });
 
 export default rootReducer;
