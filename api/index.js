@@ -405,8 +405,11 @@ api.get('/events', (req, res) => {
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
+  // console.log(reservation)
   {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
- console.log(reservation)
+  {reservation.quantityAdult ? reservation.quantityAdult= parseInt(`${reservation.quantityAdult}`,10) : reservation.quantityAdult=null}
+  {reservation.quantityChildren ? reservation.quantityChildren= parseInt(`${reservation.quantityChildren}`,10) : reservation.quantityChildren=null}
+//  console.log(reservation.quantityAdult)
   if (reservation.existantUser === false){
     connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result)=>{
       if (err){
@@ -418,9 +421,7 @@ api.post('/zboub/', (req,res)=>{
           console.log(err)
   
         }else{
-          console.log(result[0].id_user)
-        
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.allergies}","${reservation.comment}","${result[0].id_user}",${reservation.eventId})`, 
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id ) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -434,7 +435,7 @@ api.post('/zboub/', (req,res)=>{
       }
     })
   } else {
-    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
+    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -457,18 +458,28 @@ api.get('/registration/:id', (req, res)  =>{
     }
   })
 })
-api
-api.put('/zob/:id',(req, res)=>{
-  const idUser= req.param.id
-  const changeInfo = req.query
- 
-  connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,`{ idUser}`,err=>{
+
+api.put('/zboub/:id',(req, res)=>{
+  const idRegistration= req.params.id
+  const changeInfo = req.body
+  {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
+  {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
+
+
+  console.log(idRegistration)
+  console.log(changeInfo)
+  console.log(typeof  (`${ changeInfo.allergie}`))
+
+ if (idRegistration>0){
+  connection.query(`UPDATE  registrations  SET  quantity_adult =${changeInfo.quantityAdult},quantity_children=${changeInfo.quantityChildren}, allergie="${changeInfo.allergies}", comment="${changeInfo.comment}", user_id=${changeInfo.idUser} WHERE id_registration= ${idRegistration}` , err=>{
     if (err){
+      console.log(err)
       res.status(500).send("raté pov tanche")
     }else{
       res.sendStatus(200)
     }
-  })
+  })  
+}
 })
     
 //   connection.query(
@@ -551,7 +562,7 @@ api.post('/api/reservation/public/', (req, res) => {
               console.log(err)
             } else {
               connection.query(
-                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${result[0].id_user}, ${values.eventId})`,
+                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${parsInt(result[0].id_user,10)}, ${parsInt(values.eventId, 10)})`,
                 (err, result) => {
                   if(err){
                     console.log(err)

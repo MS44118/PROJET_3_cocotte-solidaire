@@ -22,9 +22,9 @@ function Reservation(props) {
   const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState();
-  const [quantityAdult, setQuantityAdult] = useState();
+  const [quantityAdult, setQuantityAdult] = useState(1);
   const [quantityChildren, setQuantityChildren] = useState(0);
-  const [allergies, setAllergies] = useState('');
+  const [allergies, setAllergies] = useState();
   const [comment, setComment] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([{ title: '', id: '' }]);
@@ -33,7 +33,8 @@ function Reservation(props) {
   const [existantUser, setExistantUser] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
   const [registration, setRegistration] = useState(0);
-
+  const [newReservation, setNewReservation] = useState(true);
+  const [idRegistration, setIdRegistration] = useState();
 
   useEffect(() => {
     M.AutoInit();
@@ -44,93 +45,106 @@ function Reservation(props) {
     axios.get('http://localhost:8000/events')
       .then((result) => {
         setEvent(result.data);
+        // console.log(result.data)
       });
-     }, []);
+    }, []);
+    
 
-  const addReservation = {
-    quantityAdult,
-    quantityChildren,
-    allergies,
-    comment,
-    lastname,
-    firstname,
-    email,
-    phone,
-    idUser,
-    existantUser,
-    eventId,
-    memberNumber,
-  };
-  axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
-    .then(function (response) {
-      console.log(response)
-    })
-    .then(function (err) {
-      console.log(err)
-    })
-  const sendForm = () => {
-    axios.post('http://localhost:8000/zboub/', addReservation)
+    const sendForm = () => {
+      if (newReservation){
+      axios.post('http://localhost:8000/zboub/', addReservation)
       .then((response) => {
         console.log(response);
       })
       .then((err) => {
         console.log(err);
       });
-  };
-
-  useEffect(() => {
-    if (searchValue.length > 0) {
-      const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
-      let resultTemp = [];
-      for (let i = 0; i < arrayTemp.length; i++) {
-        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
-      }
-      setSearchResults(resultTemp);
-    }
-    if (searchValue.length === 0) {
-      setDisableInput(false)
+    
     } else {
-      setDisableInput(true)
-      setLabelActive('active');
-    }
-  }, [searchValue]); 
-  
-    useEffect(() => {
-      const params = queryString.parse(props.location.search);
-      let registrationId = params.id;
-      
-      axios.get(`http://localhost:8000/registration/${registrationId}`)
-      .then(data=>{
-        setRegistration(data.data)
-        console.log(data.data)
-      })
-    .catch(err=>{
-      console.log(err)
-    })
-    }, [props.location.search])
+      axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
+        .then(function (response) {
+            console.log(response)
+          })
+          .then(function (err) {
+              console.log(err)
+            })
+            setNewReservation(!newReservation)
+          }
+    };
+    
+useEffect(() => {
+          if (searchValue.length > 0) {
+            const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
+            let resultTemp = [];
+            for (let i = 0; i < arrayTemp.length; i++) {
+              resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
+            }
+            setSearchResults(resultTemp);
+          }
+          if (searchValue.length === 0) {
+            setDisableInput(false)
+          } else {
+            setDisableInput(true)
+            setLabelActive('active');
+          }
+        }, [searchValue]); 
+        
+        useEffect(() => {
+          const params = queryString.parse(props.location.search);
+          let registrationId = params.id;
+          
+          axios.get(`http://localhost:8000/registration/${registrationId}`)
+          .then(data=>{
+            setRegistration(data.data)
+            console.log(data.data)
+          })
+          .catch(err=>{
+            console.log(err)
+          })
 
-
-    useEffect(()=>{
-
-      if(registration.length > 0 ){
-          setQuantityAdult(registration[0].quantity_adult)
-          setQuantityChildren(registration[0].quantity_children)
-          setAllergies(registration[0].allergie)
-          setComment(registration[0].comment)
-          setFirstname(registration[0].firstname)
-          setLastname(registration[0].lastname)
-          setEmail(registration[0].email)
-          setPhone(registration[0].phone)
-          setMemberNumber(registration[0].member_id)
-          setEventId(registration[0].id_event)
-          setLabelActive('active')
-          // setDisableInput(true)
-       
-        }
-
-    },[registration])
-  
-console.log(registration)
+          setNewReservation(false)
+        }, [props.location.search])
+        
+        
+        useEffect(()=>{
+          
+          if(registration.length > 0 ){
+            setQuantityAdult(registration[0].quantity_adult)
+            setQuantityChildren(registration[0].quantity_children)
+            setAllergies(registration[0].allergie)
+            setComment(registration[0].comment)
+            setFirstname(registration[0].firstname)
+            setLastname(registration[0].lastname)
+            setEmail(registration[0].email)
+            setPhone(registration[0].phone)
+            setMemberNumber(registration[0].member_id)
+            setEventId(registration[0].event_id)
+            setLabelActive('active')
+            setIdUser(registration[0].user_id)
+            setIdRegistration(registration[0].id_registration)
+            // setDisableInput(true)
+            
+          }
+          
+        },[registration])
+        // console.log(registration)
+        
+    
+          const addReservation = {
+            quantityAdult,
+            quantityChildren,
+            allergies,
+            comment,
+            lastname,
+            firstname,
+            email,
+            phone,
+            idUser,
+            existantUser,
+            eventId,
+            memberNumber,
+          };
+  console.log (idRegistration)
 
   const handleUser = (e, { result }) => {
 
@@ -147,10 +161,12 @@ console.log(registration)
 
   }
 
+  
   return (
 
     <div className="container">
       <h1>Réservation</h1>
+      <p>oublie pas de selectionner une cativité sinon ça plante</p>
       <div className="row">
         <div className="input-field  col s8">
 
@@ -167,14 +183,18 @@ console.log(registration)
       </div>
       <div className="row">
         <div className="input-field col s6">
-          <p>place disponibles :{events.capacity}</p>
+         
         </div>
         <div className="input-field col s6">
           <select id="events" className="browser-default color_select" value={eventId} onChange={(events) => setEventId(events.target.value)}>
+      
+          <option value="0" disabled selected>Selection d'un évènement</option>
             {events.map((event, index) =>
               <option key={event[index]} value={event.id_event} >{event.name_event} : {moment(event.date_b).calendar()} </option>
+              
             )};
            </select>
+       
 
         </div>
 
@@ -311,6 +331,7 @@ console.log(registration)
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i> 
           <textarea
+            type= "text"
             id="allergy"
             className="materialize-textarea"
             onChange={e => setAllergies(e.target.value)}
