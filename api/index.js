@@ -416,7 +416,7 @@ api.get('/api/event/type/:id', (req, res) => {
   const idActivity = req.params.id;
   if(idActivity>2){
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -424,7 +424,7 @@ api.get('/api/event/type/:id', (req, res) => {
     );
   } else {
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -459,7 +459,7 @@ api.post('/api/reservation/public/', (req, res) => {
               if(err){
                 console.log(err)
               } else {
-                res.status(200)
+                res.sendStatus(200);              
               }
             }
           )
@@ -483,7 +483,7 @@ api.post('/api/reservation/public/', (req, res) => {
                   if(err){
                     console.log(err)
                   } else {
-                    res.status(200)
+                    res.sendStatus(200)
                   }
                 }
               )
