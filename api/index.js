@@ -520,6 +520,16 @@ api.put('/zob/:id',(req, res)=>{
 
 // })
 
+api.get('/api/event/calendar', (req, res) => {
+  connection.query(
+    `SELECT events.id_event, events.name_event, events.date_b, activities.name_activity, activities.id_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC`,
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
+})
+
 api.get('/api/event/type/:id', (req, res) => {
   const idActivity = req.params.id;
   if(idActivity>2){
