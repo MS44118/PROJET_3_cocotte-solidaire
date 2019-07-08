@@ -104,25 +104,13 @@ function Users(
 
   return (
     <div className="container">
-      <div className="row" style={{ width: '100%' }}>
-        <h2 style={{
-          fontSize: '3em',
-          margin: 'auto',
-          marginBottom: '5vh',
-          marginTop: '5vh',
-        }}
-        >
+      <div className="row title">
+        <h2>
           Liste des utilisateurs / adhérents
         </h2>
       </div>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        }}
-      >
-        <div style={{ alignSelf: 'flex-start' }}>
+      <div className="topTable">
+        <div>
           <AutoComplete
             style={{ width: 300 }}
             dataSource={dataSource}
@@ -136,9 +124,8 @@ function Users(
           </AutoComplete>
         </div>
         <button
-          style={{ marginTop: '10px', alignSelf: 'flex-end' }}
           type="button"
-          className="waves-effect waves-light btn-small teal darken-1 white-text"
+          className="waves-effect waves-light btn-small teal darken-1 white-text buttonNew"
           onClick={() => dispatch(displayNewUserFormAction('block'))}
         >
           Nouvel adhérent
@@ -147,22 +134,22 @@ function Users(
       <ul className="collection">
         <li style={{ display: displayNewUser }}><FormMember userSelected="new" /></li>
         <li className="collection-item-header row center-align">
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])}>N°adhérent</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])}>Nom</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2">Tel</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2">Mail</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" />
+          <textbox className="col s4 m2" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])}>N°adhérent</textbox>
+          <textbox className="col s4 m2" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])}>Nom</textbox>
+          <textbox className="col s4 m2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
+          <textbox className="col s4 m2">Tel</textbox>
+          <textbox className="col s4 m2">Mail</textbox>
+          <textbox className="col s4 m2" />
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
             <li className="collection-item row center-align">
-              <p className="col s2">{user.memberId}</p>
-              <p className="col s2">{user.lastname}</p>
-              <p className="col s2">{user.firstname}</p>
-              <p className="col s2">{user.phone}</p>
-              <p className="col s2">{user.email}</p>
-              <p className="col s2">
+              <p className="col s4 m2">{user.memberId}</p>
+              <p className="col s4 m2">{user.lastname}</p>
+              <p className="col s4 m2">{user.firstname}</p>
+              <p className="col s4 m2">{user.phone}</p>
+              <p className="col s4 m2">{user.email}</p>
+              <p className="col s4 m2">
                 <button
                   type="button"
                   className="waves-effect waves-light btn-small teal darken-1 white-text col"

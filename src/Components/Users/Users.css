@@ -29,3 +29,24 @@
 .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled){
   border-color: #83bbb4!important;
 }
+.title{
+  width: 100%;
+}
+.title h2{
+  font-size: 3em;
+  margin: auto;
+  margin-bottom: 5vh;
+  margin-top: 5vh;
+}
+.autocomplete{
+  align-self: flex-start;
+}
+.topTable{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+.collection-item-header textbox{
+  margin-right: 20px;
+}
