@@ -27,9 +27,8 @@ function Users(
   useEffect(() => {
     axios.get('http://localhost:8000/users')
       .then((data) => {
-        setUserList(data.data);
-        setUsers(data.data.splice(20, data.data.length));
-        console.log(data.data.length)
+        setUsers(data.data);
+        setUserList(data.data.slice(0, 20));
         let dataTemp = ['0 Tous les adhérents'];
         for (let i = 0; i < data.data.length; i += 1) {
           dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`]
@@ -94,8 +93,10 @@ function Users(
   useEffect(() => {
     console.log(searchValue)
     if (searchValue > 0){
+      console.log(users)
       const arrayFilter = users.filter((user) => user.idUser === parseInt(searchValue));
       setUserList(arrayFilter);
+      console.log(arrayFilter)
     } else if (parseInt(searchValue) === 0) {
       setUserList(users);
     }
