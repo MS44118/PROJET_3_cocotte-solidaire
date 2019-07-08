@@ -19,3 +19,13 @@
 .collection-item-header:nth-child(3):after{
   margin-right: 10px;
 }
+
+.ant-select-dropdown .ant-select-dropdown-menu-item-active {
+  background-color: #83bbb4!important;
+}
+.ant-select-auto-complete.ant-select .ant-input:focus, .ant-select-auto-complete.ant-select .ant-input:hover{
+  border-color: #83bbb4!important;
+}
+.ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled){
+  border-color: #83bbb4!important;
+}

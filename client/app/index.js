@@ -61,7 +61,11 @@ function App() {
       .then((data) => {
         const eventsTemp = [...data.data];
         for (let i = 0; i < eventsTemp.length; i += 1) {
-          eventsTemp[i].placesAvailable = eventsTemp[i].capacity - eventsTemp[i].nb_persons;
+          if (eventsTemp[i].capacity - eventsTemp[i].nb_persons > 0) {
+            eventsTemp[i].placesAvailable = eventsTemp[i].capacity - eventsTemp[i].nb_persons;
+          } else {
+            eventsTemp[i].placesAvailable = 0;
+          }
         }
         setEventList(eventsTemp);
         setEvents(eventsTemp);
