@@ -1,10 +1,10 @@
 body{
   color:#498e81 !important;
 }
-.txt{
-  text-align: center;
-  font-size: 25px;
-}
-.color_select{
+
+/* .color_select{
   color:#498e81 !important;
+} */
+.noFuckingmargin{
+  margin-left: 0% !important;
 }

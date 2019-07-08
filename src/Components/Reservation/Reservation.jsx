@@ -2,17 +2,18 @@ import axios from 'axios';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
-import { Search } from 'semantic-ui-react';
-import 'semantic-ui/dist/semantic.min.css';
 import moment from 'moment';
-import './Reservation.css';
+import { Input, Icon, AutoComplete } from 'antd'
 import 'moment/locale/fr';
-import { stringLiteral } from '@babel/types';
 import queryString from 'query-string';
 import { withRouter } from 'react-router';
+import './Reservation.css';
 
-function Reservation(props) {
-
+function Reservation(
+  {
+    location,
+  }
+) {
   const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState('');
@@ -21,34 +22,39 @@ function Reservation(props) {
   const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
   const [idUser, setIdUser] = useState();
-  const [quantityAdult, setQuantityAdult] = useState();
+  const [quantityAdult, setQuantityAdult] = useState(1);
   const [quantityChildren, setQuantityChildren] = useState(0);
-  const [allergies, setAllergies] = useState('');
+  const [allergies, setAllergies] = useState();
   const [comment, setComment] = useState('');
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState([{ title: '', id: '' }]);
+
   const [labelActive, setLabelActive] = useState('');
   const [eventId, setEventId] = useState(0);
   const [existantUser, setExistantUser] = useState(false);
   const [disableInput, setDisableInput] = useState(false);
   const [registration, setRegistration] = useState(0);
-
-  // ESLINT WARNING: to prevent definitions of unused prop types
-  // const [Props, setProps] = useState({});
-  // useEffect(() => setProps(props), [props]);
+  const [newReservation, setNewReservation] = useState(true);
+  const [idRegistration, setIdRegistration] = useState();
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     M.AutoInit();
     axios.get('http://localhost:8000/users')
       .then((result) => {
         setUsers(result.data);
+        let dataTemp = ['0 Tous les adhérents'];
+        for (let i = 0; i < result.data.length; i += 1) {
+          dataTemp = [...dataTemp, `${result.data[i].idUser} ${result.data[i].firstname} ${result.data[i].lastname}`];
+        }
+        setDataSource(dataTemp);
+        console.log(dataTemp);
       });
     axios.get('http://localhost:8000/events')
       .then((result) => {
         setEvent(result.data);
+        // console.log(result.data)
       });
   }, []);
-
   const addReservation = {
     quantityAdult,
     quantityChildren,
@@ -63,31 +69,45 @@ function Reservation(props) {
     eventId,
     memberNumber,
   };
-  axios.put(`http://localhost:8000/zob/${idUser}`, addReservation)
-    .then((response) => {
-      console.log(response);
-    })
-    .then((err) => {
-      console.log(err);
-    });
   const sendForm = () => {
-    axios.post('http://localhost:8000/zboub/', addReservation)
-      .then((response) => {
-        console.log(response);
-      })
-      .then((err) => {
-        console.log(err);
-      });
+    if (newReservation) {
+      axios.post('http://localhost:8000/zboub/', addReservation)
+        .then((response) => {
+          console.log(response);
+        })
+        .then((err) => {
+          console.log(err);
+        });
+    } else {
+      axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
+        .then((response) => {
+          console.log(response);
+        })
+        .then((err) => {
+          console.log(err);
+        });
+      setNewReservation(!newReservation);
+    }
   };
 
   useEffect(() => {
-    if (searchValue.length > 0) {
-      const arrayTemp = users.filter(user => user.lastname.toLowerCase().includes(`${searchValue.toLowerCase()}`) || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`));
-      let resultTemp = [];
-      for (let i = 0; i < arrayTemp.length; i += 1) {
-        resultTemp = [...resultTemp, { title: `${arrayTemp[i].lastname} ${arrayTemp[i].firstname}`, id: arrayTemp[i].idUser }];
-      }
-      setSearchResults(resultTemp);
+    if (searchValue > 0) {
+      console.log(users);
+      const arrayTemp = users.filter(user => user.idUser === parseInt(searchValue));
+      // setUserList(arrayFilter);
+      setFirstname(arrayTemp[0].firstname);
+      setLastname(arrayTemp[0].lastname);
+      setEmail(arrayTemp[0].email);
+      setPhone(arrayTemp[0].phone);
+      setMemberNumber(arrayTemp[0].member_id);
+      setIdUser(arrayTemp[0].idUser);
+      setMemberNumber(arrayTemp[0].memberId);
+      setExistantUser(true);
+      console.log(arrayTemp);
+      // } else if (parseInt(searchValue) === 0) {
+      //   setUserList(users);
+      // }
+
     }
     if (searchValue.length === 0) {
       setDisableInput(false);
@@ -96,6 +116,7 @@ function Reservation(props) {
       setLabelActive('active');
     }
   }, [searchValue]);
+
 
   useEffect(() => {
     const params = queryString.parse(props.location.search);
@@ -130,60 +151,105 @@ function Reservation(props) {
 
   console.log(registration);
 
-  const handleUser = (e, { result }) => {
-    const arrayTemp = users.filter(user => user.idUser === result.id);
-    setFirstname(arrayTemp[0].firstname);
-    setLastname(arrayTemp[0].lastname);
-    setEmail(arrayTemp[0].email);
-    setPhone(arrayTemp[0].phone);
-    setMemberNumber(arrayTemp[0].member_id);
-    setIdUser(arrayTemp[0].idUser);
-    setMemberNumber(arrayTemp[0].memberId);
-    setExistantUser(true);
-  };
+  // const handleUser = (e, { result }) => {
+  //   const arrayTemp = users.filter(user => user.idUser === result.id);
+  //   setFirstname(arrayTemp[0].firstname);
+  //   setLastname(arrayTemp[0].lastname);
+  //   setEmail(arrayTemp[0].email);
+  //   setPhone(arrayTemp[0].phone);
+  //   setMemberNumber(arrayTemp[0].member_id);
+  //   setIdUser(arrayTemp[0].idUser);
+  //   setMemberNumber(arrayTemp[0].memberId);
+  //   setExistantUser(true);
+  // };
+
+
+  useEffect(() => {
+    const params = queryString.parse(location.search);
+    const registrationId = params.id;
+
+    axios.get(`http://localhost:8000/registration/${registrationId}`)
+      .then((data) => {
+        setRegistration(data.data);
+        console.log(data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setNewReservation(false);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (registration.length > 0) {
+      setQuantityAdult(registration[0].quantity_adult);
+      setQuantityChildren(registration[0].quantity_children);
+      setAllergies(registration[0].allergie);
+      setComment(registration[0].comment);
+      setFirstname(registration[0].firstname);
+      setLastname(registration[0].lastname);
+      setEmail(registration[0].email);
+      setPhone(registration[0].phone);
+      setMemberNumber(registration[0].member_id);
+      setEventId(registration[0].event_id);
+      setLabelActive('active');
+      setIdUser(registration[0].user_id);
+      setIdRegistration(registration[0].id_registration);
+    }
+  }, [registration]);
+  // console.log(registration)
 
   return (
 
     <div className="container">
       <h1>Réservation</h1>
-      <div className="row">
-        {/* <div className="input-field  col s8">
-
-        </div> */}
-        <div className="input-field col s4 mr-8">
-          <button
-            type="submit"
-            className="waves-effect waves-light btn-small teal white-text right "
-            onClick={sendForm}
-          >
+      <div className="input-field col s4 mr-8">
+        <button
+          type="submit"
+          className="waves-effect waves-light btn-small teal white-text right "
+          onClick={sendForm}
+        >
             Envoyer
-          </button>
-        </div>
+        </button>
       </div>
+      <p>oublie pas de selectionner une cativité sinon ça plante</p>
       <div className="row">
-        <div className="input-field col s6">
-          <p>
-            {'place disponibles :'}
-            {events.capacity}
-          </p>
-        </div>
-        <div className="input-field col s6">
-          <select id="events" className="browser-default color_select" value={eventId} onChange={events => setEventId(events.target.value)}>
-            {events.map((event, index) => (
-              <option key={event[index]} value={event.id_event}>
-                {`${event.name_event} : ${moment(event.date_b).calendar()}`}
-              </option>
-            ))}
+        <div className=" input-field col s4 noFuckingmargin">
+          <select id="events" className="browser-default color_select" value={eventId} onChange={changeEvent => setEventId(changeEvent.target.value)}>
+            <option value="0" disabled selected>Selection d&apos;un évènement</option>
+            {events.map(
+              (event, index) => (
+                <option
+                  key={(event[index])}
+                  value={event.id_event}
+                >
+                  {event.name_event}
+                  :
+                  {moment(event.date_b).calendar()}
+                </option>
+              ),
+            )}
           </select>
 
+        </div>
+        <div className=" input-field col s4 noFuckingmargin">
+          <AutoComplete
+            style={{ width: 300 }}
+            dataSource={dataSource}
+            onSelect={value => setSearchValue(value.split(' ')[0])}
+            placeholder="Recherche (par nom ou prénom)"
+            onResultSelect={(e, { result }) => dataSource(e, { result })}
+            filterOption={(inputValue, option) => option.props.children.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().indexOf(inputValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()) !== -1
+            }
+          >
+            <Input suffix={<Icon type="search" className="certain-category-icon" />} />
+          </AutoComplete>
         </div>
 
       </div>
       <div className=" row ">
-        <div className="col s4 txt ">
-          <p>Places à réserver</p>
-        </div>
-        <div className="input-field col s4">
+   
+        <div className="input-field col s4 noFuckingmargin">
           <p> nombres d&apos;Adultes</p>
           <select value={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
             <option value="0" disabled selected>Nombres Adultes</option>
@@ -196,7 +262,7 @@ function Reservation(props) {
           </select>
 
         </div>
-        <div className="input-field col s4">
+        <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
           <select onChange={e => setQuantityChildren(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
@@ -209,22 +275,12 @@ function Reservation(props) {
           </select>
 
         </div>
-        <Search
-          onSearchChange={event => setSearchValue(event.target.value)}
-          type="text"
-          value={searchValue}
-          results={searchResults}
-          onResultSelect={(e, { result }) => handleUser(e, { result })}
-          size="big"
-          icon="none"
-          placeholder="nom de famille"
-        />
 
       </div>
       {/* choose event collaps bar */}
       <div className="row">
 
-        <div className="input-field col s6">
+        <div className="input-field col s6 noFuckingmargin">
           <i className="material-icons prefix">account_circle</i>
           <input
             id="last_name"
@@ -240,23 +296,20 @@ function Reservation(props) {
             Nom
           </label>
         </div>
-        <div className="row">
-          <div className="input-field col s6">
-            <i className="material-icons prefix">account_circle</i>
-            <input
-              type="text"
-              id="firstname"
-              className="validate"
-              onChange={e => setFirstname(e.target.value)}
-              value={firstname}
-              disabled={disableInput}
-            />
-            <label htmlFor="firstname" className={labelActive}>Prénom</label>
-          </div>
+        <div className="input-field col s6">
+          <i className="material-icons prefix">account_circle</i>
+          <input
+            type="text"
+            id="firstname"
+            data-length="100%"
+            className="validate"
+            onChange={e => setFirstname(e.target.value)}
+            value={firstname}
+            disabled={disableInput}
+          />
+          <label htmlFor="firstname" className={labelActive}>Prénom</label>
         </div>
       </div>
-
-
       {/* row name mail and tel */}
       <div className="row">
         <div className="input-field col s6">
@@ -289,9 +342,9 @@ function Reservation(props) {
           </label>
         </div>
       </div>
-
+ 
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 noFuckingmargin">
           <i className="material-icons prefix">person_add</i>
           <input
             id="num_user"
@@ -311,6 +364,7 @@ function Reservation(props) {
         <div className="input-field col s12">
           <i className="material-icons prefix">notification_important</i>
           <textarea
+            type="text"
             id="allergy"
             className="materialize-textarea"
             onChange={e => setAllergies(e.target.value)}
@@ -328,9 +382,11 @@ function Reservation(props) {
           <input
             type="text"
             id="importantInfo"
+
             data-length="100%"
             onChange={e => setComment(e.target.value)}
             value={comment}
+
           />
           <label htmlFor="importantInfo" className={labelActive}>
             Informations complémentaires
@@ -342,4 +398,4 @@ function Reservation(props) {
   );
 }
 
-export default withRouter(Reservation);
+export default (Reservation);
