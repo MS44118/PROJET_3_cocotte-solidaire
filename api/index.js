@@ -212,7 +212,7 @@ api.put('/user/:id', (req, res) => {
 
 api.post('/user/', (req, res) => {
   const values = req.body;
-  {values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null}
+  {values.firstname ? null : values.firstname = null}
   {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
   {values.email ? values.email = `'${values.email}'` : values.email = null}
   {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}

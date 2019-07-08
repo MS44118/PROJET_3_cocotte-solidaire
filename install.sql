@@ -51,6 +51,7 @@ INSERT INTO cocotte_booking.activities
 VALUES
   ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
   ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('Autre', null, null),
   ('poterie', "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg");
 -- controls
 SELECT id_activity, name_activity, description_activity FROM activities;
@@ -78,21 +79,24 @@ INSERT INTO cocotte_booking.events
   (date_b, date_e, name_event, capacity, address_event, activity_id, description_event, picture_event)
 
 VALUES
-  ("2019-10-31 12:15:00", "2019-10-31 13:45:00", "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ("2019-09-14 09:15:00", "2019-09-14 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-09-14 14:00:00", "2019-09-14 18:00:00", "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ("2019-09-14 12:15:00", "2019-09-14 13:45:00", "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ("2019-09-21 09:15:00", "2019-09-21 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-09-21 09:15:00", "2019-09-21 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-06-10 09:15:00", "2019-06-10 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-06-10 09:15:00", "2019-06-10 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-06-20 09:15:00", "2019-06-20 13:45:00", "manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-07-20 09:15:00", "2019-07-20 13:45:00", "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-07-20 12:15:00", "2019-07-20 13:45:00", "manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  (NOW(), NOW(), "manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  (NOW(), NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ("2019-10-13 14:00:00", "2019-10-13 18:00:00", "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 3, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg")
-  ;
+  ('2019-07-14',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
+  ('2019-07-15',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-17',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
+  ('2019-07-18',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('2019-07-19',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-14',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
+  ('2019-07-15',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-17',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
+  ('2019-07-18',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
+  ('2019-07-19',NOW(), "autre", 8, "evènement unique ", 3, "evènement unique ", null);
 
 -- controls
 SELECT * FROM events;
@@ -118,23 +122,16 @@ VALUES
   (2, 2, " ", "besoin d'1 chaise bébé", 1, 4),
   (3, 0, " ", " ", 2, 4),
   (1, 0, "cacahuètes", " ", 3, 4),
-  (1, 0, "fruits de mer", " ", 4, 6),
-  (3, 0, " ", "fauteuil roulant", 1, 6),
-  (1, 0, "échalottes", " ", 2, 2)
-  ;
+  (1, 0, " ", " ", 4, 6),
+  (3, 0, " ", " ", 1, 6),
+(1, 0, " ", " ", 2, 2);
 
-SELECT registrations.id_registration,
+ 'SELECT registrations.id_registration,
   users.firstname, users.lastname, users.email, 
   users.phone, users.member_id, registrations.quantity_adult, 
   registrations.quantity_children, registrations.event_id, registrations.allergie, 
   registrations.comment 
-  FROM registrations 
-  JOIN users ON users.id_user=registrations.user_id 
-    JOIN events ON events.id_event=registrations.event_id 
-      JOIN activities ON activities.id_activity=events.activity_id 
-  GROUP BY registrations.id_registration
-  ;
-
+  FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id GROUP BY registrations.id_registration;',
 
 
 
