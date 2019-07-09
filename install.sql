@@ -124,14 +124,3 @@ VALUES
   (1, 0, "échalottes", " ", 2, 2)
   ;
 
- 'SELECT registrations.id_registration,
-  users.firstname, users.lastname, users.email, 
-  users.phone, users.member_id, registrations.quantity_adult, 
-  registrations.quantity_children, registrations.event_id, registrations.allergie, 
-  registrations.comment 
-  FROM registrations 
-  JOIN users ON users.id_user=registrations.user_id 
-    JOIN events ON events.id_event=registrations.event_id 
-      JOIN activities ON activities.id_activity=events.activity_id 
-  GROUP BY registrations.id_registration
-;

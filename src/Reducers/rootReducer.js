@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
 import displayUserFormReducer from './displayUserFormReducer';
 import userReducer from './userReducer';
-import homeReducer from './homeReducer';
+import updateRegistrationsReducer from './updateEventsReducer';
+import updateEventsReducer from './updateRegistrationsReducer';
 
 const rootReducer = combineReducers({
   displayUserForm: displayUserFormReducer,
   user: userReducer,
-  registrationLength: homeReducer,
+  updateEventsReducer,
+  updateRegistrationsReducer,
 });
 
 export default rootReducer;

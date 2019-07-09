@@ -9,14 +9,16 @@ import './ReservationHome.css';
 import 'antd/dist/antd.css';
 
 // REDUX ACTIONS
-import updateEventsAction from '../../Actions/homeActions';
+// import { updateRegistrationsAction } from '../../Actions/homeActions';
 
 function ReservationHome(props) {
   const [registrations, setRegistrations] = useState([]);
   const [homeProps, setHomeProps] = useState({});
 
   // ESLINT WARNING: to prevent definitions of unused prop types
-  useEffect(() => setHomeProps(props), [props]);
+  useEffect(() => {
+    setHomeProps(props);
+  }, [props]);
 
   // get the registrations details from database
   useEffect(() => {
@@ -48,7 +50,7 @@ function ReservationHome(props) {
   // delete function (once you hit the confirmation button)
   const deleteRegistration = (id) => {
     message.config({
-      top: 150,
+      top: 200,
       duration: 2,
       maxCount: 3,
     });
@@ -64,7 +66,7 @@ function ReservationHome(props) {
           ],
         );
         console.log(registrations.length);
-        homeProps.methodUpdateRegistrationsLength({ registrations.length });
+        // props.dispatch(updateRegistrationsAction([registrations]))
       })
       .catch((err) => {
         message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
@@ -215,4 +217,5 @@ function ReservationHome(props) {
   );
 }
 
-export default connect()(ReservationHome);
+// export default connect()(ReservationHome);
+export default ReservationHome;

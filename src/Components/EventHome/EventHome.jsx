@@ -5,14 +5,18 @@ import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
 import CalendarHome from '../CalendarHome/CalendarHome';
+
 // import M from 'materialize-css/dist/js/materialize';
-// import Calendar from 'react-calendar';
 import './EventHome.css';
 import 'antd/dist/antd.css';
 
 import ReservationHome from '../ReservationHome/ReservationHome';
 
-function EventHome(props) {
+// ACTIONS REDUX
+import { updateEventsAction } from '../../Actions/home';
+
+
+function EventHome(props, updateEventsAction, dispatch) {
   // to store api response
   const [events, setEvents] = useState([]);
   // to collapse all the registrations for a specific event
@@ -20,10 +24,10 @@ function EventHome(props) {
   // to show modale asking confirmation to delete event
   const [deleteModal, setDeleteModal] = useState([]);
   // get the number of registrations to refresh the list of events if some change
-  const [registrationLength, setRegistrationLength] = useState({});
-  const handleUpdateRegistrations = (regLength) => {
-    setRegistrationLength(regLength);
-  };
+  // const [registrationLength, setRegistrationLength] = useState({});
+  // const handleUpdateRegistrations = (regLength) => {
+  //   setRegistrationLength(regLength);
+  // };
 
 
   // events filtered with checkboxes
@@ -36,7 +40,7 @@ function EventHome(props) {
 
 
   // ESLINT WARNING: to prevent definitions of unused prop types
-  useEffect(() => setStoreProps(props), [props]);
+  // useEffect(() => setStoreProps(props), [props]);
 
   // to delete an event
   const deleteEvent = (id) => {
@@ -97,8 +101,9 @@ function EventHome(props) {
       .then((result) => {
         setEvents(result.data);
         setFilteredEvents(result.data);
+        // props.dispatch(updateEventsAction(events));
       });
-  }, [registrationLength]);
+  }, []);
 
   // set filters according to checkboxes
   useEffect(() => {
@@ -151,7 +156,7 @@ function EventHome(props) {
       </div>
 
       <div className="row calendar">
-        <CalendarHome selectedDate={selectedDate} />
+        {/* <CalendarHome selectedDate={selectedDate} /> */}
       </div>
 
       <div className="row checkbox">
@@ -347,7 +352,7 @@ function EventHome(props) {
                     eventId={event.id_event}
                     eventName={event.name_event}
                     eventDate={event.date_b.format}
-                    methodUpdateRegistrationsLength={handleUpdateRegistrations()}
+                    // methodUpdateRegistrationsLength={handleUpdateRegistrations()}
                   />
                 )
               }
@@ -376,8 +381,9 @@ function EventHome(props) {
 }
 
 
-const mapStateToProps = store => ({
-  storeProps: store.registrationLength,
-});
+// const mapStateToProps = store => ({
+//   storeProps: store.registrations,
+// });
 
-export default connect(mapStateToProps)(EventHome);
+// export default EventHome;
+export default connect()(EventHome);

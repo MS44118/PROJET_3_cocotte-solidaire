@@ -2,7 +2,8 @@
 const updateEventsReducer = (store = [], action) => {
   switch (action.type) {
     case 'UPDATE_EVENTS': {
-      return [...store, action.payload];
+      return store;
+      // return [...store, action.payload];
     }
     default:
       return store;
