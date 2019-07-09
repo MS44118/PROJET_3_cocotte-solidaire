@@ -339,6 +339,7 @@ function EventHome({ events, registrations, dispatch }) {
                     eventId={event.id_event}
                     eventName={event.name_event}
                     eventDate={event.date_b.format}
+                    registrations={registrations}
                   />
                 )
               }
@@ -380,8 +381,8 @@ EventHome.propTypes = {
 
 EventHome.defaultProps = {
   dispatch: null,
-  events: null,
-  registrations: null,
+  events: mapStateToProps.events,
+  registrations: mapStateToProps.registrations,
 };
 
 // export default EventHome;

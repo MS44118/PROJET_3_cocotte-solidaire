@@ -9,6 +9,10 @@ export const removeEventAction = id => ({
   payload: id,
 });
 
+export const updateEventAction = datasForUpdate => ({
+  type: 'UPDATE_EVENT',
+  payload: datasForUpdate,
+});
 
 export const initRegistrationsAction = registrations => ({
   type: 'INIT_REGISTRATIONS',

@@ -5,7 +5,11 @@ const registrationsReducer = (store = [], action) => {
       return action.payload;
     }
     case 'REMOVE_REGISTRATION': {
-      return store[action.payload];
+      const index = store.findIndex(i => i.id_registration === action.payload);
+      return [
+        ...store.slice(0, [index]),
+        ...store.slice([index + 1], store.length),
+      ];
     }
     default:
       return store;

@@ -10,7 +10,7 @@ import './ReservationHome.css';
 import 'antd/dist/antd.css';
 
 // REDUX ACTIONS
-import { removeRegistrationAction } from '../../Actions/homeAction';
+import { removeRegistrationAction, updateEventAction } from '../../Actions/homeAction';
 
 function ReservationHome(
   {
@@ -63,7 +63,8 @@ function ReservationHome(
     axios.delete(`http://localhost:8000/registration/${id}`)
       .then((res) => {
         message.success(res.data);
-        // const index = registrations.findIndex(i => i.id_registration === id);
+        const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === id);
+        const IdEventToUpdate = registrations[indexRegistrationToDelete].event_id;
         // setRegistrations(
         //   [
         //     ...registrations.slice(0, [index]),
@@ -71,6 +72,7 @@ function ReservationHome(
         //   ],
         // );
         dispatch(removeRegistrationAction(id));
+        dispatch(updateEventAction({ id: IdEventToUpdate, registration: indexRegistrationToDelete }));
       })
       .catch((err) => {
         message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
@@ -221,10 +223,6 @@ function ReservationHome(
   );
 }
 
-const mapStateToProps = store => ({
-  registration: store.registrations,
-});
-
 ReservationHome.propTypes = {
   dispatch: PropTypes.func,
   registrations: PropTypes.arrayOf(PropTypes.object),
@@ -236,11 +234,11 @@ ReservationHome.propTypes = {
 
 ReservationHome.defaultProps = {
   dispatch: null,
-  registrations: null,
+  registrations: [],
   eventId: null,
   eventName: null,
   eventDate: null,
 };
 
-export default connect(mapStateToProps)(ReservationHome);
+export default connect()(ReservationHome);
 // export default ReservationHome;
