@@ -264,7 +264,7 @@ function EventHome() {
                 }
               </li>
               <li className="col col-icon s1">
-                <Link to={`/event/${event.id_event}`}>
+                <Link to={`/events/${event.id_event}`}>
                   <i className="material-icons icon-green">create</i>
                 </Link>
               </li>

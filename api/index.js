@@ -17,7 +17,8 @@ api.use(bodyParser.urlencoded({
   extended: true,
 }));
 // allows cross origin requests (localhost:xxxx)
-api.use(cors());
+// api.use(cors());
+api.use(cors({ origin: '*' }));
 
 connection.connect((err) => {
   if (err) throw err;
@@ -110,30 +111,6 @@ api.get('/api/future-registrations', (req, res) => {
 
 
 
-
-
-// here explain what it is for
-api.get('/activities', (req, res) => {
-  connection.query('SELECT * FROM activities', (err, result) => {
-    const data = result.map((activity, index) => ({
-      id_activity: activity.id_activity,
-      name: activity.name_activity,
-      description : activity.description_activity,
-      picture: activity.picture_activity
-    }))
-    if (err) throw err;
-    res.send(data);
-  });
-});
-
-
-// here explain what it is for
-api.get('/events', (req, res) => {
-  connection.query('SELECT * FROM events', (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
-});
 
 
 // here explain what it is for
@@ -277,10 +254,23 @@ api.put('/user/anonym/:id', (req, res) => {
   }
 });
 
+//-------------------------------------------------------ACTIVITIES-----------------------------------------
+api.get('/activities', (req, res) => {
+  connection.query('SELECT * FROM activities', (err, result) => {
+    const data = result.map((activity, index) => ({
+      id_activity: activity.id_activity,
+      name: activity.name_activity,
+      description : activity.description_activity,
+      picture: activity.picture_activity
+    }))
+    if (err) throw err;
+    res.send(data);
+  });
+});
+
 api.post('/activities', (req, res) => {
   const formData = req.body;
   const data = {
-    id_activity: formData.id_activity,
     name_activity: formData.name,
     description_activity: formData.description,
     picture_activity: formData.picture
@@ -297,6 +287,7 @@ api.post('/activities', (req, res) => {
 
 api.put('/activities/:id', (req, res) => {
   const idActivity = req.params.id;
+  console.log(idActivity);
   const formData = req.body;
   const data = {
     name_activity: formData.name,
@@ -315,9 +306,12 @@ api.put('/activities/:id', (req, res) => {
 
 api.delete('/activities/:id', (req, res) => {
   const idActivity = req.params.id;
+  console.log(idActivity);
+  
   connection.query('DELETE FROM activities WHERE id_activity = ?', [idActivity], err => {
     if (err) {
-      res.status(500).send(`Erreur lors de la suppression d'une activité: ${err}`);
+      console.log(err.errno);
+      res.sendStatus(500);
     } else {
       res.sendStatus(200);
     }
@@ -407,27 +401,48 @@ api.delete('/registration/:id', (req, res) => {
 
 //------------------------------------------------Upload file-------------------------------------------------
 
-const storage = multer.diskStorage({
+//-------Upload file------
+
+var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, '../public/images')
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname )
+    cb(null, file.originalname);
   }
 })
+ 
+var upload = multer({ storage: storage })
 
-const upload = multer({ storage: storage }).single('file')
+api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {
+  const file = req.file
+  console.log(file);
+  console.log(req.headers);
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+  res.send(file)
+})
 
-api.post('/uploaddufichier',function(req, res) { 
-  upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            return res.status(500).json(err)
-        } else if (err) {
-            return res.status(500).json(err)
-        }
-    return res.status(200).send(req.file)
+//-------delete file--------
+api.delete('/deletefile/:file', function(req, res) {
+  let file = req.params.file;
+  fs.stat(`../public/images/${file}`, function(err) {
+    if (!err) {
+      fs.unlink(`../public/images/${file}`, function(err) {
+        if (err) throw err;
+        console.log('file deleted');
+      })
+    }
+    else if (err.code === 'ENOENT') {
+      console.log('file or directory does not exist');
+    }
   })
 })
+
+
 api.get('/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
@@ -623,6 +638,85 @@ api.post('/api/reservation/public/', (req, res) => {
     )
   }
 });
+
+//---------------------------------------------------EVENTS---------------------------------------------------------
+api.get('/events', (req, res) => {
+  connection.query('SELECT * FROM events', (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
+});
+
+api.get('/events/:id', (req, res) => {
+  const idEvent = req.params.id;
+  // console.log(idEvent);
+
+  connection.query('SELECT * FROM events WHERE id_event = ?', idEvent, (err, result) => {
+    if (err) throw err;
+    let theEvents = result[0];
+    // console.log(theEvents);
+    // console.log(theEvents.id_event);
+    if (result[0].name_event === '' || result[0].description_event === '' || result[0].picture_event === '') {
+      connection.query('SELECT * FROM activities WHERE id_activity = ?', result[0].activity_id, (error, resultat) => {
+        if (error) throw error;
+        theEvents.name_event = theEvents.name_event !== '' ? theEvents.name_event : resultat[0].name_activity;
+        theEvents.description_event = theEvents.description_event !== '' ? theEvents.description_event : resultat[0].description_activity;
+        theEvents.picture_event = theEvents.picture_event !== '' ? theEvents.picture_event : resultat[0].picture_activity;
+        res.send(result);
+      })
+    } else {
+      res.send(result);
+    }
+  });
+});
+
+api.post('/events', (req, res) => {
+  const formData = req.body;
+  const data = {
+    date_b: formData.dateB,
+    date_e: formData.dateE,
+    name_event: formData.nameEvent,
+    capacity: formData.capacity,
+    address_event: formData.addressEvent,
+    description_event: formData.descriptionEvent,
+    picture_event: formData.pictureEvent,
+    activity_id: formData.activityId,
+  }
+  console.log(data);
+  connection.query('INSERT INTO events SET ?', data, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la sauvegarde d'un nouveau evenement");
+    } else {
+      res.sendStatus(200);
+    }    
+  });
+});
+
+api.put('/events/:id', (req, res) => {
+  const idEvent = req.params.id;
+  const formData = req.body;
+  const data = {
+    date_b: formData.dateB,
+    date_e: formData.dateE,
+    name_event: formData.nameEvent,
+    capacity: formData.capacity,
+    address_event: formData.addressEvent,
+    description_event: formData.descriptionEvent,
+    picture_event: formData.pictureEvent,
+    activity_id: formData.activityId,
+  }
+  console.log(data);
+  connection.query('UPDATE events SET ? WHERE id_event = ?', [data, idEvent], err => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Erreur lors de la modification d'un nouveau evenement");
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
 
 api.listen(8000, 'localhost', (err) => {
   if (err) throw err;
