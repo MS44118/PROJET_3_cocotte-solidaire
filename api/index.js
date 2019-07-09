@@ -455,6 +455,7 @@ api.get('/events', (req, res) => {
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
+  console.log(reservation)
   // console.log(reservation)
   {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
   {reservation.quantityAdult ? reservation.quantityAdult= parseInt(`${reservation.quantityAdult}`,10) : reservation.quantityAdult=null}
@@ -471,7 +472,7 @@ api.post('/zboub/', (req,res)=>{
           console.log(err)
   
         }else{
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id ) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`, 
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -487,6 +488,7 @@ api.post('/zboub/', (req,res)=>{
   } else {
     connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
             reservation, (err, result)=>{
+              
               if (err) {
                 console.log(err)
                 res.status(500).send("error while saving")
@@ -499,7 +501,9 @@ api.post('/zboub/', (req,res)=>{
 });
 api.get('/registration/:id', (req, res)  =>{
   const param = req.params.id
+  console.log(param)
   const data= req.body
+  console.log(data)
   connection.query(`SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE id_registration= '${param}'`,(err,result)=>{
     if (err){
     res.status(500).send("penos")
@@ -514,12 +518,6 @@ api.put('/zboub/:id',(req, res)=>{
   const changeInfo = req.body
   {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
   {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
-
-
-  console.log(idRegistration)
-  console.log(changeInfo)
-  console.log(typeof  (`${ changeInfo.allergie}`))
-
  if (idRegistration>0){
   connection.query(`UPDATE  registrations  SET  quantity_adult =${changeInfo.quantityAdult},quantity_children=${changeInfo.quantityChildren}, allergie="${changeInfo.allergies}", comment="${changeInfo.comment}", user_id=${changeInfo.idUser} WHERE id_registration= ${idRegistration}` , err=>{
     if (err){

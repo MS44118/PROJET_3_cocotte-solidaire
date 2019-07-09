@@ -3,16 +3,17 @@ import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Input, Icon, AutoComplete } from 'antd'
+import { Input, Icon, AutoComplete } from 'antd';
 import 'moment/locale/fr';
 import queryString from 'query-string';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import './Reservation.css';
 
 function Reservation(
   {
     location,
-  }
+  },
 ) {
   const [events, setEvent] = useState([]);
   const [users, setUsers] = useState([]);
@@ -21,10 +22,10 @@ function Reservation(
   const [lastname, setLastname] = useState('');
   const [memberNumber, setMemberNumber] = useState('');
   const [phone, setPhone] = useState('');
-  const [idUser, setIdUser] = useState();
+  const [idUser, setIdUser] = useState('');
   const [quantityAdult, setQuantityAdult] = useState(1);
   const [quantityChildren, setQuantityChildren] = useState(0);
-  const [allergies, setAllergies] = useState();
+  const [allergies, setAllergies] = useState('');
   const [comment, setComment] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [labelActive, setLabelActive] = useState('');
@@ -46,14 +47,13 @@ function Reservation(
           dataTemp = [...dataTemp, `${result.data[i].idUser} ${result.data[i].firstname} ${result.data[i].lastname}`];
         }
         setDataSource(dataTemp);
-        console.log(dataTemp);
       });
     axios.get('http://localhost:8000/events')
       .then((result) => {
         setEvent(result.data);
-        // console.log(result.data)
       });
   }, []);
+
   const addReservation = {
     quantityAdult,
     quantityChildren,
@@ -92,9 +92,7 @@ function Reservation(
 
   useEffect(() => {
     if (searchValue > 0) {
-      console.log(users);
-      const arrayTemp = users.filter(user => user.idUser === parseInt(searchValue));
-      // setUserList(arrayFilter);
+      const arrayTemp = users.filter(user => user.idUser === parseInt(searchValue, 10));
       setFirstname(arrayTemp[0].firstname);
       setLastname(arrayTemp[0].lastname);
       setEmail(arrayTemp[0].email);
@@ -103,9 +101,6 @@ function Reservation(
       setIdUser(arrayTemp[0].idUser);
       setMemberNumber(arrayTemp[0].memberId);
       setExistantUser(true);
-      // } else if (parseInt(searchValue) === 0) {
-      //   setUserList(users);
-      // }
     }
     if (searchValue.length === 0) {
       setDisableInput(false);
@@ -115,53 +110,6 @@ function Reservation(
     }
   }, [searchValue]);
 
-
-  useEffect(() => {
-    const params = queryString.parse(location.search);
-    let registrationId = params.id;
-
-    axios.get(`http://localhost:8000/registration/${registrationId}`)
-      .then((data) => {
-        setRegistration(data.data);
-        console.log(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [location.search]);
-
-  useEffect(() => {
-    if (registration.length > 0) {
-      setQuantityAdult(registration[0].quantity_adult);
-      setQuantityChildren(registration[0].quantity_children);
-      setAllergies(registration[0].allergie);
-      setComment(registration[0].comment);
-      setFirstname(registration[0].firstname);
-      setLastname(registration[0].lastname);
-      setEmail(registration[0].email);
-      setPhone(registration[0].phone);
-      setMemberNumber(registration[0].member_id);
-      setEventId(registration[0].id_event);
-      setLabelActive('active');
-      // setDisableInput(true)
-    }
-  }, [registration]);
-
-  console.log(registration);
-
-  // const handleUser = (e, { result }) => {
-  //   const arrayTemp = users.filter(user => user.idUser === result.id);
-  //   setFirstname(arrayTemp[0].firstname);
-  //   setLastname(arrayTemp[0].lastname);
-  //   setEmail(arrayTemp[0].email);
-  //   setPhone(arrayTemp[0].phone);
-  //   setMemberNumber(arrayTemp[0].member_id);
-  //   setIdUser(arrayTemp[0].idUser);
-  //   setMemberNumber(arrayTemp[0].memberId);
-  //   setExistantUser(true);
-  // };
-
-  // récupération pour le put régistration
   useEffect(() => {
     const params = queryString.parse(location.search);
     const registrationId = params.id;
@@ -176,6 +124,18 @@ function Reservation(
       });
 
     setNewReservation(false);
+    if (location.search.length > 0) {
+      const params = queryString.parse(location.search);
+      const registrationId = params.id;
+      axios.get(`http://localhost:8000/registration/${registrationId}`)
+        .then((data) => {
+          setRegistration(data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      setNewReservation(false);
+    }
   }, [location.search]);
 
   useEffect(() => {
@@ -195,10 +155,8 @@ function Reservation(
       setIdRegistration(registration[0].id_registration);
     }
   }, [registration]);
-  // console.log(registration)
 
   return (
-
     <div className="container">
       <h1>Réservation</h1>
       <div className="input-field col s4 mr-8">
@@ -207,7 +165,7 @@ function Reservation(
           className="waves-effect waves-light btn-small teal white-text right "
           onClick={sendForm}
         >
-            Envoyer
+          Envoyer
         </button>
       </div>
       <p>oublie pas de selectionner une cativité sinon ça plante</p>
@@ -228,8 +186,8 @@ function Reservation(
               ),
             )}
           </select>
-
         </div>
+
         <div className=" input-field col s4 noFuckingmargin">
           <AutoComplete
             style={{ width: 300 }}
@@ -243,10 +201,9 @@ function Reservation(
             <Input suffix={<Icon type="search" className="certain-category-icon" />} />
           </AutoComplete>
         </div>
-
       </div>
       <div className=" row ">
-   
+
         <div className="input-field col s4 noFuckingmargin">
           <p> nombres d&apos;Adultes</p>
           <select value={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
@@ -340,7 +297,7 @@ function Reservation(
           </label>
         </div>
       </div>
- 
+
       <div className="row">
         <div className="input-field col s12 noFuckingmargin">
           <i className="material-icons prefix">person_add</i>
@@ -380,11 +337,9 @@ function Reservation(
           <input
             type="text"
             id="importantInfo"
-
             data-length="100%"
             onChange={e => setComment(e.target.value)}
             value={comment}
-
           />
           <label htmlFor="importantInfo" className={labelActive}>
             Informations complémentaires
@@ -395,5 +350,11 @@ function Reservation(
 
   );
 }
+Reservation.propTypes = {
+  location: PropTypes.shape({ root: PropTypes.string.isRequired }),
+};
+Reservation.defaultProps = {
+  location: null,
+};
 
-export default (Reservation);
+export default withRouter(Reservation);
