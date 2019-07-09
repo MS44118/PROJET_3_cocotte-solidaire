@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
-
+import CalendarHome from '../CalendarHome/CalendarHome';
 // import M from 'materialize-css/dist/js/materialize';
 // import Calendar from 'react-calendar';
 import './EventHome.css';
@@ -47,11 +47,18 @@ function EventHome(props) {
     });
     axios.delete(`http://localhost:8000/event/${id}`)
       .then((res) => {
-        const index = filteredEvents.findIndex(i => i.id_event === id);
+        const indexF = filteredEvents.findIndex(i => i.id_event === id);
         setFilteredEvents(
           [
-            ...filteredEvents.slice(0, [index]),
-            ...filteredEvents.slice([index + 1], filteredEvents.length),
+            ...filteredEvents.slice(0, [indexF]),
+            ...filteredEvents.slice([indexF + 1], filteredEvents.length),
+          ],
+        );
+        const indexE = filteredEvents.findIndex(i => i.id_event === id);
+        setEvents(
+          [
+            ...events.slice(0, [indexE]),
+            ...events.slice([indexE + 1], events.length),
           ],
         );
         message.success(res.data);
@@ -127,22 +134,24 @@ function EventHome(props) {
     setDeleteModal(array);
   }, [events, filteredEvents]);
 
+  const selectedDate = (date) => {
+    const arrayTemp = events.filter(event => moment(event.date_b).format('LL') === date);
+    if (arrayTemp.length > 0) {
+      setFilteredEvents(arrayTemp);
+    } else {
+      setFilteredEvents(events);
+    }
+  }
+
   return (
     <div className="container">
-
-      <div className="row reste-a-faire">
-        <ul>
-          <li>RESTE A FAIRE: </li>
-          <li>lier les actions de filtrages au calendrier</li>
-        </ul>
-      </div>
 
       <div className="row title">
         <h1>Evènements à venir</h1>
       </div>
 
       <div className="row calendar">
-        {/* <Calendar /> */}
+        <CalendarHome selectedDate={selectedDate} />
       </div>
 
       <div className="row checkbox">

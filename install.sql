@@ -51,6 +51,7 @@ INSERT INTO cocotte_booking.activities
 VALUES
   ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
   ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
+  ('Autre', null, null),
   ('poterie', "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg");
 -- controls
 SELECT id_activity, name_activity, description_activity FROM activities;
@@ -123,7 +124,7 @@ VALUES
   (1, 0, "échalottes", " ", 2, 2)
   ;
 
-SELECT registrations.id_registration,
+ 'SELECT registrations.id_registration,
   users.firstname, users.lastname, users.email, 
   users.phone, users.member_id, registrations.quantity_adult, 
   registrations.quantity_children, registrations.event_id, registrations.allergie, 
@@ -133,8 +134,4 @@ SELECT registrations.id_registration,
     JOIN events ON events.id_event=registrations.event_id 
       JOIN activities ON activities.id_activity=events.activity_id 
   GROUP BY registrations.id_registration
-  ;
-
-
-
-
+;

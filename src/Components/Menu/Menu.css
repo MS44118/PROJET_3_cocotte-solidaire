@@ -15,7 +15,7 @@ nav .brand-logo img{
   width: auto;
 }
 
-nav ul a{
+nav ul a, nav ul a:hover{
   font-size: 1rem;
   color: #498e81;
 }

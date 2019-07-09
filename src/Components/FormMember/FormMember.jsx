@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
+import { Select } from 'antd';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -15,6 +16,7 @@ import { updateUserAction, newUserAction } from '../../Actions/userAction';
 registerLocale('fr', fr);
 
 function FormMember({ userSelected, dispatch }) {
+  const { Option } = Select;
   const [user, setUser] = useState({});
   const [adress, setAdress] = useState('');
   const [birthday, setBirthday] = useState('');
@@ -143,15 +145,13 @@ function FormMember({ userSelected, dispatch }) {
   };
 
   return (
-    <div className="container" style={{ marginBottom: '8em' }}>
-      <h1>Inscription</h1>
-      <div className="row">
-        <div className="input-field col s3">
-          <select value={gender} onChange={event => setGender(event.target.value)}>
-            <option className="color_select" value="" disabled selected>Genre</option>
-            <option value="female">Feminin</option>
-            <option value="male">Masculin</option>
-          </select>
+    <div className="container" style={{ marginBottom: '8em', marginTop: '3em' }}>
+      <div className="row">        
+        <div className="input-field col s3 select">
+          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 300, color: '#498e81' }} >
+            <Option value="female">Feminin</Option>
+            <Option value="male">Masculin</Option>
+          </Select>
         </div>
         <div className="input-field col">
           <span style={{ color: 'black', fontSize: '1.2em' }}>Date d&apos;adhésion :</span>

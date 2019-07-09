@@ -11,6 +11,7 @@ import './index.css';
 import 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'moment/locale/fr';
+import 'antd/dist/antd.css';
 
 const store = createStore(
   rootReducer,
