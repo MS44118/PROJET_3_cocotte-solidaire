@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -29,7 +29,7 @@ function FormMember({ userSelected, dispatch }) {
   const [mailingActive, setMailingActive] = useState(false);
   const [memberActive, setMemberActive] = useState(false);
   const [memberId, setMemberId] = useState('');
-  const [membershipDateLast, setMembershipDateLast] = useState('');
+  const [membershipDateLast, setMembershipDateLast] = useState(new Date());
   const [membershipPlace, setMembershipPlace] = useState('');
   const [neighborhood, setNeighborhood] = useState(false);
   const [phone, setPhone] = useState('');
@@ -99,22 +99,23 @@ function FormMember({ userSelected, dispatch }) {
       dispatch(updateUserAction(user));
       axios.put(`http://localhost:8000/user/${idUser}`, user)
         .then((res) => {
-          console.log(res.statusText);
           if (res.status === 200) {
+            message.success('La modification a bien été prise en compte', 3);
             dispatch(updateUserAction(user));
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
     } else {
       axios.post('http://localhost:8000/user/', user)
         .then((data) => {
           const userTemp = { ...user, idUser: data.data[0].id_user };
           dispatch(newUserAction(userTemp));
+          message.success("L'enregistrement a bien été pris en compte", 3);
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
     }
     setIdUser('');
@@ -146,9 +147,9 @@ function FormMember({ userSelected, dispatch }) {
 
   return (
     <div className="container" style={{ marginBottom: '8em', marginTop: '3em' }}>
-      <div className="row">        
+      <div className="row">
         <div className="input-field col s3 select">
-          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 300, color: '#498e81' }} >
+          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 300, color: '#498e81' }}>
             <Option value="female">Feminin</Option>
             <Option value="male">Masculin</Option>
           </Select>
@@ -159,7 +160,7 @@ function FormMember({ userSelected, dispatch }) {
           <DatePicker
             locale="fr"
             dateFormat="dd/MM/yyyy"
-            selected={membershipDateLast ? new Date(membershipDateLast) : new Date()}
+            selected={membershipDateLast && new Date(membershipDateLast)}
             onChange={date => date && setMembershipDateLast(date)}
           />
         </div>

@@ -34,6 +34,25 @@ ThemedStyleSheet.registerTheme({
 
 const type = document.getElementById('app').getAttribute('type');
 
+function useWindowSize() {
+  const isClient = typeof window === 'object';
+  function getSize() {
+    return isClient ? window.innerWidth : undefined;
+  }
+  const [windowSize, setWindowSize] = useState(getSize);
+  useEffect(() => {
+    if (!isClient) {
+      return false;
+    }
+    function handleResize() {
+      setWindowSize(getSize());
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+  return windowSize;
+}
+
 function App() {
   const size = useWindowSize();
   const [eventList, setEventList] = useState([]);
@@ -56,8 +75,8 @@ function App() {
   const [events, setEvents] = useState([]);
   const [isOccuped, setIsOccuped] = useState(false);
   const [display, setDisplay] = useState('');
-
-  console.log(size)
+  const [eventName, setEventName] = useState('');
+  const [eventDateB, setEventDateB] = useState('');
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/event/type/${type}`)
@@ -110,6 +129,12 @@ function App() {
     setActiveForm(arrayTemp);
     setDisplayForm('block');
     setEventId(eventList[index].id_event);
+    if (eventList[index].name_event) {
+      setEventName(eventList[index].name_event);
+    } else {
+      setEventName(eventList[index].name_activity);
+    }
+    setEventDateB(eventList[index].date_b);
   };
 
   useEffect(() => {
@@ -124,10 +149,12 @@ function App() {
       phone,
       memberId,
       eventId,
+      eventName,
+      eventDateB,
     };
     setReservation(reservationTemp);
   }, [numberAdults, numberChildrens, allergie, information,
-    lastname, firstname, email, phone, memberId, eventId]);
+    lastname, firstname, email, phone, memberId, eventId, eventName, eventDateB]);
 
   const sendReservation = () => {
     setDisplayForm('none');
@@ -215,7 +242,7 @@ function App() {
         </div>
       </div>
       <div className={`container cards-${display.style}`}>
-      {eventList.length && size <= 768
+        {eventList.length && size <= 768
           && (
             <div className="calendar-mobile">
               <DayPickerSingleDateController
@@ -235,7 +262,7 @@ function App() {
           <div>
             {type > 2
               ? (
-                <div className={`card ${size < 768 ? null : "horizontal"}`} key={event[index]}>
+                <div className={`card ${size < 768 ? null : 'horizontal'}`} key={event[index]}>
                   <div className="card-image">
                     <img src={event.picture_event ? event.picture_event : event.picture_activity} alt="pic-event" />
                   </div>
@@ -482,22 +509,3 @@ function App() {
 }
 
 ReactDOM.render(<App />, document.getElementById('app'));
-
-function useWindowSize() {
-  const isClient = typeof window === 'object';
-  function getSize() {
-    return isClient ? window.innerWidth : undefined
-  }
-  const [windowSize, setWindowSize] = useState(getSize);
-  useEffect(() => {
-    if (!isClient) {
-      return false;
-    }
-    function handleResize() {
-      setWindowSize(getSize());
-    }
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); // Empty array ensures that effect is only run on mount and unmount
-  return windowSize;
-}

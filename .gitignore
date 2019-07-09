@@ -13,3 +13,6 @@ api/.public.key
 
 # special settings visualcode (maelenn)
 .vscode
+
+# email auth
+api/.emailAuth.js

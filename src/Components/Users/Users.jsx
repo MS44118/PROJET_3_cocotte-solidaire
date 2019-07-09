@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import _ from 'underscore';
+import {
+  Input, Icon, AutoComplete, message,
+} from 'antd';
 import FormMember from '../FormMember/FormMember';
-import { Input, Icon, AutoComplete } from 'antd';
 import './Users.css';
 
 // ACTIONS
@@ -31,9 +33,9 @@ function Users(
         setUserList(data.data.slice(0, 20));
         let dataTemp = ['0 Tous les adhérents'];
         for (let i = 0; i < data.data.length; i += 1) {
-          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`]
+          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`];
         }
-        setDataSource(dataTemp)
+        setDataSource(dataTemp);
       });
   }, []);
 
@@ -69,15 +71,15 @@ function Users(
   const handleDelete = (index) => {
     axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
       .then((res) => {
-        console.log(res.statusText);
         if (res.status === 200) {
+          message.success("L'anonymisation a bien été prise en compte", 3);
           const arrayTemp = [...userList];
           arrayTemp.splice(index, 1);
           setUserList(arrayTemp);
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        message.error("Une erreur s'est produite. Merci de réessayer", 3);
       });
   };
 
@@ -91,16 +93,13 @@ function Users(
   };
 
   useEffect(() => {
-    console.log(searchValue)
-    if (searchValue > 0){
-      console.log(users)
-      const arrayFilter = users.filter((user) => user.idUser === parseInt(searchValue));
+    if (searchValue > 0) {
+      const arrayFilter = users.filter(user => user.idUser === parseInt(searchValue, 10));
       setUserList(arrayFilter);
-      console.log(arrayFilter)
-    } else if (parseInt(searchValue) === 0) {
+    } else if (parseInt(searchValue, 10) === 0) {
       setUserList(users);
     }
-  },[searchValue]);
+  }, [searchValue]);
 
   return (
     <div className="container">
@@ -114,11 +113,9 @@ function Users(
           <AutoComplete
             style={{ width: 300 }}
             dataSource={dataSource}
-            onSelect={(value, option) => setSearchValue(value.split(' ')[0])}
+            onSelect={value => setSearchValue(value.split(' ')[0])}
             placeholder="Recherche (par nom ou prénom)"
-            filterOption={(inputValue, option) =>
-              option.props.children.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().indexOf(inputValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()) !== -1
-            }
+            filterOption={(inputValue, option) => option.props.children.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().indexOf(inputValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()) !== -1}
           >
             <Input suffix={<Icon type="search" className="certain-category-icon" />} />
           </AutoComplete>
@@ -202,6 +199,7 @@ Users.propTypes = {
     neighborhood: PropTypes.bool,
     phone: PropTypes.string,
     zip: PropTypes.string,
+    idUser: PropTypes.string,
   }),
   newUser: PropTypes.shape({
     adress: PropTypes.string,
