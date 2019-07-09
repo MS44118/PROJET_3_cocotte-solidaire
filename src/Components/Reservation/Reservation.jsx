@@ -27,7 +27,6 @@ function Reservation(
   const [allergies, setAllergies] = useState();
   const [comment, setComment] = useState('');
   const [searchValue, setSearchValue] = useState('');
-
   const [labelActive, setLabelActive] = useState('');
   const [eventId, setEventId] = useState(0);
   const [existantUser, setExistantUser] = useState(false);
@@ -69,6 +68,7 @@ function Reservation(
     eventId,
     memberNumber,
   };
+
   const sendForm = () => {
     if (newReservation) {
       axios.post('http://localhost:8000/zboub/', addReservation)
@@ -103,11 +103,9 @@ function Reservation(
       setIdUser(arrayTemp[0].idUser);
       setMemberNumber(arrayTemp[0].memberId);
       setExistantUser(true);
-      console.log(arrayTemp);
       // } else if (parseInt(searchValue) === 0) {
       //   setUserList(users);
       // }
-
     }
     if (searchValue.length === 0) {
       setDisableInput(false);
@@ -163,7 +161,7 @@ function Reservation(
   //   setExistantUser(true);
   // };
 
-
+  // récupération pour le put régistration
   useEffect(() => {
     const params = queryString.parse(location.search);
     const registrationId = params.id;
