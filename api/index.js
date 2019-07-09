@@ -5,10 +5,12 @@ const connection = require('./conf');
 const moment = require('moment');
 const multer = require('multer');
 // const upload = multer({ dest: 'tmp/' });
+const sendEmail = require('../api/Utils/mailUtil').sendEmail;
 const fs = require('fs');
 
 const api = express();
 
+// Création de la méthode de transport de l'email 
 
 // Support JSON-encoded bodies
 api.use(bodyParser.json());
@@ -144,18 +146,8 @@ api.get('/users', (req, res) => {
 api.put('/user/:id', (req, res) => {
   const idUser = req.params.id;
   const values = req.body;
-  {values.firstname ? null : values.firstname = null}
-  {values.lastname ? null : values.lastname = null}
-  {values.email ? null : values.email = null}
-  {values.phone ? null : values.phone = null}
-  {values.gender ? null : values.gender = null}
-  {values.memberId ? null : values.memberId = null}
-  {values.membershipPlace ? null : values.membershipPlace = null}
-  {values.adress ? null : values.adress = null}
-  {values.zip ? null : values.zip = null}
-  {values.city ? null : values.city = null}
-  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
+  { values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null }
+  { values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null }
 
   const data = {
     firstname: values.firstname,
@@ -189,31 +181,23 @@ api.put('/user/:id', (req, res) => {
 
 api.post('/user/', (req, res) => {
   const values = req.body;
-  {values.firstname ? null : values.firstname = null}
-  {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
-  {values.email ? values.email = `'${values.email}'` : values.email = null}
-  {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}
-  {values.gender ? values.gender = `'${values.gender}'` : values.gender = null}
-  {values.memberId ? values.memberId = `'${values.memberId}'` : values.memberId = null}
-  {values.membershipPlace ? values.membershipPlace = `'${values.membershipPlace}'` : values.membershipPlace = null}
-  {values.adress ? values.adress = `'${values.adress}'` : values.adress = null}
-  {values.zip ? values.zip = `'${values.zip}'` : values.zip = null}
-  {values.city ? values.city = `'${values.city}'` : values.city = null}
-  {values.birthday ? values.birthday = `'${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}'` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `'${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}'` : values.membershipDateLast = null}
+  { values.memberId ? values.memberId = parseInt(values.memberId, 10) : values.memberId = null }
+  { values.zip ? values.zip = parseInt(values.zip, 10) : values.zip = null }
+  { values.birthday ? values.birthday = `'${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}'` : values.birthday = null }
+  { values.membershipDateLast ? values.membershipDateLast = `'${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}'` : values.membershipDateLast = null }
 
-  connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES (${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, ${values.birthday}, ${values.gender}, ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, ${values.membershipPlace}, ${values.adress}, ${values.zip}, ${values.city}, ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`, 
-  (err, results) => {
-    if (err) {
-      console.log(err)
-      res.status(500).send("Erreur lors de l'enregistrement d'un utilisateur.");
-    } else {
-      connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
-        if (err) throw err;
-        res.send(result);
-      })
-    }
-  })
+  connection.query(`INSERT INTO users (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym) VALUES ('${values.firstname}', '${values.lastname}', '${values.email}', '${values.phone}', ${values.birthday}, '${values.gender}', ${values.memberId}, ${values.memberActive}, ${values.membershipDateLast}, '${values.membershipPlace}', '${values.adress}', ${values.zip}, '${values.city}', ${values.neighborhood}, ${values.imageCopyright}, ${values.mailingActive}, false)`,
+    (err, results) => {
+      if (err) {
+        console.log(err)
+        res.status(500).send("Erreur lors de l'enregistrement d'un utilisateur.");
+      } else {
+        connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
+          if (err) throw err;
+          res.send(result);
+        })
+      }
+    })
 })
 
 
@@ -221,8 +205,8 @@ api.post('/user/', (req, res) => {
 api.put('/user/anonym/:id', (req, res) => {
   const idUser = req.params.id;
   const values = req.body;
-  {values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null}
-  {values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null}
+  { values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null }
+  { values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null }
   const data = {
     firstname: 'firstname',
     lastname: 'lastname',
@@ -231,7 +215,7 @@ api.put('/user/anonym/:id', (req, res) => {
     birthday: values.birthday,
     gender: values.gender,
     member_id: values.memberId,
-    member_active: values.memberActive,
+    member_active: false,
     membership_date_last: values.membershipDateLast,
     membership_place: values.membershipPlace,
     address_user: 'address',
@@ -281,7 +265,7 @@ api.post('/activities', (req, res) => {
       res.status(500).send("Erreur lors de la sauvegarde d'une nouvelle activité");
     } else {
       res.sendStatus(200);
-    }    
+    }
   });
 });
 
@@ -338,7 +322,7 @@ api.delete('/event/:id', (req, res) => {
           console.log(`Erreur lors de l'appel a la base de données: ${err}`);
           res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
         };
-          
+
         if (result[0].nb_persons === 0) {
           // supprime l'evenement (si evenement existant et pas d'inscription)
           connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
@@ -354,7 +338,7 @@ api.delete('/event/:id', (req, res) => {
           console.log(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
           res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
         };
-      
+
       });
     }
   });
@@ -447,23 +431,23 @@ api.get('/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
     (err, result) => {
-      if (err) throw err; 
+      if (err) throw err;
       res.send(result);
     },
   );
-}); 
- //registrtion post
-api.post('/zboub/', (req,res)=>{
+});
+//registrtion post
+api.post('/zboub/', (req, res) => {
   const reservation = req.body
   console.log(reservation)
   // console.log(reservation)
-  {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
-  {reservation.quantityAdult ? reservation.quantityAdult= parseInt(`${reservation.quantityAdult}`,10) : reservation.quantityAdult=null}
-  {reservation.quantityChildren ? reservation.quantityChildren= parseInt(`${reservation.quantityChildren}`,10) : reservation.quantityChildren=null}
-//  console.log(reservation.quantityAdult)
-  if (reservation.existantUser === false){
-    connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result)=>{
-      if (err){
+  { reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null }
+  { reservation.quantityAdult ? reservation.quantityAdult = parseInt(`${reservation.quantityAdult}`, 10) : reservation.quantityAdult = null }
+  { reservation.quantityChildren ? reservation.quantityChildren = parseInt(`${reservation.quantityChildren}`, 10) : reservation.quantityChildren = null }
+  //  console.log(reservation.quantityAdult)
+  if (reservation.existantUser === false) {
+    connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result) => {
+      if (err) {
         console.log(err)
         res.status(500).send("error while saving")
       } else{
@@ -499,7 +483,7 @@ api.post('/zboub/', (req,res)=>{
 
   }
 });
-api.get('/registration/:id', (req, res)  =>{
+api.get('/registration/:id', (req, res) => {
   const param = req.params.id
   console.log(param)
   const data= req.body
@@ -513,8 +497,8 @@ api.get('/registration/:id', (req, res)  =>{
   })
 })
 
-api.put('/zboub/:id',(req, res)=>{
-  const idRegistration= req.params.id
+api.put('/zboub/:id', (req, res) => {
+  const idRegistration = req.params.id
   const changeInfo = req.body
   {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
   {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
@@ -529,9 +513,9 @@ api.put('/zboub/:id',(req, res)=>{
   })  
 }
 })
-    
+
 //   connection.query(
- 
+
 
 // api.post('/newReservation/', (req,res)=>{
 //   const reservation= req.body
@@ -556,7 +540,7 @@ api.get('/api/event/calendar', (req, res) => {
 
 api.get('/api/event/type/:id', (req, res) => {
   const idActivity = req.params.id;
-  if(idActivity>2){
+  if (idActivity > 2) {
     connection.query(
       `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
@@ -578,30 +562,56 @@ api.get('/api/event/type/:id', (req, res) => {
 api.post('/api/reservation/public/', (req, res) => {
   const values = req.body;
   console.log(values)
-  {values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null}
-  {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
-  {values.email ? values.email = `'${values.email}'` : values.email = null}
-  {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}
-  {values.memberId ? values.memberId = `'${values.memberId}'` : values.memberId = null}
-  {values.allergie ? values.allergie = `'${values.allergie}'` : values.allergie = null}
-  {values.information ? values.information = `'${values.information}'` : values.information = null}
-  {values.numberAdults ? values.numberAdults = `'${values.numberAdults}'` : values.numberAdults = null}
-  {values.numberChildrens ? values.numberChildrens = `'${values.numberChildrens}'` : values.numberChildrens = null}
-  {values.eventId ? values.eventId = `'${values.eventId}'` : values.eventId = null}
-  if(values.memberId){
+  if (values.memberId) {
     connection.query(
-      `SELECT id_user FROM users WHERE member_id=${values.memberId}`,(err, result) => {
-        if(err){
+      `SELECT id_user, email FROM users WHERE member_id=${values.memberId}`, (err, result) => {
+        if (err) {
           console.log(err)
-        }else{
-          console.log(result[0].id_user)
+        } else if (result.length === 0) {
           connection.query(
-            `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${result[0].id_user}, ${values.eventId})`,
+            `INSERT INTO users (firstname, lastname, email, phone, anonym) VALUES('${values.firstname}', '${values.lastname}', '${values.email}', '${values.phone}', false)`,
             (err, result) => {
-              if(err){
+              if (err) {
                 console.log(err)
               } else {
-                res.sendStatus(200);              
+                connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
+                  if (err) {
+                    console.log(err)
+                  } else {
+                    connection.query(
+                      `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${parseInt(values.numberAdults)}, ${parseInt(values.numberChildrens)}, '${values.allergie}', '${values.information}', ${parseInt(result[0].id_user, 10)}, ${parseInt(values.eventId, 10)})`,
+                      (err, result) => {
+                        if (err) {
+                          console.log(err)
+                        } else {
+                          if (values.email) {
+                            const data = { email: values.email, eventName: values.eventName, eventDate: values.eventDateB, nbAdults: values.numberAdults, nbChildrens: values.numberChildrens }
+                            const repMail = sendEmail(data);
+                            console.log(repMail)
+                          }
+                          res.sendStatus(200)
+                        }
+                      }
+                    )
+                  }
+                })
+              }
+            }
+          )
+        } else {
+          const resultEmail = result[0].email
+          connection.query(
+            `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${parseInt(values.numberAdults)}, ${parseInt(values.numberChildrens)}, '${values.allergie}', '${values.information}', ${parseInt(result[0].id_user, 10)}, ${parseInt(values.eventId, 10)})`,
+            (err, result) => {
+              if (err) {
+                console.log(err)
+              } else {
+                if (resultEmail) {
+                  const data = { email: resultEmail, eventName: values.eventName, eventDate: values.eventDateB, nbAdults: values.numberAdults, nbChildrens: values.numberChildrens }
+                  const repMail = sendEmail(data);
+                  console.log(repMail)
+                }
+                res.sendStatus(200);
               }
             }
           )
@@ -610,21 +620,26 @@ api.post('/api/reservation/public/', (req, res) => {
     )
   } else {
     connection.query(
-      `INSERT INTO users (firstname, lastname, email, phone, anonym) VALUES(${values.firstname}, ${values.lastname}, ${values.email}, ${values.phone}, false)`,
+      `INSERT INTO users (firstname, lastname, email, phone, anonym) VALUES('${values.firstname}', '${values.lastname}', '${values.email}', '${values.phone}', false)`,
       (err, result) => {
-        if(err){
+        if (err) {
           console.log(err)
         } else {
           connection.query('SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1', (err, result) => {
-            if(err){
+            if (err) {
               console.log(err)
             } else {
               connection.query(
-                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${parsInt(result[0].id_user,10)}, ${parsInt(values.eventId, 10)})`,
+                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${parseInt(values.numberAdults)}, ${parseInt(values.numberChildrens)}, '${values.allergie}', '${values.information}', ${parseInt(result[0].id_user, 10)}, ${parseInt(values.eventId, 10)})`,
                 (err, result) => {
-                  if(err){
+                  if (err) {
                     console.log(err)
                   } else {
+                    if (values.email) {
+                      const data = { email: values.email, eventName: values.eventName, eventDate: values.eventDateB, nbAdults: values.numberAdults, nbChildrens: values.numberChildrens }
+                      const repMail = sendEmail(data);
+                      console.log(repMail)
+                    }
                     res.sendStatus(200)
                   }
                 }

@@ -133,12 +133,6 @@ function CalendarHome({ selectedDate }) {
     return listData || [];
   };
 
-  useEffect(() => {
-    if (monthEvents.length > 0) {
-      dateCellRender(monthEvents);
-    }
-  }, [monthEvents]);
-
   const dateCellRender = (value) => {
     const listData = getListData(value, monthEvents);
     return (
@@ -151,6 +145,12 @@ function CalendarHome({ selectedDate }) {
       </ul>
     );
   };
+
+  useEffect(() => {
+    if (monthEvents.length > 0) {
+      dateCellRender(monthEvents);
+    }
+  }, [monthEvents]);
 
   return (
     <div>
