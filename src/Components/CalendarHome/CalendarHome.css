@@ -1,0 +1,28 @@
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.events .ant-badge-status {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  text-overflow: ellipsis;
+  font-size: 12px;
+}
+.ant-radio-group-outline{
+  display: none;
+}
+.ant-fullcalendar-selected-day .ant-fullcalendar-date{
+  background-color: #83bbb4!important;
+}
+.ant-fullcalendar-selected-day .ant-fullcalendar-date .ant-fullcalendar-value{
+  color:rgb(95, 93, 93)!important;
+}
+.ant-fullcalendar-date:hover{
+  background-color: #83bbb4!important;
+  opacity: 0.5;
+}
+.ant-fullcalendar-today .ant-fullcalendar-date{
+  border-top-color: #84b9af!important;
+}

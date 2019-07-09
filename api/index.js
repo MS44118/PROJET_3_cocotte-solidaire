@@ -212,7 +212,7 @@ api.put('/user/:id', (req, res) => {
 
 api.post('/user/', (req, res) => {
   const values = req.body;
-  {values.firstname ? values.firstname = `'${values.firstname}'` : values.firstname = null}
+  {values.firstname ? null : values.firstname = null}
   {values.lastname ? values.lastname = `'${values.lastname}'` : values.lastname = null}
   {values.email ? values.email = `'${values.email}'` : values.email = null}
   {values.phone ? values.phone = `'${values.phone}'` : values.phone = null}
@@ -440,8 +440,11 @@ api.get('/events', (req, res) => {
  //registrtion post
 api.post('/zboub/', (req,res)=>{
   const reservation = req.body
+  // console.log(reservation)
   {reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null}
- console.log(reservation)
+  {reservation.quantityAdult ? reservation.quantityAdult= parseInt(`${reservation.quantityAdult}`,10) : reservation.quantityAdult=null}
+  {reservation.quantityChildren ? reservation.quantityChildren= parseInt(`${reservation.quantityChildren}`,10) : reservation.quantityChildren=null}
+//  console.log(reservation.quantityAdult)
   if (reservation.existantUser === false){
     connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result)=>{
       if (err){
@@ -453,9 +456,7 @@ api.post('/zboub/', (req,res)=>{
           console.log(err)
   
         }else{
-          console.log(result[0].id_user)
-        
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.allergies}","${reservation.comment}","${result[0].id_user}",${reservation.eventId})`, 
+          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id ) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -469,7 +470,7 @@ api.post('/zboub/', (req,res)=>{
       }
     })
   } else {
-    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${parseInt(reservation.quantityAdult,10)},${parseInt(reservation.quantityChildren, 10)},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
+    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
             reservation, (err, result)=>{
               if (err) {
                 console.log(err)
@@ -492,18 +493,28 @@ api.get('/registration/:id', (req, res)  =>{
     }
   })
 })
-api
-api.put('/zob/:id',(req, res)=>{
-  const idUser= req.param.id
-  const changeInfo = req.query
- 
-  connection.query(`UPDATE  registrations  SET ? WHERE user_id= ?` ,`{ idUser}`,err=>{
+
+api.put('/zboub/:id',(req, res)=>{
+  const idRegistration= req.params.id
+  const changeInfo = req.body
+  {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
+  {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
+
+
+  console.log(idRegistration)
+  console.log(changeInfo)
+  console.log(typeof  (`${ changeInfo.allergie}`))
+
+ if (idRegistration>0){
+  connection.query(`UPDATE  registrations  SET  quantity_adult =${changeInfo.quantityAdult},quantity_children=${changeInfo.quantityChildren}, allergie="${changeInfo.allergies}", comment="${changeInfo.comment}", user_id=${changeInfo.idUser} WHERE id_registration= ${idRegistration}` , err=>{
     if (err){
+      console.log(err)
       res.status(500).send("raté pov tanche")
     }else{
       res.sendStatus(200)
     }
-  })
+  })  
+}
 })
     
 //   connection.query(
@@ -520,11 +531,21 @@ api.put('/zob/:id',(req, res)=>{
 
 // })
 
+api.get('/api/event/calendar', (req, res) => {
+  connection.query(
+    `SELECT events.id_event, events.name_event, events.date_b, activities.name_activity, activities.id_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC`,
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
+})
+
 api.get('/api/event/type/:id', (req, res) => {
   const idActivity = req.params.id;
   if(idActivity>2){
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -532,7 +553,7 @@ api.get('/api/event/type/:id', (req, res) => {
     );
   } else {
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -567,7 +588,7 @@ api.post('/api/reservation/public/', (req, res) => {
               if(err){
                 console.log(err)
               } else {
-                res.status(200)
+                res.sendStatus(200);              
               }
             }
           )
@@ -586,12 +607,12 @@ api.post('/api/reservation/public/', (req, res) => {
               console.log(err)
             } else {
               connection.query(
-                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${result[0].id_user}, ${values.eventId})`,
+                `INSERT INTO registrations(quantity_adult, quantity_children, allergie, comment, user_id, event_id) VALUES (${values.numberAdults}, ${values.numberChildrens}, ${values.allergie}, ${values.information}, ${parsInt(result[0].id_user,10)}, ${parsInt(values.eventId, 10)})`,
                 (err, result) => {
                   if(err){
                     console.log(err)
                   } else {
-                    res.status(200)
+                    res.sendStatus(200)
                   }
                 }
               )

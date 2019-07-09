@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { Search } from 'semantic-ui-react';
 import _ from 'underscore';
 import FormMember from '../FormMember/FormMember';
-import 'semantic-ui/dist/semantic.min.css';
+import { Input, Icon, AutoComplete } from 'antd';
 import './Users.css';
 
 // ACTIONS
@@ -23,13 +22,18 @@ function Users(
   const [filterLastName, setFilterLastName] = useState(false);
   const [filterMemberId, setFilterMemberId] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [searchResults, setSearchResults] = useState([{ title: '' }]);
+  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/users')
       .then((data) => {
-        setUserList(data.data);
         setUsers(data.data);
+        setUserList(data.data.slice(0, 20));
+        let dataTemp = ['0 Tous les adhérents'];
+        for (let i = 0; i < data.data.length; i += 1) {
+          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`]
+        }
+        setDataSource(dataTemp)
       });
   }, []);
 
@@ -87,59 +91,41 @@ function Users(
   };
 
   useEffect(() => {
-    if (searchValue.length > 0) {
-      const arrayFilter = userList.filter((user) => {
-        let usersFilter = [];
-        if (user.lastname && user.firstname) {
-          usersFilter = user.lastname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`)
-          || user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
-        } else if (user.lastname === null) {
-          usersFilter = user.firstname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
-        } else {
-          usersFilter = user.lastname.toLowerCase().startsWith(`${searchValue.toLowerCase()}`);
-        }
-        return usersFilter;
-      });
-
+    console.log(searchValue)
+    if (searchValue > 0){
+      console.log(users)
+      const arrayFilter = users.filter((user) => user.idUser === parseInt(searchValue));
       setUserList(arrayFilter);
-      let resultTemp = [];
-      for (let i = 0; i < arrayFilter.length; i += 1) {
-        resultTemp = [...resultTemp, { title: `${arrayFilter[i].lastname} - ${arrayFilter[i].firstname}` }];
-      }
-      setSearchResults(resultTemp);
-    } else {
+      console.log(arrayFilter)
+    } else if (parseInt(searchValue) === 0) {
       setUserList(users);
     }
-  }, [searchValue]);
+  },[searchValue]);
 
   return (
     <div className="container">
-      <div className="row">
-        <h2
-          style={{ fontSize: '3em' }}
-          className="center-align"
-        >
+      <div className="row title">
+        <h2>
           Liste des utilisateurs / adhérents
         </h2>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <div style={{ alignSelf: 'flex-start' }}>
-          <Search
-            onSearchChange={event => setSearchValue(event.target.value)}
-            type="text"
-            value={searchValue}
-            results={searchResults}
-            icon="none"
-            onResultSelect={(e, { result }) => setSearchValue(result.title.split(' ')[0])}
-            size="large"
-            showNoResults="true"
+      <div className="topTable">
+        <div>
+          <AutoComplete
+            style={{ width: 300 }}
+            dataSource={dataSource}
+            onSelect={(value, option) => setSearchValue(value.split(' ')[0])}
             placeholder="Recherche (par nom ou prénom)"
-          />
+            filterOption={(inputValue, option) =>
+              option.props.children.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().indexOf(inputValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()) !== -1
+            }
+          >
+            <Input suffix={<Icon type="search" className="certain-category-icon" />} />
+          </AutoComplete>
         </div>
         <button
-          style={{ marginTop: '20px', alignSelf: 'flex-end' }}
           type="button"
-          className="waves-effect waves-light btn-small teal darken-1 white-text"
+          className="waves-effect waves-light btn-small teal darken-1 white-text buttonNew"
           onClick={() => dispatch(displayNewUserFormAction('block'))}
         >
           Nouvel adhérent
@@ -148,22 +134,22 @@ function Users(
       <ul className="collection">
         <li style={{ display: displayNewUser }}><FormMember userSelected="new" /></li>
         <li className="collection-item-header row center-align">
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])}>N°adhérent</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])}>Nom</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2">Tel</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2">Mail</textbox>
-          <textbox style={{ marginRight: '20px' }} className="col s2" />
+          <textbox className="col s4 m2" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])}>N°adhérent</textbox>
+          <textbox className="col s4 m2" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])}>Nom</textbox>
+          <textbox className="col s4 m2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
+          <textbox className="col s4 m2">Tel</textbox>
+          <textbox className="col s4 m2">Mail</textbox>
+          <textbox className="col s4 m2" />
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
             <li className="collection-item row center-align">
-              <p className="col s2">{user.memberId}</p>
-              <p className="col s2">{user.lastname}</p>
-              <p className="col s2">{user.firstname}</p>
-              <p className="col s2">{user.phone}</p>
-              <p className="col s2">{user.email}</p>
-              <p className="col s2">
+              <p className="col s4 m2">{user.memberId}</p>
+              <p className="col s4 m2">{user.lastname}</p>
+              <p className="col s4 m2">{user.firstname}</p>
+              <p className="col s4 m2">{user.phone}</p>
+              <p className="col s4 m2">{user.email}</p>
+              <p className="col s4 m2">
                 <button
                   type="button"
                   className="waves-effect waves-light btn-small teal darken-1 white-text col"

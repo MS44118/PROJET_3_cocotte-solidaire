@@ -2,13 +2,35 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import moment from 'moment';
-import toaster from 'toasted-notes';
 import 'moment/locale/fr';
 import 'react-dates/initialize';
 import { DayPickerSingleDateController } from 'react-dates';
-import 'react-dates/lib/css/_datepicker.css';
 import isSameDay from 'react-dates/lib/utils/isSameDay';
+import 'antd/dist/antd.css';
+import { message } from 'antd';
 import './index.css';
+
+import ThemedStyleSheet from 'react-with-styles/lib/ThemedStyleSheet';
+import aphroditeInterface from 'react-with-styles-interface-aphrodite';
+import DefaultTheme from 'react-dates/lib/theme/DefaultTheme';
+
+ThemedStyleSheet.registerInterface(aphroditeInterface);
+ThemedStyleSheet.registerTheme({
+  reactDates: {
+    ...DefaultTheme.reactDates,
+    color: {
+      ...DefaultTheme.reactDates.color,
+      highlighted: {
+        backgroundColor: '#83bbb4',
+        backgroundColor_active: '#498e81',
+        backgroundColor_hover: '#498e81',
+        color: '#186A3B',
+        color_active: '#fff',
+        color_hover: '#fff',
+      },
+    },
+  },
+});
 
 const type = document.getElementById('app').getAttribute('type');
 
@@ -32,24 +54,38 @@ function App() {
   const [blockedList, setBlockedList] = useState([]);
   const [events, setEvents] = useState([]);
   const [isOccuped, setIsOccuped] = useState(false);
+  const [display, setDisplay] = useState('');
 
   useEffect(() => {
     axios.get(`http://localhost:8000/api/event/type/${type}`)
       .then((data) => {
-        setEventList(data.data);
-        setEvents(data.data);
+        const eventsTemp = [...data.data];
+        for (let i = 0; i < eventsTemp.length; i += 1) {
+          if (eventsTemp[i].capacity - eventsTemp[i].nb_persons > 0) {
+            eventsTemp[i].placesAvailable = eventsTemp[i].capacity - eventsTemp[i].nb_persons;
+          } else {
+            eventsTemp[i].placesAvailable = 0;
+          }
+        }
+        setEventList(eventsTemp);
+        setEvents(eventsTemp);
+        if (type <= 2) {
+          setDisplay({ style: 'calendar_center' });
+        } else {
+          setDisplay({ style: 'calendar_right', orientation: 'vertical', anchorDirection: 'right' });
+        }
       });
   }, []);
 
   useEffect(() => {
     let arrayTempFocus = [];
     let arrayTempBlocked = [];
-    for (let i = 0; i < eventList.length; i += 1) {
-      if (eventList[i].nb_persons >= eventList[i].capacity) {
-        arrayTempBlocked = [...arrayTempBlocked, moment(eventList[i].date_b)];
+    for (let i = 0; i < events.length; i += 1) {
+      if (events[i].nb_persons >= events[i].capacity) {
+        arrayTempBlocked = [...arrayTempBlocked, moment(events[i].date_b)];
         setBlockedList(arrayTempBlocked);
       } else {
-        arrayTempFocus = [...arrayTempFocus, moment(eventList[i].date_b)];
+        arrayTempFocus = [...arrayTempFocus, moment(events[i].date_b)];
         setFocusList(arrayTempFocus);
       }
     }
@@ -96,15 +132,11 @@ function App() {
       axios.post('http://localhost:8000/api/reservation/public/', reservation)
         .then((res) => {
           if (res.status === 200) {
-            toaster.notify('Réservation bien enregistrée.', {
-              duration: 3000,
-            });
+            message.success('Votre réservation a bien été prise en compte', 3);
           }
         })
         .catch(() => {
-          toaster.notify("Problème lors de l'enregistrement de la réservation. Veuillez réessayer.", {
-            duration: 3000,
-          });
+          message.error("Une erreur s'est produite lors de votre réservation. Merci de réessayer", 3);
         });
     }
     setNumberAdult(0);
@@ -146,71 +178,71 @@ function App() {
 
   return (
 
-    <div>
-      <div className="container center">
-        <div className="calendar">
-          <DayPickerSingleDateController
-            daySize={50}
-            numberOfMonths={2}
-            autoFocus
-            hideKeyboardShortcutsPanel
-            date={dateSelected || moment()}
-            onDateChange={date => setDateSelected(date)}
-            isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
-            isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
-            id="reservation_calendar"
-          />
-        </div>
-      </div>
-      <div className="container">
+    <div className={`container-${display.style}`}>
+      <div className={`container center hidden-${display.style}`}>
         {eventList.length && type <= 2
         && (
           <div className="render">
             <div className="container mssg">
-              <p className="center-align subtitles"><span>{eventList[0].name_activity}</span></p>
+              <h1 className="center-align subtitles"><span>{eventList[0].name_activity}</span></h1>
               <p className="justify text">{eventList[0].description_activity}</p>
               {eventList[0].picture_activity ? <img className="activitie_pics" src={eventList[0].picture_activity} alt="cocotte_activite" /> : ''}
             </div>
           </div>
-        )
-        }
+        )}
+        <div className={display.style}>
+          {eventList.length && type <= 2
+          && (
+            <DayPickerSingleDateController
+              daySize={50}
+              numberOfMonths={2}
+              autoFocus
+              hideKeyboardShortcutsPanel
+              date={dateSelected || moment()}
+              onDateChange={date => setDateSelected(date)}
+              isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
+              isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
+              id="reservation_calendar"
+            />
+          )}
+        </div>
+      </div>
+      <div className={`container cards-${display.style}`}>
         {eventList && eventList.map((event, index) => (
           <div>
             {type > 2
               ? (
                 <div className="card horizontal" key={event[index]}>
                   <div className="card-image">
-                    <img src={event.picture_event ? event.picture_event : event.picture_activity} alt="activitie_pic" />
+                    <img src={event.picture_event ? event.picture_event : event.picture_activity} alt="pic-event" />
                   </div>
                   <div className="card-stacked">
                     <span className="card-title title">{event.name_event ? event.name_event : event.name_activity}</span>
                     <div className="card-content">
                       <p>
                         {event.description_event
-                          ? event.description_event : event.description_activity}
+                          ? event.description_event
+                          : event.description_activity}
                       </p>
                     </div>
                     <div className="card-bottom">
                       <p>
                         Places restantes :
-                        {event.capacity - event.nb_persons}
+                        {event.placesAvailable}
                       </p>
                       <p>
                         Date :
                         {moment(event.date_b).locale('fr').format('LLL')}
                       </p>
                     </div>
-                    {event.capacity - event.nb_persons <= 0 ? null
-                      : (
-                        <button
-                          type="button"
-                          className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                          onClick={() => handleCreate(index)}
-                        >
-                          RESERVER
-                        </button>
-                      )
-                    }
+                    <button
+                      type="button"
+                      className="waves-effect waves-light btn-small teal darken-1 white-text col right card-button"
+                      onClick={() => handleCreate(index)}
+                      disabled={event.placesAvailable <= 0 || false}
+                    >
+                      RESERVER
+                    </button>
                   </div>
                 </div>
               )
@@ -221,57 +253,53 @@ function App() {
                       <p className="col s3">{event.name_event ? event.name_event : event.name_activity}</p>
                       <p className="col s3">
                         Places restantes :
-                        {event.capacity - event.nb_persons}
+                        {event.placesAvailable}
                       </p>
                       <p className="col s3">
                         Date :
                         {moment(event.date_b).locale('fr').format('LLL')}
                       </p>
                       <p className="col s3">
-                        {event.capacity - event.nb_persons <= 0 ? null
-                          : (
-                            <button
-                              type="button"
-                              className="waves-effect waves-light btn-small teal darken-1 white-text col right"
-                              onClick={() => handleCreate(index)}
-                            >
-                              RESERVER
-                            </button>
-                          )
-                        }
+                        <button
+                          type="button"
+                          className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                          onClick={() => handleCreate(index)}
+                          disabled={event.placesAvailable <= 0 || false}
+                        >
+                          RESERVER
+                        </button>
                       </p>
                     </li>
                   </ul>
                 </div>
-              )
-            }
+              )}
             <div style={{ display: activeForm[index] ? 'block' : 'none' }}>
               <div className="form">
                 <div className="row">
                   <div className="input-field col s6">
-                    <select className="browser-default" value={numberAdults} onChange={e => setNumberAdult(e.target.value)}>
+                    <select className="browser-default form-item" value={numberAdults} onChange={e => setNumberAdult(e.target.value)}>
                       <option value="0" disabled selected>Nombre d&apos;adultes</option>
                       <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
+                      <option value="2" disabled={event.placesAvailable - numberChildrens / 2 < 2 || false}>2</option>
+                      <option value="3" disabled={event.placesAvailable - numberChildrens / 2 < 3 || false}>3</option>
+                      <option value="4" disabled={event.placesAvailable - numberChildrens / 2 < 4 || false}>4</option>
+                      <option value="5" disabled={event.placesAvailable - numberChildrens / 2 < 5 || false}>5</option>
+                      <option value="6" disabled={event.placesAvailable - numberChildrens / 2 < 6 || false}>6</option>
                     </select>
                   </div>
                   <div className="input-field col s6">
-                    <select className="browser-default" value={numberChildrens} onChange={e => setNumberChildren(e.target.value)}>
-                      <option value="0" disabled selected>Nombres d&apos;enfants</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
+                    <select className="browser-default form-item" value={numberChildrens} onChange={e => setNumberChildren(e.target.value)}>
+                      <option value="0" disabled selected>Nombres d&apos;enfants (1/2 place)</option>
+                      <option value="1" disabled={event.placesAvailable - numberAdults < 1 || false}>1</option>
+                      <option value="2" disabled={event.placesAvailable - numberAdults < 1 || false}>2</option>
+                      <option value="3" disabled={event.placesAvailable - numberAdults < 2 || false}>3</option>
+                      <option value="4" disabled={event.placesAvailable - numberAdults < 2 || false}>4</option>
+                      <option value="5" disabled={event.placesAvailable - numberAdults < 3 || false}>5</option>
+                      <option value="6" disabled={event.placesAvailable - numberAdults < 3 || false}>6</option>
                     </select>
                   </div>
                 </div>
-                <div className="row">
+                <div className="row form-item">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">account_circle</i>
                     <input
@@ -285,7 +313,7 @@ function App() {
                     />
                     <label id="last_name" htmlFor="last_name">Nom</label>
                   </div>
-                  <div className="row">
+                  <div className="row form-item">
                     <div className="input-field col s6">
                       <i className="material-icons prefix">account_circle</i>
                       <input
@@ -299,7 +327,7 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <div className="row">
+                <div className="row form-item">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">phone</i>
                     <input
@@ -327,7 +355,7 @@ function App() {
                     </label>
                   </div>
                 </div>
-                <div className="row">
+                <div className="row form-item">
                   <div className="input-field col s6">
                     <i className="material-icons prefix">person_add</i>
                     <input
@@ -341,7 +369,7 @@ function App() {
                       Numéro d&apos;adhérent
                     </label>
                   </div>
-                  <div className="row">
+                  <div className="row form-item">
                     <div className="row">
                       <div className="input-field col s12">
                         <i className="material-icons prefix">notification_important</i>
@@ -355,8 +383,7 @@ function App() {
                         </label>
                       </div>
                     </div>
-
-                    <div className="row">
+                    <div className="row form-item">
                       <div className="input-field col s12">
                         <i className="material-icons prefix">info</i>
                         <input
@@ -372,16 +399,16 @@ function App() {
                       </div>
                     </div>
                   </div>
-
                 </div>
                 <div className="row">
                   <div className="row">
-                    <span className="col s10 info">
+                    <p className="col s10">
                       Adhésion obligatoire avec participation libre.
                       Pour gagner du temps, vous pouvez adhérer en ligne via ce bouton.
                       Sinon ce sera directement sur place !
-                    </span>
+                    </p>
                     <a
+                      style={{ marginTop: '15px' }}
                       target="blank"
                       className="waves-effect waves-light btn-small teal darken-1 white-text col s2 right"
                       href="https://www.lacocottesolidaire.fr/adhesion"
@@ -389,10 +416,10 @@ function App() {
                       ADHERER
                     </a>
                   </div>
-                  <span className="col info">Pour les groupes de plus de six personnes, réservez par téléphone au 06 51 49 20 82 !</span>
-                  <span className="col merci">merci et à très vite</span>
+                  <p className="col">Pour les groupes de plus de six personnes, réservez par téléphone au 06 51 49 20 82 !</p>
+                  <h4 className="col merci">MERCI ET A TRES VITE</h4>
                 </div>
-                <div className="row" style={{ display: 'grid', width: '20%' }}>
+                <div className="row send">
                   <button
                     type="button"
                     className="waves-effect waves-light btn-small teal darken-1 white-text"
@@ -406,6 +433,23 @@ function App() {
           </div>
         ))}
       </div>
+      {eventList.length && type > 2
+      && (
+        <div className={`calendar-${display.style}`}>
+          <DayPickerSingleDateController
+            daySize={50}
+            numberOfMonths={2}
+            autoFocus
+            orientation={display.orientation}
+            hideKeyboardShortcutsPanel
+            date={dateSelected || moment()}
+            onDateChange={date => setDateSelected(date)}
+            isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
+            isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
+            id="reservation_calendar"
+          />
+        </div>
+      )}
     </div>
   );
 }
