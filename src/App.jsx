@@ -14,6 +14,7 @@ function App() {
       <Menu />
       <Route path="/" exact component={Home} />
       <Route path="/events" exact component={Events} />
+      <Route path="/events/:id" component={Events} />
       <Route path="/activities" exact component={Activities} />
       <Route path="/reservation" exact component={Reservation} />
       <Route path="/users" exact component={Users} />

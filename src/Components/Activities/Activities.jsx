@@ -14,14 +14,14 @@ function Activities() {
   const [title, setTitle] = useState('');
   const [describtion, setDescribtion] = useState('');
   const [file, setFile] = useState('');
-  const [indexSup, setIndexSup] = useState(null);
+  const [indexSup, setIndexSup] = useState('default');
   const [nameFile, setNameFile] = useState('');
   const [active, setActive] = useState('');
   const [emptyFile, setEmptyFile] = useState(0);
   const [recharge, setRecharge] = useState(0);
 
   // --------------------------------CHANGEMENT STATE-----------------------------------
-  const handleChange = (event, setHook) => setHook(event.target.value);
+  const handleChange = (event, setHook) => setHook(event.target.value.replace('/', ''));
   const handleChangeFile = (event) => {
     setEmptyFile(1);
     setFile(event.target.files[0] ? URL.createObjectURL(event.target.files[0]) : false);
@@ -40,7 +40,7 @@ function Activities() {
   // -----------------------------------------------REQUETES-------------------------------
   const submitActivity = () => {
     const file1 = nameFile;
-    const fileName = `${title}.jpg`;
+    const fileName = `activite-${title}.jpg`;
     const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
     const newFile = new File([blob], fileName, { type: 'image/jpg' });
     const data = new FormData();
@@ -52,9 +52,11 @@ function Activities() {
     })
       .then((response) => {
         console.log(response);
+        toast.info('Activité crée !');
       })
       .catch((error) => {
         console.log(error);
+        toast.info(`${error}`);
       });
     axios.post('http://localhost:8000/uploaddufichier/', data)
       .then((response) => {
@@ -70,6 +72,7 @@ function Activities() {
     setFile('');
     setNameFile('');
     setSelectValue('default');
+    setIndexSup('default');
     setEmptyFile(0);
     setRecharge(1);
   };
@@ -78,7 +81,7 @@ function Activities() {
     let newFile;
     if (emptyFile === 1) {
       const file1 = nameFile;
-      const fileName = `${title}.jpg`;
+      const fileName = `activite-${title}.jpg`;
       const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
@@ -91,6 +94,7 @@ function Activities() {
         })
         .catch((error) => {
           console.log(error);
+          toast.info(`${error}`);
         });
     }
     axios.put(`http://localhost:8000/activities/${id}`, {
@@ -111,6 +115,7 @@ function Activities() {
     setFile('');
     setNameFile('');
     setSelectValue('default');
+    setIndexSup('default');
     setRecharge(1);
     setEmptyFile(0);
   };
@@ -123,9 +128,10 @@ function Activities() {
         toast.info(`L'activite ${title} a ete supprimee`);
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error.data);
+        toast.info(`${error}`);
       });
-    axios.post(`http://localhost:8000/deletefile/${sendFile[2]}`)
+    axios.delete(`http://localhost:8000/deletefile/${sendFile[2]}`)
       .then((response) => {
         console.log(response);
         toast.info(`L'activite ${title} a ete supprimee`);
@@ -139,6 +145,7 @@ function Activities() {
     setFile('');
     setNameFile('');
     setSelectValue('default');
+    setIndexSup('default');
     setRecharge(1);
     setEmptyFile(0);
   };
@@ -167,10 +174,10 @@ function Activities() {
       <h1 className="center-align marg">Création d&apos;une activité</h1>
       <div className="row">
         <div className="input-field col s6">
-          <select onChange={valueSelected} className="browser-default color_select">
-            <option defaultValue>Création d&apos;une nouvelle activité</option>
+          <select value={indexSup} onChange={valueSelected} className="browser-default color_select">
+            <option value="default">Création d&apos;une nouvelle activité</option>
             {activities ? activities.map((activity, index) => (
-              <option value={index}>{activity.name}</option>
+              <option style={activity.id_activity === 3 ? { display: 'none' } : null} value={index} key={activity.id_activity}>{activity.name}</option>
             )) : ''}
           </select>
         </div>
@@ -196,15 +203,39 @@ function Activities() {
             <input type="file" onChange={handleChangeFile} name="file" />
           </div>
           <div className="file-path-wrapper">
-            <input className="file-path" type="text" value={nameFile} />
+            <input className="file-path" type="text" />
           </div>
         </div>
       </div>
 
       <div className="center-align">
-        {selectValue === 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={title !== '' && describtion !== '' && file !== '' ? submitActivity : prevent} type={title !== '' && describtion !== '' ? 'submit' : ''}>Creer</button> : ''}
-        {selectValue !== 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={title !== '' && describtion !== '' ? modifyActivity : prevent} type={title !== '' && describtion !== '' ? 'submit' : ''}>Modifier</button> : ''}
-        {selectValue !== 'default' ? <button className="btn waves-effect waves-light pos_bt" onClick={removeActivity} type="submit">Supprimer</button> : ''}
+        {selectValue === 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={title !== '' && describtion !== '' && file !== '' ? submitActivity : prevent}
+            type="submit"
+          >
+            Creer
+          </button>
+        ) : ''}
+        {selectValue !== 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={title !== '' && describtion !== '' ? modifyActivity : prevent}
+            type="submit"
+          >
+            Modifier
+          </button>
+        ) : ''}
+        {selectValue !== 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={removeActivity}
+            type="submit"
+          >
+            Supprimer
+          </button>
+        ) : ''}
       </div>
 
       <p className="center-align renduSize">Rendu de l&apos;activité</p>

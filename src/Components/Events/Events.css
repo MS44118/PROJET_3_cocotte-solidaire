@@ -1,0 +1,41 @@
+.text {
+  font-size: 1.2em;
+  line-height: 2em;
+}
+
+p {
+  font-family: Roboto!important;
+  color: black;
+  text-align: left!important;
+}
+
+.mssg {
+  max-width: inherit;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.color_select{
+  color:#498e81 !important;
+}
+
+.marge {
+  margin: 2em;
+}
+
+.card-content-second{
+  margin-left: 20px;
+  vertical-align: bottom;
+  padding-bottom: 0px;
+ }
+ .title{
+  font-family: Simplifica;
+  font-size: 1.5em;
+  margin-left: 20px;
+  margin-top: 10px;
+  text-transform: uppercase;
+ }
+ .card-bottom{
+  vertical-align: bottom;
+  padding-bottom: 0px;
+ }
