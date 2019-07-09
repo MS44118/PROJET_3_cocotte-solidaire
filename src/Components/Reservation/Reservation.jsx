@@ -119,7 +119,7 @@ function Reservation(
 
 
   useEffect(() => {
-    const params = queryString.parse(props.location.search);
+    const params = queryString.parse(location.search);
     let registrationId = params.id;
 
     axios.get(`http://localhost:8000/registration/${registrationId}`)
@@ -130,7 +130,7 @@ function Reservation(
       .catch((err) => {
         console.log(err);
       });
-  }, [props.location.search]);
+  }, [location.search]);
 
   useEffect(() => {
     if (registration.length > 0) {
