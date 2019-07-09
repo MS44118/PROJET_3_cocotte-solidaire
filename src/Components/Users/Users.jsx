@@ -31,9 +31,9 @@ function Users(
         setUserList(data.data.slice(0, 20));
         let dataTemp = ['0 Tous les adhérents'];
         for (let i = 0; i < data.data.length; i += 1) {
-          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`]
+          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`];
         }
-        setDataSource(dataTemp)
+        setDataSource(dataTemp);
       });
   }, []);
 
