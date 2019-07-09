@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import { Tooltip, message, Modal } from 'antd';
@@ -9,24 +10,29 @@ import './ReservationHome.css';
 import 'antd/dist/antd.css';
 
 // REDUX ACTIONS
-// import { updateRegistrationsAction } from '../../Actions/homeActions';
+import { removeRegistrationAction } from '../../Actions/homeAction';
 
-function ReservationHome(props) {
-  const [registrations, setRegistrations] = useState([]);
-  const [homeProps, setHomeProps] = useState({});
+function ReservationHome(
+  {
+    eventId, eventName, eventDate, registrations, dispatch,
+  },
+) {
+  // const [registrations, setRegistrations] = useState([]);
+  // const [homeProps, setHomeProps] = useState({});
 
   // ESLINT WARNING: to prevent definitions of unused prop types
-  useEffect(() => {
-    setHomeProps(props);
-  }, [props]);
+  // useEffect(() => {
+  //   setHomeProps(props);
+  // }, [props]);
 
   // get the registrations details from database
-  useEffect(() => {
-    axios.get('http://localhost:8000/api/future-registrations')
-      .then((result) => {
-        setRegistrations(result.data);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios.get('http://localhost:8000/api/future-registrations')
+  //     .then((result) => {
+  //       setRegistrations(result.data);
+  //       props.dispatch(initRegistrationsAction(result.data));
+  //     });
+  // }, []);
 
   // state to show/hide Modale (to confirm registrations deletion)
   const [deleteModal, setDeleteModal] = useState([]);
@@ -54,19 +60,17 @@ function ReservationHome(props) {
       duration: 2,
       maxCount: 3,
     });
-    console.log(registrations.length);
     axios.delete(`http://localhost:8000/registration/${id}`)
       .then((res) => {
         message.success(res.data);
-        const index = registrations.findIndex(i => i.id_registration === id);
-        setRegistrations(
-          [
-            ...registrations.slice(0, [index]),
-            ...registrations.slice([index + 1], registrations.length),
-          ],
-        );
-        console.log(registrations.length);
-        // props.dispatch(updateRegistrationsAction([registrations]))
+        // const index = registrations.findIndex(i => i.id_registration === id);
+        // setRegistrations(
+        //   [
+        //     ...registrations.slice(0, [index]),
+        //     ...registrations.slice([index + 1], registrations.length),
+        //   ],
+        // );
+        dispatch(removeRegistrationAction(id));
       })
       .catch((err) => {
         message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
@@ -98,7 +102,7 @@ function ReservationHome(props) {
 
       {/* liste des réservations */}
       {registrations
-        .filter(registration => registration.event_id === homeProps.eventId)
+        .filter(registration => registration.event_id === eventId)
         .map((registration, index) => (
           <ul key={registration.id_registration} className="registration-item">
             <li className="col s1 hide-on-med-and-down">{registration.member_id}</li>
@@ -164,9 +168,9 @@ function ReservationHome(props) {
                 title={(
                   <h3>
                     {'atelier '}
-                    {homeProps.eventName}
+                    {eventName}
                     {' du '}
-                    {moment(homeProps.eventDate).format('dddd Do/MM/YY')}
+                    {moment(eventDate).format('dddd Do/MM/YY')}
                   </h3>
                 )}
                 visible={deleteModal[index]}
@@ -217,5 +221,26 @@ function ReservationHome(props) {
   );
 }
 
-// export default connect()(ReservationHome);
-export default ReservationHome;
+const mapStateToProps = store => ({
+  registration: store.registrations,
+});
+
+ReservationHome.propTypes = {
+  dispatch: PropTypes.func,
+  registrations: PropTypes.arrayOf(PropTypes.object),
+  eventId: PropTypes.number,
+  eventName: PropTypes.string,
+  eventDate: PropTypes.string,
+};
+
+
+ReservationHome.defaultProps = {
+  dispatch: null,
+  registrations: null,
+  eventId: null,
+  eventName: null,
+  eventDate: null,
+};
+
+export default connect(mapStateToProps)(ReservationHome);
+// export default ReservationHome;

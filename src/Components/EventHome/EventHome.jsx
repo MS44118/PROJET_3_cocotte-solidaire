@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
@@ -13,22 +14,14 @@ import 'antd/dist/antd.css';
 import ReservationHome from '../ReservationHome/ReservationHome';
 
 // ACTIONS REDUX
-import { updateEventsAction } from '../../Actions/home';
+import { initEventsAction, initRegistrationsAction, removeEventAction } from '../../Actions/homeAction';
 
 
-function EventHome(props, updateEventsAction, dispatch) {
-  // to store api response
-  const [events, setEvents] = useState([]);
+function EventHome({ events, registrations, dispatch }) {
   // to collapse all the registrations for a specific event
   const [collapses, setCollapses] = useState([]);
   // to show modale asking confirmation to delete event
   const [deleteModal, setDeleteModal] = useState([]);
-  // get the number of registrations to refresh the list of events if some change
-  // const [registrationLength, setRegistrationLength] = useState({});
-  // const handleUpdateRegistrations = (regLength) => {
-  //   setRegistrationLength(regLength);
-  // };
-
 
   // events filtered with checkboxes
   // and one day with date picked on the calendar
@@ -38,31 +31,21 @@ function EventHome(props, updateEventsAction, dispatch) {
   const [filterManger, setFilterManger] = useState(true);
   const [filterAutres, setFilterAutres] = useState(true);
 
-
-  // ESLINT WARNING: to prevent definitions of unused prop types
-  // useEffect(() => setStoreProps(props), [props]);
-
   // to delete an event
   const deleteEvent = (id) => {
     message.config({
       top: 150,
-      duration: 4,
+      duration: 3,
       maxCount: 3,
     });
     axios.delete(`http://localhost:8000/event/${id}`)
       .then((res) => {
-        const indexF = filteredEvents.findIndex(i => i.id_event === id);
+        dispatch(removeEventAction(id));
+        const index = filteredEvents.findIndex(i => i.id_event === id);
         setFilteredEvents(
           [
-            ...filteredEvents.slice(0, [indexF]),
-            ...filteredEvents.slice([indexF + 1], filteredEvents.length),
-          ],
-        );
-        const indexE = filteredEvents.findIndex(i => i.id_event === id);
-        setEvents(
-          [
-            ...events.slice(0, [indexE]),
-            ...events.slice([indexE + 1], events.length),
+            ...filteredEvents.slice(0, [index]),
+            ...filteredEvents.slice([index + 1], filteredEvents.length),
           ],
         );
         message.success(res.data);
@@ -95,13 +78,16 @@ function EventHome(props, updateEventsAction, dispatch) {
     );
   };
 
-  // api call (or refresh if registrations deleted)
+  // api call while loading
   useEffect(() => {
     axios.get('http://localhost:8000/api/future-events')
       .then((result) => {
-        setEvents(result.data);
         setFilteredEvents(result.data);
-        // props.dispatch(updateEventsAction(events));
+        dispatch(initEventsAction(result.data));
+      });
+    axios.get('http://localhost:8000/api/future-registrations')
+      .then((result) => {
+        dispatch(initRegistrationsAction(result.data));
       });
   }, []);
 
@@ -146,7 +132,8 @@ function EventHome(props, updateEventsAction, dispatch) {
     } else {
       setFilteredEvents(events);
     }
-  }
+  };
+
 
   return (
     <div className="container">
@@ -352,7 +339,6 @@ function EventHome(props, updateEventsAction, dispatch) {
                     eventId={event.id_event}
                     eventName={event.name_event}
                     eventDate={event.date_b.format}
-                    // methodUpdateRegistrationsLength={handleUpdateRegistrations()}
                   />
                 )
               }
@@ -381,9 +367,22 @@ function EventHome(props, updateEventsAction, dispatch) {
 }
 
 
-// const mapStateToProps = store => ({
-//   storeProps: store.registrations,
-// });
+const mapStateToProps = store => ({
+  events: store.events,
+  registrations: store.registrations,
+});
+
+EventHome.propTypes = {
+  dispatch: PropTypes.func,
+  events: PropTypes.arrayOf(PropTypes.object),
+  registrations: PropTypes.arrayOf(PropTypes.object),
+};
+
+EventHome.defaultProps = {
+  dispatch: null,
+  events: null,
+  registrations: null,
+};
 
 // export default EventHome;
-export default connect()(EventHome);
+export default connect(mapStateToProps)(EventHome);
