@@ -88,7 +88,7 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-right: 20%;
+  margin: auto;
 }
 .cards-calendar_right{
   overflow: hidden;
@@ -146,4 +146,21 @@ p {
 .cards-calendar_right::-webkit-scrollbar {
   width: 0px;
   background: transparent; /* Chrome/Safari/Webkit */
+}
+
+@media screen and (min-width: 100px) and (max-width: 768px) {
+  .container-calendar_right{
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-columns: 100% 0%;
+    grid-template-rows: 1fr;
+  }
+  .send{
+    display: grid;
+    width: 50%;
+  }
+  .CalendarMonth_table_p5jgym td{
+    padding: 6px;
+  }
 }
