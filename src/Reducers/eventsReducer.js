@@ -14,10 +14,10 @@ const eventsReducer = (store = [], action) => {
     case 'UPDATE_EVENT': {
       const registration = store.registrations[action.payload.registration];
       const index = store.findIndex(i => i.id_event === action.payload.id);
-      console.log(action.payload.registration);
-      console.log(action.payload.id);
+      // console.log(action.payload.registration);
+      // console.log(action.payload.id);
       // break;
-      const eventModified = {      
+      const eventModified = {
         NB_REG: store[index].NB_REG - registration.NB_REG,
         id_event: store[index].id_event,
         name_event: store[index].name_event,

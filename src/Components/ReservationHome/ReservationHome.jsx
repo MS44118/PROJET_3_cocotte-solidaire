@@ -72,7 +72,9 @@ function ReservationHome(
         //   ],
         // );
         dispatch(removeRegistrationAction(id));
-        dispatch(updateEventAction({ id: IdEventToUpdate, registration: indexRegistrationToDelete }));
+        dispatch(updateEventAction(
+          { id: IdEventToUpdate, registration: indexRegistrationToDelete },
+        ));
       })
       .catch((err) => {
         message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
