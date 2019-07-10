@@ -54,7 +54,7 @@ ul{
   flex-direction: row;
   align-content: center;
   justify-content: center;
-  max-width: 15px;
+  /* max-width: 15px; */
 }
 
 

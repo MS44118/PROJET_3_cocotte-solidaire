@@ -7,6 +7,7 @@ import {
   Input, Icon, AutoComplete, message,
 } from 'antd';
 import FormMember from '../FormMember/FormMember';
+import setHeaderToken from '../../Utils/tokenUtil';
 import './Users.css';
 
 // ACTIONS
@@ -27,17 +28,23 @@ function Users(
   const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/users')
-      .then((data) => {
-        setUsers(data.data);
-        setUserList(data.data.slice(0, 20));
-        let dataTemp = ['0 Tous les adhérents'];
-        for (let i = 0; i < data.data.length; i += 1) {
-          dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`];
-        }
-        setDataSource(dataTemp);
-      });
+    setHeaderToken(() => {
+      axios.get('http://localhost:8000/users')
+        .then((data) => {
+          setUsers(data.data);
+          setUserList(data.data.slice(0, 20));
+          let dataTemp = ['0 Tous les adhérents'];
+          for (let i = 0; i < data.data.length; i += 1) {
+            dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`];
+          }
+          setDataSource(dataTemp);
+        })
+        .catch(() => {
+          message.error("Problème lors de la récupération des utilisateurs.", 3);
+        });
+    });
   }, []);
+
 
   useEffect(() => {
     const arrayTemp = [];
@@ -69,18 +76,20 @@ function Users(
   };
 
   const handleDelete = (index) => {
-    axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
-      .then((res) => {
-        if (res.status === 200) {
-          message.success("L'anonymisation a bien été prise en compte", 3);
-          const arrayTemp = [...userList];
-          arrayTemp.splice(index, 1);
-          setUserList(arrayTemp);
-        }
-      })
-      .catch(() => {
-        message.error("Une erreur s'est produite. Merci de réessayer", 3);
-      });
+    setHeaderToken(() => {
+      axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+        .then((res) => {
+          if (res.status === 200) {
+            const arrayTemp = [...userList];
+            arrayTemp.splice(index, 1);
+            setUserList(arrayTemp);
+            message.success("L'anonymisation a bien été prise en compte", 3);
+          }
+        })
+        .catch(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
+        });
+    });
   };
 
   const filterUsers = (tag, [param, setFunc]) => {
@@ -140,7 +149,7 @@ function Users(
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
-            <li className="collection-item row center-align">
+            <li className="collection-item row">
               <p className="col s4 m2">{user.memberId}</p>
               <p className="col s4 m2">{user.lastname}</p>
               <p className="col s4 m2">{user.firstname}</p>
@@ -156,7 +165,7 @@ function Users(
                 </button>
                 <button
                   type="button"
-                  className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col"
                   onClick={() => handleDelete(index)}
                 >
                   <i className="material-icons">delete</i>

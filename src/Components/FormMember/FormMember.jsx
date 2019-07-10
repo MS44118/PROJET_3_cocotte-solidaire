@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { Select, message } from 'antd';
+import fr from 'date-fns/locale/fr';
 import M from 'materialize-css/dist/js/materialize';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
-import fr from 'date-fns/locale/fr';
 import './FormMember.css';
+import setHeaderToken from '../../Utils/tokenUtil';
+
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';
 import { updateUserAction, newUserAction } from '../../Actions/userAction';
 
@@ -97,26 +99,30 @@ function FormMember({ userSelected, dispatch }) {
     }
     if (idUser) {
       dispatch(updateUserAction(user));
-      axios.put(`http://localhost:8000/user/${idUser}`, user)
-        .then((res) => {
-          if (res.status === 200) {
-            message.success('La modification a bien été prise en compte', 3);
-            dispatch(updateUserAction(user));
-          }
-        })
-        .catch(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
+      setHeaderToken(() => {
+        axios.put(`http://localhost:8000/user/${idUser}`, user)
+          .then((res) => {
+            if (res.status === 200) {
+              dispatch(updateUserAction(user));
+              message.success('La modification a bien été prise en compte', 3);
+            }
+          })
+          .catch(() => {
+            message.error("Une erreur s'est produite. Merci de réessayer", 3);
+          });
+      });
     } else {
-      axios.post('http://localhost:8000/user/', user)
-        .then((data) => {
-          const userTemp = { ...user, idUser: data.data[0].id_user };
-          dispatch(newUserAction(userTemp));
-          message.success("L'enregistrement a bien été pris en compte", 3);
-        })
-        .catch(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
+      setHeaderToken(() => {
+        axios.post('http://localhost:8000/user/', user)
+          .then((data) => {
+            const userTemp = { ...user, idUser: data.data[0].id_user };
+            dispatch(newUserAction(userTemp));
+            message.success("L'enregistrement a bien été pris en compte", 3);
+          })
+          .catch(() => {
+            message.error("Une erreur s'est produite. Merci de réessayer", 3);
+          });
+      });
     }
     setIdUser('');
     setAdress('');
