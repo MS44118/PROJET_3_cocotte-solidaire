@@ -69,16 +69,17 @@ function Reservation(
     existantUser,
     eventId,
     memberNumber,
+    
   };
 
   const sendForm = () => {
     if (newReservation) {
       axios.post('http://localhost:8000/zboub/', addReservation)
         .then(() => {
-          message.success('La reservation a bien été prise en compte', 3);
+          message.success('La reservation a bien été prise en compte', 10);
         })
         .then(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
+          message.error("Une erreur s'est produite. Merci de réessayer", 10);
         });
     } else {
       axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
@@ -153,6 +154,7 @@ function Reservation(
           type="submit"
           className="waves-effect waves-light btn-small teal white-text right "
           onClick={sendForm}
+          
         >
           Envoyer
         </button>
