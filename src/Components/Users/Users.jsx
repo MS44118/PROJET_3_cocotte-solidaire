@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import _ from 'underscore';
 import {
-  Input, Icon, AutoComplete, message, Modal, Button,
+  Input, Icon, AutoComplete, message, Modal,
 } from 'antd';
 import FormMember from '../FormMember/FormMember';
 import setHeaderToken from '../../Utils/tokenUtil';
@@ -41,7 +41,7 @@ function Users(
           setDataSource(dataTemp);
         })
         .catch(() => {
-          message.error("Problème lors de la récupération des utilisateurs.", 3);
+          message.error('Problème lors de la récupération des utilisateurs.', 3);
         });
     });
   }, []);
@@ -96,11 +96,10 @@ function Users(
 
   const showDeleteConfirm = (index) => {
     confirm({
-      title: `Etes vous sur de vouloir supprimer l'adhérent ${userList[index].firstname} ${userList[index].lastname}?`,
-      // content: "Some descriptions",
-      okText: "Oui",
-      okType: "danger",
-      cancelText: "Non",
+      title: `Etes vous sur de vouloir supprimer l'adhérent: ${userList[index].firstname} ${userList[index].lastname}?`,
+      okText: 'Oui',
+      okType: 'danger',
+      cancelText: 'Non',
       onOk() {
         setHeaderToken(() => {
           axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
@@ -109,7 +108,7 @@ function Users(
                 const arrayTemp = [...userList];
                 arrayTemp.splice(index, 1);
                 setUserList(arrayTemp);
-                message.success("L'anonymisation a bien été prise en compte", 3);
+                message.success('La suppression a bien été prise en compte', 3);
               }
             })
             .catch(() => {
@@ -118,24 +117,7 @@ function Users(
         });
       },
       onCancel() {
-      }
-    });
-  }
-
-  const handleDelete = (index) => {
-    setHeaderToken(() => {
-      axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
-        .then((res) => {
-          if (res.status === 200) {
-            const arrayTemp = [...userList];
-            arrayTemp.splice(index, 1);
-            setUserList(arrayTemp);
-            message.success("L'anonymisation a bien été prise en compte", 3);
-          }
-        })
-        .catch(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
+      },
     });
   };
 

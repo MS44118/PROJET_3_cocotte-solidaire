@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { Select, message } from 'antd';
+import {
+  Select, message, Row, Col,
+} from 'antd';
 import fr from 'date-fns/locale/fr';
-import M from 'materialize-css/dist/js/materialize';
-import 'materialize-css/dist/css/materialize.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
 import './FormMember.css';
@@ -38,10 +38,6 @@ function FormMember({ userSelected, dispatch }) {
   const [zip, setZip] = useState('');
   const [idUser, setIdUser] = useState('');
   const [labelActive, setLabelActive] = useState('');
-
-  useEffect(() => {
-    M.AutoInit();
-  }, []);
 
   useEffect(() => {
     if (userSelected.user) {
@@ -155,15 +151,16 @@ function FormMember({ userSelected, dispatch }) {
 
   return (
     <div className="container" style={{ marginBottom: '8em', marginTop: '3em' }}>
-      <div className="row">
-        <div className="input-field col s6 m3 select">
-          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 300, color: '#498e81' }}>
+      <Row>
+        <Col sm={24} md={8} className="input-field select">
+          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Genre :</span>
+          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 200, color: '#498e81' }}>
             <Option value="female">Feminin</Option>
             <Option value="male">Masculin</Option>
           </Select>
-        </div>
-        <div className="input-field col">
-          <span style={{ color: 'black', fontSize: '1.2em' }}>Date d&apos;adhésion :</span>
+        </Col>
+        <Col sm={24} md={8} className="input-field">
+          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Date d&apos;adhésion :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"
@@ -171,9 +168,9 @@ function FormMember({ userSelected, dispatch }) {
             selected={membershipDateLast && new Date(membershipDateLast)}
             onChange={date => date && setMembershipDateLast(date)}
           />
-        </div>
-        <div className="input-field col">
-          <span style={{ color: 'black', fontSize: '1.2em' }}>Date de naissance :</span>
+        </Col>
+        <Col sm={24} md={8} className="input-field">
+          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Date de naissance :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"
@@ -181,10 +178,10 @@ function FormMember({ userSelected, dispatch }) {
             selected={birthday && new Date(birthday)}
             onChange={date => date && setBirthday(date)}
           />
-        </div>
-      </div>
-      <div className="row">
-        <div className="input-field col s12 m6">
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">account_circle</i>
           <input
             id="last_name"
@@ -196,8 +193,8 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="last_name">
             Nom
           </label>
-        </div>
-        <div className="input-field col s12 m6">
+        </Col>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">account_circle</i>
           <input
             id="first_name"
@@ -209,10 +206,10 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="first_name">
             Prénom
           </label>
-        </div>
-      </div>
-      <div className="row">
-        <div className="input-field col s12 m6">
+        </Col>
+      </Row>
+      <Row>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">email</i>
           <input
             value={email !== null ? email : ''}
@@ -224,8 +221,8 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="email">
             Email
           </label>
-        </div>
-        <div className="input-field col s12 m6">
+        </Col>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">phone</i>
           <input
             value={phone !== null ? phone : ''}
@@ -237,11 +234,11 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="icon_telephone">
             Téléphone
           </label>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
-      <div className="row">
-        <div className="input-field col s12 m6">
+      <Row>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">location_on</i>
           <input
             value={adress !== null ? adress : ''}
@@ -253,8 +250,8 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="adress">
             Adresse
           </label>
-        </div>
-        <div className="input-field col s12 m6">
+        </Col>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">location_on</i>
           <input
             value={zip !== null ? zip : ''}
@@ -266,11 +263,11 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="zip_code">
             Code postal
           </label>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
-      <div className="row">
-        <div className="input-field col s12 m6">
+      <Row>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">location_on</i>
           <input
             value={city && city}
@@ -282,8 +279,8 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="city">
             Ville
           </label>
-        </div>
-        <div className="input-field col s12 m6">
+        </Col>
+        <Col sm={24} md={12} className="input-field">
           <label>
             <input
               type="checkbox"
@@ -293,11 +290,11 @@ function FormMember({ userSelected, dispatch }) {
             />
             <span>Habite dans le quartier</span>
           </label>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
-      <div className="row">
-        <div className="input-field col s12 m6">
+      <Row>
+        <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">person_add</i>
           <input
             value={memberId && memberId}
@@ -309,8 +306,8 @@ function FormMember({ userSelected, dispatch }) {
           <label className={labelActive} htmlFor="member_id">
             Numéro d&apos;adhérent
           </label>
-        </div>
-        <div className="input-field col s12 m6">
+        </Col>
+        <Col sm={24} md={12} className="input-field">
           <label>
             <input
               type="checkbox"
@@ -320,11 +317,11 @@ function FormMember({ userSelected, dispatch }) {
             />
             <span>Membre actif</span>
           </label>
-        </div>
-      </div>
+        </Col>
+      </Row>
 
-      <div className="row">
-        <div className="input-field col s6 m3">
+      <Row>
+        <Col sm={24} md={6} className="input-field">
           <label>
             <input
               type="checkbox"
@@ -334,8 +331,8 @@ function FormMember({ userSelected, dispatch }) {
             />
             <span>Droit à l&apos;image</span>
           </label>
-        </div>
-        <div className="input-field col s6 m3">
+        </Col>
+        <Col sm={24} md={6} className="input-field">
           <label>
             <input
               type="checkbox"
@@ -345,8 +342,8 @@ function FormMember({ userSelected, dispatch }) {
             />
             <span>Accepte l&apos;envoie de mail</span>
           </label>
-        </div>
-        <div className="input-field col s6 m3">
+        </Col>
+        <Col sm={24} md={6} className="input-field">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
@@ -354,8 +351,8 @@ function FormMember({ userSelected, dispatch }) {
           >
             Envoyer
           </button>
-        </div>
-        <div className="input-field col s6 m3">
+        </Col>
+        <Col sm={24} md={6} className="input-field">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
@@ -363,8 +360,8 @@ function FormMember({ userSelected, dispatch }) {
           >
             Fermer
           </button>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 }

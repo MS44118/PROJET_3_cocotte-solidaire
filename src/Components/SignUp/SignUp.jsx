@@ -20,7 +20,7 @@ function SignUp() {
   const handleSendSignUp = () => {
     axios.post('http://localhost:8000/login/SignUp', adminSignUp)
       .then(() => {
-        message.success("Enregistré avec succès.", 3);
+        message.success('Enregistré avec succès.', 3);
       })
       .catch(() => {
         message.error("Problème lors de l'enregistrement du nouvel admin.", 3);

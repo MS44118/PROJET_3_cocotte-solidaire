@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { message } from 'antd';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Menu from './Components/Menu/Menu';
@@ -27,8 +28,8 @@ function App({ tokenApproved, dispatch }) {
             localStorage.removeItem('id_token');
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          message.error('Votre session a expiré, merci de vous authentifier à nouveu', 3);
         });
     });
   }, []);
@@ -43,15 +44,15 @@ function App({ tokenApproved, dispatch }) {
           <Route path="/activities" exact component={Activities} />
           <Route path="/reservation" exact component={Reservation} />
           <Route path="/users" exact component={Users} />
-        <Route path="/signup" exact component={SignUp} />
-
+          <Route path="/signup" exact component={SignUp} />
           <Footer />
         </div>
-      ) : 
-      <div>
-        <Login />
-      </div>
-      }
+      )
+        : (
+          <div>
+            <Login />
+          </div>
+        )}
     </div>
   );
 }

@@ -8,10 +8,10 @@ import App from './App';
 import rootReducer from './Reducers/rootReducer';
 
 import './index.css';
+import 'antd/dist/antd.css';
 import 'materialize-css';
 import 'materialize-css/dist/css/materialize.min.css';
 import 'moment/locale/fr';
-import 'antd/dist/antd.css';
 
 const store = createStore(
   rootReducer,

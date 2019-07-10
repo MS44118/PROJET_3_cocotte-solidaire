@@ -6,3 +6,14 @@
 .select{
     margin: auto;
 }
+.ant-select-open .ant-select-selection {
+    border-color: #83bbb4!important;
+    box-shadow: 0 0 0 1px #83bbb4!important;
+}
+.ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
+    border-color: #83bbb4!important;
+    box-shadow: 0 0 0 1px #83bbb4!important;
+}
+.ant-select-selection:hover{
+    border-color: #83bbb4!important;
+}

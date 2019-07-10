@@ -27,7 +27,7 @@ function Login({ dispatch }) {
         message.success("Bienvenue sur l'espace admin !", 3);
       })
       .catch(() => {
-        message.error("Erreur dans le mail ou le mot de passe.", 3);
+        message.error('Erreur dans le mail ou le mot de passe.', 3);
       });
   };
 
