@@ -16,10 +16,6 @@
   margin-top: 10px;  
 }
 
-.collection-item button {
-  margin-left: 3em;
-}
-
 .collection-item-header:nth-child(3):after{
   margin-right: 10px;
 }

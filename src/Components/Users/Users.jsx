@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import _ from 'underscore';
 import {
-  Input, Icon, AutoComplete, message,
+  Input, Icon, AutoComplete, message, Modal, Button,
 } from 'antd';
 import FormMember from '../FormMember/FormMember';
 import setHeaderToken from '../../Utils/tokenUtil';
@@ -18,6 +18,7 @@ function Users(
     displayNewUser, displayKnownUser, updateUser, newUser, dispatch,
   },
 ) {
+  const { confirm } = Modal;
   const [users, setUsers] = useState([]);
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
@@ -75,23 +76,6 @@ function Users(
     dispatch(displayKnownUserFormAction('block'));
   };
 
-  const handleDelete = (index) => {
-    setHeaderToken(() => {
-      axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
-        .then((res) => {
-          if (res.status === 200) {
-            const arrayTemp = [...userList];
-            arrayTemp.splice(index, 1);
-            setUserList(arrayTemp);
-            message.success("L'anonymisation a bien été prise en compte", 3);
-          }
-        })
-        .catch(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
-    });
-  };
-
   const filterUsers = (tag, [param, setFunc]) => {
     if (param) {
       setUserList(userList.reverse());
@@ -109,6 +93,51 @@ function Users(
       setUserList(users);
     }
   }, [searchValue]);
+
+  const showDeleteConfirm = (index) => {
+    confirm({
+      title: `Etes vous sur de vouloir supprimer l'adhérent ${userList[index].firstname} ${userList[index].lastname}?`,
+      // content: "Some descriptions",
+      okText: "Oui",
+      okType: "danger",
+      cancelText: "Non",
+      onOk() {
+        setHeaderToken(() => {
+          axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+            .then((res) => {
+              if (res.status === 200) {
+                const arrayTemp = [...userList];
+                arrayTemp.splice(index, 1);
+                setUserList(arrayTemp);
+                message.success("L'anonymisation a bien été prise en compte", 3);
+              }
+            })
+            .catch(() => {
+              message.error("Une erreur s'est produite. Merci de réessayer", 3);
+            });
+        });
+      },
+      onCancel() {
+      }
+    });
+  }
+
+  const handleDelete = (index) => {
+    setHeaderToken(() => {
+      axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+        .then((res) => {
+          if (res.status === 200) {
+            const arrayTemp = [...userList];
+            arrayTemp.splice(index, 1);
+            setUserList(arrayTemp);
+            message.success("L'anonymisation a bien été prise en compte", 3);
+          }
+        })
+        .catch(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
+        });
+    });
+  };
 
   return (
     <div className="container">
@@ -165,8 +194,8 @@ function Users(
                 </button>
                 <button
                   type="button"
-                  className="waves-effect waves-light btn-small teal darken-1 white-text col"
-                  onClick={() => handleDelete(index)}
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                  onClick={() => showDeleteConfirm(index)}
                 >
                   <i className="material-icons">delete</i>
                 </button>

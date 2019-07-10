@@ -115,9 +115,11 @@ function FormMember({ userSelected, dispatch }) {
       setHeaderToken(() => {
         axios.post('http://localhost:8000/user/', user)
           .then((data) => {
-            const userTemp = { ...user, idUser: data.data[0].id_user };
-            dispatch(newUserAction(userTemp));
-            message.success("L'enregistrement a bien été pris en compte", 3);
+            if (data) {
+              const userTemp = { ...user, idUser: data.data[0].id_user };
+              dispatch(newUserAction(userTemp));
+              message.success("L'enregistrement a bien été pris en compte", 3);
+            }
           })
           .catch(() => {
             message.error("Une erreur s'est produite. Merci de réessayer", 3);
@@ -154,7 +156,7 @@ function FormMember({ userSelected, dispatch }) {
   return (
     <div className="container" style={{ marginBottom: '8em', marginTop: '3em' }}>
       <div className="row">
-        <div className="input-field col s3 select">
+        <div className="input-field col s6 m3 select">
           <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 300, color: '#498e81' }}>
             <Option value="female">Feminin</Option>
             <Option value="male">Masculin</Option>
@@ -182,7 +184,7 @@ function FormMember({ userSelected, dispatch }) {
         </div>
       </div>
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">account_circle</i>
           <input
             id="last_name"
@@ -195,7 +197,7 @@ function FormMember({ userSelected, dispatch }) {
             Nom
           </label>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">account_circle</i>
           <input
             id="first_name"
@@ -210,7 +212,7 @@ function FormMember({ userSelected, dispatch }) {
         </div>
       </div>
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">email</i>
           <input
             value={email !== null ? email : ''}
@@ -223,7 +225,7 @@ function FormMember({ userSelected, dispatch }) {
             Email
           </label>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">phone</i>
           <input
             value={phone !== null ? phone : ''}
@@ -239,7 +241,7 @@ function FormMember({ userSelected, dispatch }) {
       </div>
 
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">location_on</i>
           <input
             value={adress !== null ? adress : ''}
@@ -252,7 +254,7 @@ function FormMember({ userSelected, dispatch }) {
             Adresse
           </label>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">location_on</i>
           <input
             value={zip !== null ? zip : ''}
@@ -268,7 +270,7 @@ function FormMember({ userSelected, dispatch }) {
       </div>
 
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">location_on</i>
           <input
             value={city && city}
@@ -281,7 +283,7 @@ function FormMember({ userSelected, dispatch }) {
             Ville
           </label>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <label>
             <input
               type="checkbox"
@@ -295,7 +297,7 @@ function FormMember({ userSelected, dispatch }) {
       </div>
 
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <i className="material-icons prefix">person_add</i>
           <input
             value={memberId && memberId}
@@ -308,7 +310,7 @@ function FormMember({ userSelected, dispatch }) {
             Numéro d&apos;adhérent
           </label>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12 m6">
           <label>
             <input
               type="checkbox"
@@ -322,7 +324,7 @@ function FormMember({ userSelected, dispatch }) {
       </div>
 
       <div className="row">
-        <div className="input-field col s3">
+        <div className="input-field col s6 m3">
           <label>
             <input
               type="checkbox"
@@ -333,7 +335,7 @@ function FormMember({ userSelected, dispatch }) {
             <span>Droit à l&apos;image</span>
           </label>
         </div>
-        <div className="input-field col s3">
+        <div className="input-field col s6 m3">
           <label>
             <input
               type="checkbox"
@@ -344,7 +346,7 @@ function FormMember({ userSelected, dispatch }) {
             <span>Accepte l&apos;envoie de mail</span>
           </label>
         </div>
-        <div className="input-field col s3">
+        <div className="input-field col s6 m3">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
@@ -353,7 +355,7 @@ function FormMember({ userSelected, dispatch }) {
             Envoyer
           </button>
         </div>
-        <div className="input-field col s3">
+        <div className="input-field col s6 m3">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text right col s4"
