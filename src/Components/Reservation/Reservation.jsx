@@ -3,7 +3,9 @@ import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Input, Icon, AutoComplete } from 'antd';
+import {
+  Input, Icon, AutoComplete, message,
+} from 'antd';
 import 'moment/locale/fr';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
@@ -72,19 +74,19 @@ function Reservation(
   const sendForm = () => {
     if (newReservation) {
       axios.post('http://localhost:8000/zboub/', addReservation)
-        .then((response) => {
-          console.log(response);
+        .then(() => {
+          message.success('La reservation a bien été prise en compte', 3);
         })
-        .then((err) => {
-          console.log(err);
+        .then(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
     } else {
       axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
-        .then((response) => {
-          console.log(response);
+        .then(() => {
+          message.success('La reservation a bien été prise en compte', 3);
         })
-        .then((err) => {
-          console.log(err);
+        .then(() => {
+          message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
       setNewReservation(!newReservation);
     }
@@ -111,19 +113,6 @@ function Reservation(
   }, [searchValue]);
 
   useEffect(() => {
-    const params = queryString.parse(location.search);
-    const registrationId = params.id;
-
-    axios.get(`http://localhost:8000/registration/${registrationId}`)
-      .then((data) => {
-        setRegistration(data.data);
-        console.log(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    setNewReservation(false);
     if (location.search.length > 0) {
       const params = queryString.parse(location.search);
       const registrationId = params.id;
@@ -131,8 +120,8 @@ function Reservation(
         .then((data) => {
           setRegistration(data.data);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          message.error("Une erreur s'est produite lors du chargement. Merci de rafraichir la page", 3);
         });
       setNewReservation(false);
     }
