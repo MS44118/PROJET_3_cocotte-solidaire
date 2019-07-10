@@ -75,18 +75,23 @@ function Reservation(
   const sendForm = () => {
     if (newReservation) {
       axios.post('http://localhost:8000/zboub/', addReservation)
-        .then(() => {
-          message.success('La reservation a bien été prise en compte', 10);
+        .then((res) => {
+          console.log(res)
+          if(res.sendStatus === 200){
+              return  message.success('La reservation a bien été prise en compte', 3);
+            }
         })
-        .then(() => {
+        .catch(() => {
           message.error("Une erreur s'est produite. Merci de réessayer", 10);
         });
     } else {
       axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
-        .then(() => {
-          message.success('La reservation a bien été prise en compte', 3);
+        .then((res) => { 
+          if(res.sendStatus === 200){
+            return  message.success('La reservation a bien été prise en compte', 3);
+          }
         })
-        .then(() => {
+        .catch(() => {
           message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
       setNewReservation(!newReservation);

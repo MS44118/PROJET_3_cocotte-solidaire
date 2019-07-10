@@ -462,7 +462,7 @@ api.post('/zboub/', (req, res) => {
                 console.log(err)
                 res.status(500).send("error while saving")
               }else {
-                res.status(200)
+                res.sendStatus(200)
               }
             });
         }
@@ -477,7 +477,7 @@ api.post('/zboub/', (req, res) => {
                 console.log(err)
                 res.status(500).send("error while saving")
               }else {
-                res.status(200)
+                res.sendStatus(200)
               }
             });
 
