@@ -8,12 +8,16 @@
   padding-right: 20px;
 }
 
-.collection p{
-  margin: 20px;
+.collection-item p {
+  text-align: center!important;
 }
 
 .collection button {
   margin-top: 10px;  
+}
+
+.collection-item button {
+  margin-left: 3em;
 }
 
 .collection-item-header:nth-child(3):after{
@@ -33,7 +37,7 @@
   width: 100%;
 }
 .title h2{
-  font-size: 3em;
+  font-size: 2em;
   margin: auto;
   margin-bottom: 5vh;
   margin-top: 5vh;

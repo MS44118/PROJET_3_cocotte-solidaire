@@ -149,7 +149,7 @@ function Users(
         </li>
         {userList.length && userList.map((user, index) => (
           <div key={user[index]}>
-            <li className="collection-item row center-align">
+            <li className="collection-item row">
               <p className="col s4 m2">{user.memberId}</p>
               <p className="col s4 m2">{user.lastname}</p>
               <p className="col s4 m2">{user.firstname}</p>
@@ -165,7 +165,7 @@ function Users(
                 </button>
                 <button
                   type="button"
-                  className="waves-effect waves-light btn-small teal darken-1 white-text col right"
+                  className="waves-effect waves-light btn-small teal darken-1 white-text col"
                   onClick={() => handleDelete(index)}
                 >
                   <i className="material-icons">delete</i>
