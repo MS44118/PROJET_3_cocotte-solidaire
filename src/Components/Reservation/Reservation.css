@@ -2,9 +2,17 @@ body{
   color:#498e81 !important;
 }
 
-/* .color_select{
-  color:#498e81 !important;
-} */
+.color_select{
+  border-radius: 80px !important;
+}
 .noFuckingmargin{
   margin-left: 0% !important;
+}
+.test{
+  color: #498e81 !important;
+  border-radius: 80px !important;
+}
+.ant-select-selection{
+  border-radius: 80px !important;
+  
 }
