@@ -273,12 +273,13 @@ api.put('/user/anonym/:id', verifyToken, (req, res) => {
   });
 });
 
-api.post('/login/SignUp/', verifyToken, (req, res) => {
-  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-    if (err) {
-      console.log(err)
-      res.sendStatus(403);
-    } else {
+api.post('/login/SignUp/', (req, res) => {
+// api.post('/login/SignUp/', verifyToken, (req, res) => {
+  // jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    // if (err) {
+    //   console.log(err)
+    //   res.sendStatus(403);
+    // } else {
       const values = req.body;
       bcrypt.hash(values.passwordSignUp, 10, (err, hash) => {
         connection.query(`INSERT INTO admins (email, password, name) VALUES ('${values.emailSignUp}', '${hash}', '${values.nameSignUp}')`,
@@ -292,8 +293,8 @@ api.post('/login/SignUp/', verifyToken, (req, res) => {
             }
           });
       })
-    }
-  });
+    // }
+  // });
 });
 
 api.post('/login/', (req, res) => {
