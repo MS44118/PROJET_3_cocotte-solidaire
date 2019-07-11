@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
 import CalendarHome from '../CalendarHome/CalendarHome';
 import conf from '../../app.conf';
+import setHeaderToken from '../../Utils/tokenUtil';
 
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
@@ -34,26 +35,33 @@ function EventHome({ events, registrations, dispatch }) {
 
   // to delete an event
   const deleteEvent = (id) => {
-    message.config({
-      top: 150,
-      duration: 3,
-      maxCount: 3,
+    // message.config({
+    //   top: 150,
+    //   duration: 3,
+    //   maxCount: 3,
+    // });
+    setHeaderToken(() => {
+      axios.delete(`${conf.url}/event/${id}`)
+        .then((res) => {
+          message.success(res.data, 3);
+          if (res.status === 200) {
+            dispatch(removeEventAction(id));
+            const index = filteredEvents.findIndex(i => i.id_event === id);
+            setFilteredEvents(
+              [
+                ...filteredEvents.slice(0, [index]),
+                ...filteredEvents.slice([index + 1], filteredEvents.length),
+              ],
+            );
+          } else {
+            message.warning(res.status, 3);
+          }
+        })
+        .catch((err) => {
+          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
+        });
     });
-    axios.delete(`${conf.url}/event/${id}`)
-      .then((res) => {
-        dispatch(removeEventAction(id));
-        const index = filteredEvents.findIndex(i => i.id_event === id);
-        setFilteredEvents(
-          [
-            ...filteredEvents.slice(0, [index]),
-            ...filteredEvents.slice([index + 1], filteredEvents.length),
-          ],
-        );
-        message.success(res.data);
-      })
-      .catch((err) => {
-        message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
-      });
+
   };
 
   // { filtre_xxxxx: true, check_xxxxx: true }
@@ -81,15 +89,17 @@ function EventHome({ events, registrations, dispatch }) {
 
   // api call while loading
   useEffect(() => {
-    axios.get(`${conf.url}/api/future-events`)
-      .then((result) => {
-        setFilteredEvents(result.data);
-        dispatch(initEventsAction(result.data));
-      });
-    axios.get(`${conf.url}/api/future-registrations`)
-      .then((result) => {
-        dispatch(initRegistrationsAction(result.data));
-      });
+    setHeaderToken(() => {
+      axios.get(`${conf.url}/api/future-events`)
+        .then((result) => {
+          setFilteredEvents(result.data);
+          dispatch(initEventsAction(result.data));
+        });
+      axios.get(`${conf.url}/api/future-registrations`)
+        .then((result) => {
+          dispatch(initRegistrationsAction(result.data));
+        });
+    });
   }, []);
 
   // set filters according to checkboxes
@@ -215,7 +225,7 @@ function EventHome({ events, registrations, dispatch }) {
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
-            <ul className="event-item row valign-wrapper center-align">
+            <ul className="event-item row center-align">
               <li className="col s2">{event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">
@@ -274,7 +284,7 @@ function EventHome({ events, registrations, dispatch }) {
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
                 <Modal
-                  title="Vous aller supprimer l'évènement suivant: "
+                  title={`Vous aller supprimer l'évènement n° ${event.id_event}: `}
                   visible={deleteModal[index]}
                   onOk={() => {
                     handleStateMapped(index, deleteModal, setDeleteModal);
@@ -337,7 +347,7 @@ function EventHome({ events, registrations, dispatch }) {
                   <ReservationHome
                     eventId={event.id_event}
                     eventName={event.name_event}
-                    eventDate={event.date_b.format}
+                    eventDate={event.date_b}
                     registrations={registrations}
                   />
                 )

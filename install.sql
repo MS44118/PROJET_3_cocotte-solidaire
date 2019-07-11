@@ -124,6 +124,11 @@ VALUES
   (1, 0, "échalottes", " ", 2, 2),
   (1, 0, " ", " ", 4, 6),
   (3, 0, " ", " ", 1, 6),
+  (2, 2, " ", "besoin d'1 chaise bébé", 1, 2),
+  (3, 0, " ", " ", 2, 2),
+  (1, 0, "cacahuètes", " ", 3, 2),
+  (1, 0, "fruits de mer", " ", 4, 2),
+  (3, 0, " ", "fauteuil roulant", 1, 2),
   (1, 0, " ", " ", 2, 2);
 
 CREATE TABLE admins (
@@ -136,4 +141,4 @@ CREATE TABLE admins (
 INSERT INTO cocotte_booking.admins 
   (email, password, name)
 VALUES
-  ('aurelia@gmail.com', 'password', 'aurelia');
+  ('ms44118@gmail.com', 'maelenn', 'maelenn'),

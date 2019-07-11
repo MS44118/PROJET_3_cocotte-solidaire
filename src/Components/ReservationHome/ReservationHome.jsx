@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { Tooltip, message, Modal } from 'antd';
 import conf from '../../app.conf';
+import setHeaderToken from '../../Utils/tokenUtil';
 
 import './ReservationHome.css';
 import 'antd/dist/antd.css';
@@ -18,23 +19,6 @@ function ReservationHome(
     eventId, eventName, eventDate, registrations, dispatch,
   },
 ) {
-  // const [registrations, setRegistrations] = useState([]);
-  // const [homeProps, setHomeProps] = useState({});
-
-  // ESLINT WARNING: to prevent definitions of unused prop types
-  // useEffect(() => {
-  //   setHomeProps(props);
-  // }, [props]);
-
-  // get the registrations details from database
-  // useEffect(() => {
-  //   axios.get('http://localhost:8000/api/future-registrations')
-  //     .then((result) => {
-  //       setRegistrations(result.data);
-  //       props.dispatch(initRegistrationsAction(result.data));
-  //     });
-  // }, []);
-
   // state to show/hide Modale (to confirm registrations deletion)
   const [deleteModal, setDeleteModal] = useState([]);
 
@@ -58,28 +42,34 @@ function ReservationHome(
   const deleteRegistration = (id) => {
     message.config({
       top: 200,
-      duration: 2,
+      duration: 4,
       maxCount: 3,
     });
-    axios.delete(`${conf.url}/registration/${id}`)
-      .then((res) => {
-        message.success(res.data);
-        const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === id);
-        const IdEventToUpdate = registrations[indexRegistrationToDelete].event_id;
-        // setRegistrations(
-        //   [
-        //     ...registrations.slice(0, [index]),
-        //     ...registrations.slice([index + 1], registrations.length),
-        //   ],
-        // );
-        dispatch(removeRegistrationAction(id));
-        dispatch(updateEventAction(
-          { id: IdEventToUpdate, registration: indexRegistrationToDelete },
-        ));
-      })
-      .catch((err) => {
-        message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
-      });
+    let resultat = {};
+    setHeaderToken(() => {
+      axios.delete(`${conf.url}/registration/${id}`)
+        .then((res) => {
+          message.success(res.data);
+          resultat = res.status;
+        })
+        .then(() => {
+          if (resultat === 200) {
+            dispatch(updateEventAction({ regId: id, reg: registrations }));
+          } else {
+            message.warning(resultat);
+          }
+        })
+        .then(() => {
+          if (resultat === 200) {
+            dispatch(removeRegistrationAction(id));
+          } else {
+            message.warning(resultat);
+          }
+        })
+        .catch((err) => {
+          message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
+        });
+    });
   };
 
 
@@ -200,7 +190,7 @@ function ReservationHome(
                   </button>,
                 ]}
               >
-                <h4>{'ATTENTION vous allez supprimer l\'inscription de : '}</h4>
+                <h4>{`ATTENTION vous allez supprimer l'inscription n°${registration.id_registration} de l'évenement n°${registration.event_id}: `}</h4>
                 <p>
                   {registration.firstname}
                   {' '}
@@ -225,6 +215,7 @@ function ReservationHome(
     </div>
   );
 }
+
 
 ReservationHome.propTypes = {
   dispatch: PropTypes.func,

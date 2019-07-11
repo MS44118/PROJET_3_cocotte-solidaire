@@ -40,92 +40,43 @@ connection.connect((err) => {
   console.log('connected to MYSQL database');
 });
 
-// to request all the datas from all the tables from the mysql DB cocotte_booking
-// api.get('/', (req, res) => {
-//   connection.query(
-//     'SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id;',
-//     (err, result) => {
-//       if (err) throw err;
-//       res.send(result);
-//     }
-//   );
-// });
-// SELECT registrations.*, users.*, events.*, activities.* 
-// FROM registrations 
-// JOIN users ON users.id_user=registrations.user_id 
-//   JOIN events ON events.id_event=registrations.event_id 
-//     JOIN activities ON activities.id_activity=events.activity_id
-// ;
 
-// to request all the future events from now() ==> EventHome.js
-api.get('/api/future-events', (req, res) => {
-  connection.query(
-    'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
+// to request all the future events from today 00:00 ==> EventHome.js
+api.get('/api/future-events', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      connection.query(
+        'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
+        (err, result) => {
+          if (err) throw err;
+          res.send(result);
+        }
+      );
     }
-  );
+  })
 });
-// SELECT 
-//   COUNT(registrations.event_id) as NB_REG,
-//   events.id_event, 
-//   events.name_event, 
-//   events.date_b, 
-//   events.date_e, 
-//   IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, 
-//   IFNULL(SUM(registrations.quantity_children), 0) as nb_children,
-//   IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons,
-//   events.capacity,
-//   COUNT(NULLIF(TRIM(users.email), "")) as nb_emails,
-//   COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,
-//   COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments
-//   FROM events 
-// LEFT JOIN registrations ON registrations.event_id=events.id_event
-//   LEFT JOIN users ON users.id_user=registrations.user_id
-// WHERE events.date_b >= CURDATE()
-// GROUP BY events.id_event
-// ORDER BY events.date_b ASC
-// ;
-
-// ---------- CONDIITON WERE date_b >  -----------------------
-// WHERE events.date_b > NOW()
-// WHERE events.date_b > CURDATE()
-// WHERE events.date_b > "2019-06-13 09:00:00"
-// WHERE events.date_b > "2019-06-14 09:00:00"
-
 
 
 // to request all the future registrations from now() ==> ReservationHome.js
-api.get('/api/future-registrations', (req, res) => {
-  connection.query(
-    'SELECT registrations.id_registration, users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id GROUP BY registrations.id_registration;',
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
+api.get('/api/future-registrations', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      connection.query(
+        'SELECT registrations.id_registration, users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id WHERE events.date_b >= CURDATE() GROUP BY registrations.id_registration;',
+        (err, result) => {
+          if (err) throw err;
+          res.send(result);
+        }
+      );
     }
-  );
+  })
 });
-// SELECT registrations.id_registration,
-//   users.firstname,
-//   users.lastname,
-//   users.email,
-//   users.phone,
-//   users.member_id,
-//   registrations.quantity_adult,
-//   registrations.quantity_children,
-//   registrations.event_id,
-//   registrations.allergie,
-//   registrations.comment 
-// FROM registrations 
-// JOIN users ON users.id_user=registrations.user_id 
-//   JOIN events ON events.id_event=registrations.event_id 
-//     JOIN activities ON activities.id_activity=events.activity_id
-// GROUP BY registrations.id_registration
-// ;
-
-
-
 
 
 // here explain what it is for
@@ -277,13 +228,13 @@ api.put('/user/anonym/:id', verifyToken, (req, res) => {
   });
 });
 
-api.post('/login/SignUp/', (req, res) => {
-// api.post('/login/SignUp/', verifyToken, (req, res) => {
-  // jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-    // if (err) {
-    //   console.log(err)
-    //   res.sendStatus(403);
-    // } else {
+// api.post('/login/SignUp/', (req, res) => {
+api.post('/login/SignUp/', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
       const values = req.body;
       bcrypt.hash(values.passwordSignUp, 10, (err, hash) => {
         connection.query(`INSERT INTO admins (email, password, name) VALUES ('${values.emailSignUp}', '${hash}', '${values.nameSignUp}')`,
@@ -297,8 +248,8 @@ api.post('/login/SignUp/', (req, res) => {
             }
           });
       })
-    // }
-  // });
+    }
+  });
 });
 
 
@@ -404,73 +355,88 @@ api.delete('/activities/:id', (req, res) => {
 });
 
 // to delete a specific event from event page or home admin
-api.delete('/event/:id', (req, res) => {
-  const idEvent = req.params.id;
-  console.log(`lancement suppression de l'evenement ${idEvent}: `);
-  // controle si l'evenement existe
-  connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
+api.delete('/event/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
-      console.log(`Erreur lors de l'appel a la base de données: ${err}`);
-      res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
-    };
-    if (result[0].nb_event === 0) {
-      console.log(`l'évènement n°${idEvent} n'existe pas.`);
-      res.status(410).send(`l'évènement n°${idEvent} n'existe pas.`);
+      console.log(err)
+      res.sendStatus(403);
     } else {
-      // controle si l'evenement contient des inscriptions
-      connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
+      const idEvent = req.params.id;
+      console.log(`lancement suppression de l'evenement ${idEvent}: `);
+      // controle si l'evenement existe
+      connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
         if (err) {
           console.log(`Erreur lors de l'appel a la base de données: ${err}`);
           res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
         };
-
-        if (result[0].nb_persons === 0) {
-          // supprime l'evenement (si evenement existant et pas d'inscription)
-          connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
+        if (result[0].nb_event === 0) {
+          console.log(`l'évènement n°${idEvent} n'existe pas.`);
+          res.status(410).send(`l'évènement n°${idEvent} n'existe pas.`);
+        } else {
+          // controle si l'evenement contient des inscriptions
+          connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
             if (err) {
-              console.log(`Erreur lors de la suppression d'un évènement: ${err}`);
-              res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+              console.log(`Erreur lors de l'appel a la base de données: ${err}`);
+              res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+            };
+
+            if (result[0].nb_persons === 0) {
+              // supprime l'evenement (si evenement existant et pas d'inscription)
+              connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
+                if (err) {
+                  console.log(`Erreur lors de la suppression d'un évènement: ${err}`);
+                  res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
+                } else {
+                  console.log(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+                  res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
+                }
+              });
             } else {
-              console.log(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
-              res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
-            }
+              console.log(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+              res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+            };
+
           });
-        } else {
-          console.log(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-          res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-        };
-
-      });
-    }
-  });
-});
-
-// to delete a specific event from event page or home admin
-api.delete('/registration/:id', (req, res) => {
-  const idRegistration = req.params.id;
-  console.log(`lancement suppression de l'inscription ${idRegistration}: `);
-  // controle si l'inscription existe
-  connection.query(`SELECT COUNT(id_registration) as nb_registration FROM registrations WHERE id_registration = ? `, [idRegistration], (err, result) => {
-    if (err) {
-      console.log(`Erreur lors de l'appel a la base de données: ${err}`);
-      res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
-    };
-    if (result[0].nb_registration === 0) {
-      console.log(`l'inscription n°${idRegistration} n'existe pas.`);
-      res.status(410).send(`l'inscription n°${idRegistration} n'existe pas.`);
-    } else {
-      // supprime l'inscription 
-      connection.query('DELETE FROM registrations WHERE id_registration = ?', [idRegistration], (err, result) => {
-        if (err) {
-          console.log(`Erreur lors de la suppression d'un inscription: ${err}`);
-          res.status(500).send(`Erreur lors de la suppression d'un inscription: ${err}`);
-        } else {
-          console.log(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
-          res.status(200).send(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
         }
       });
     }
-  });
+  })
+});
+
+// to delete a specific event from event page or home admin
+  // api.delete('/registration/:id', (req, res) => {
+  api.delete('/registration/:id', verifyToken, (req, res) => {
+    jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const idRegistration = req.params.id;
+      console.log(`lancement suppression de l'inscription ${idRegistration}: `);
+      // controle si l'inscription existe
+      connection.query(`SELECT COUNT(id_registration) as nb_registration FROM registrations WHERE id_registration = ? `, [idRegistration], (err, result) => {
+        if (err) {
+          console.log(`Erreur lors de l'appel a la base de données: ${err}`);
+          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+        };
+        if (result[0].nb_registration === 0) {
+          console.log(`l'inscription n°${idRegistration} n'existe pas.`);
+          res.status(410).send(`l'inscription n°${idRegistration} n'existe pas.`);
+        } else {
+          // supprime l'inscription 
+          connection.query('DELETE FROM registrations WHERE id_registration = ?', [idRegistration], (err, result) => {
+            if (err) {
+              console.log(`Erreur lors de la suppression d'un inscription: ${err}`);
+              res.status(500).send(`Erreur lors de la suppression d'un inscription: ${err}`);
+            } else {
+              console.log(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+              res.status(200).send(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+            }
+          });
+        }
+      });
+    }
+  })
 });
 
 
@@ -496,7 +462,7 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 })
- 
+
 var upload = multer({ storage: storage })
 
 api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {

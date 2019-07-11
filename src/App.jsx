@@ -71,5 +71,4 @@ App.defaultProps = {
   dispatch: null,
 };
 
-
 export default connect(mapStateToProps)(App);
