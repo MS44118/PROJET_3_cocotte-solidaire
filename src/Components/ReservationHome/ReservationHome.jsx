@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import { Tooltip, message, Modal } from 'antd';
+import setHeaderToken from '../../Utils/tokenUtil';
 
 import './ReservationHome.css';
 import 'antd/dist/antd.css';
@@ -17,21 +18,21 @@ function ReservationHome(
     eventId, eventName, eventDate, registrations, dispatch,
   },
 ) {
-  // const [registrations, setRegistrations] = useState([]);
-  // const [homeProps, setHomeProps] = useState({});
-
   // ESLINT WARNING: to prevent definitions of unused prop types
+  // const [homeProps, setHomeProps] = useState({});
   // useEffect(() => {
   //   setHomeProps(props);
   // }, [props]);
 
   // get the registrations details from database
   // useEffect(() => {
-  //   axios.get('http://localhost:8000/api/future-registrations')
-  //     .then((result) => {
-  //       setRegistrations(result.data);
-  //       props.dispatch(initRegistrationsAction(result.data));
-  //     });
+  //   setHeaderToken(() => {
+  //     axios.get('http://localhost:8000/api/future-registrations')
+  //       .then((result) => {
+  //         setRegistrations(result.data);
+  //         props.dispatch(initRegistrationsAction(result.data));
+  //       });
+  //   });
   // }, []);
 
   // state to show/hide Modale (to confirm registrations deletion)
@@ -57,28 +58,24 @@ function ReservationHome(
   const deleteRegistration = (id) => {
     message.config({
       top: 200,
-      duration: 2,
+      duration: 4,
       maxCount: 3,
     });
-    axios.delete(`http://localhost:8000/registration/${id}`)
-      .then((res) => {
-        message.success(res.data);
-        const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === id);
-        const IdEventToUpdate = registrations[indexRegistrationToDelete].event_id;
-        // setRegistrations(
-        //   [
-        //     ...registrations.slice(0, [index]),
-        //     ...registrations.slice([index + 1], registrations.length),
-        //   ],
-        // );
-        dispatch(removeRegistrationAction(id));
-        dispatch(updateEventAction(
-          { id: IdEventToUpdate, registration: indexRegistrationToDelete },
-        ));
-      })
-      .catch((err) => {
-        message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
-      });
+    setHeaderToken(() => {
+      axios.delete(`http://localhost:8000/registration/${id}`)
+        .then((res) => {
+          message.success(res.data);
+        })
+        .then(() => {
+          dispatch(updateEventAction(id));
+        })
+        .then(() => {
+          dispatch(removeRegistrationAction(id));
+        })
+        .catch((err) => {
+          message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
+        });
+    });
   };
 
 
@@ -199,7 +196,7 @@ function ReservationHome(
                   </button>,
                 ]}
               >
-                <h4>{'ATTENTION vous allez supprimer l\'inscription de : '}</h4>
+                <h4>{`ATTENTION vous allez supprimer l'inscription n°${registration.id_registration} de l'évenement n°${registration.event_id}: `}</h4>
                 <p>
                   {registration.firstname}
                   {' '}
@@ -224,6 +221,7 @@ function ReservationHome(
     </div>
   );
 }
+
 
 ReservationHome.propTypes = {
   dispatch: PropTypes.func,

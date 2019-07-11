@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
 import CalendarHome from '../CalendarHome/CalendarHome';
+import setHeaderToken from '../../Utils/tokenUtil';
 
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
@@ -38,21 +39,24 @@ function EventHome({ events, registrations, dispatch }) {
       duration: 3,
       maxCount: 3,
     });
-    axios.delete(`http://localhost:8000/event/${id}`)
-      .then((res) => {
-        dispatch(removeEventAction(id));
-        const index = filteredEvents.findIndex(i => i.id_event === id);
-        setFilteredEvents(
-          [
-            ...filteredEvents.slice(0, [index]),
-            ...filteredEvents.slice([index + 1], filteredEvents.length),
-          ],
-        );
-        message.success(res.data);
-      })
-      .catch((err) => {
-        message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
-      });
+    setHeaderToken(() => {
+      axios.delete(`http://localhost:8000/event/${id}`)
+        .then((res) => {
+          dispatch(removeEventAction(id));
+          const index = filteredEvents.findIndex(i => i.id_event === id);
+          setFilteredEvents(
+            [
+              ...filteredEvents.slice(0, [index]),
+              ...filteredEvents.slice([index + 1], filteredEvents.length),
+            ],
+          );
+          message.success(res.data);
+        })
+        .catch((err) => {
+          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);
+        });
+    });
+
   };
 
   // { filtre_xxxxx: true, check_xxxxx: true }
@@ -80,15 +84,17 @@ function EventHome({ events, registrations, dispatch }) {
 
   // api call while loading
   useEffect(() => {
-    axios.get('http://localhost:8000/api/future-events')
-      .then((result) => {
-        setFilteredEvents(result.data);
-        dispatch(initEventsAction(result.data));
-      });
-    axios.get('http://localhost:8000/api/future-registrations')
-      .then((result) => {
-        dispatch(initRegistrationsAction(result.data));
-      });
+    setHeaderToken(() => {
+      axios.get('http://localhost:8000/api/future-events')
+        .then((result) => {
+          setFilteredEvents(result.data);
+          dispatch(initEventsAction(result.data));
+        });
+      axios.get('http://localhost:8000/api/future-registrations')
+        .then((result) => {
+          dispatch(initRegistrationsAction(result.data));
+        });
+    });
   }, []);
 
   // set filters according to checkboxes
@@ -143,7 +149,7 @@ function EventHome({ events, registrations, dispatch }) {
       </div>
 
       <div className="row calendar">
-        <CalendarHome selectedDate={selectedDate} />
+        {/* <CalendarHome selectedDate={selectedDate} /> */}
       </div>
 
       <div className="row checkbox">
@@ -275,7 +281,7 @@ function EventHome({ events, registrations, dispatch }) {
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
                 <Modal
-                  title="Vous aller supprimer l'évènement suivant: "
+                  title={`Vous aller supprimer l'évènement n° ${event.id_event}: `}
                   visible={deleteModal[index]}
                   onOk={() => {
                     handleStateMapped(index, deleteModal, setDeleteModal);
@@ -338,7 +344,7 @@ function EventHome({ events, registrations, dispatch }) {
                   <ReservationHome
                     eventId={event.id_event}
                     eventName={event.name_event}
-                    eventDate={event.date_b.format}
+                    eventDate={event.date_b}
                     registrations={registrations}
                   />
                 )

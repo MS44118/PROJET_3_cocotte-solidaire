@@ -136,4 +136,4 @@ CREATE TABLE admins (
 INSERT INTO cocotte_booking.admins 
   (email, password, name)
 VALUES
-  ('aurelia@gmail.com', 'password', 'aurelia');
+  ('ms44118@gmail.com', 'maelenn', 'maelenn'),

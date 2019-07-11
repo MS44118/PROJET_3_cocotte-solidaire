@@ -17,6 +17,13 @@ const registrationsReducer = (store = [], action) => {
 };
 export default registrationsReducer;
 
+// const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === id);
+// dispatch(removeRegistrationAction(id));
+// const IdEventToUpdate = registrations[indexRegistrationToDelete].event_id;
+// dispatch(updateEventAction(
+//   { IdEventToUpdate },
+// ));
+
 
 // export const initRegistrationsAction = registrations => ({
 //   type: 'INIT_REGISTRATIONS',

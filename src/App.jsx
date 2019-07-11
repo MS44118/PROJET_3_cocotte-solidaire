@@ -43,14 +43,15 @@ function App({ tokenApproved, dispatch }) {
           <Route path="/activities" exact component={Activities} />
           <Route path="/reservation" exact component={Reservation} />
           <Route path="/users" exact component={Users} />
-        <Route path="/signup" exact component={SignUp} />
-
+          <Route path="/signup" exact component={SignUp} />
           <Footer />
         </div>
-      ) : 
-      <div>
-        <Login />
-      </div>
+      ) : (
+        <div>
+          <Login />
+          {/* <Route path="/signup" exact component={SignUp} /> */}
+        </div>
+      )
       }
     </div>
   );
