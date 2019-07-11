@@ -207,7 +207,7 @@ console.log(dataSource)
 
         <div className="input-field col s4 noFuckingmargin">
           <p> Nombres d&apos;adultes</p>
-          <Select  value={quantityAdult}  style={{ width: 120 }}className="test" onChange={e => setQuantityAdult(e.target.value)}>
+          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e.target.value)}>
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
