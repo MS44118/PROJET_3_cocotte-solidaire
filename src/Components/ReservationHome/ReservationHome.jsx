@@ -75,13 +75,13 @@ function ReservationHome(
             message.warning(resultat);
           }
         })
-        // .then(() => {
-        //   if (resultat === 200) {
-        //     dispatch(removeRegistrationAction(id));
-        //   } else {
-        //     message.warning(resultat);
-        //   }
-        // })
+        .then(() => {
+          if (resultat === 200) {
+            dispatch(removeRegistrationAction(id));
+          } else {
+            message.warning(resultat);
+          }
+        })
         .catch((err) => {
           message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
         });

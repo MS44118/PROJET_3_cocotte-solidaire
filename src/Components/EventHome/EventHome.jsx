@@ -42,15 +42,19 @@ function EventHome({ events, registrations, dispatch }) {
     setHeaderToken(() => {
       axios.delete(`http://localhost:8000/event/${id}`)
         .then((res) => {
-          dispatch(removeEventAction(id));
-          const index = filteredEvents.findIndex(i => i.id_event === id);
-          setFilteredEvents(
-            [
-              ...filteredEvents.slice(0, [index]),
-              ...filteredEvents.slice([index + 1], filteredEvents.length),
-            ],
-          );
           message.success(res.data);
+          if (res.status === 200) {
+            dispatch(removeEventAction(id));
+            const index = filteredEvents.findIndex(i => i.id_event === id);
+            setFilteredEvents(
+              [
+                ...filteredEvents.slice(0, [index]),
+                ...filteredEvents.slice([index + 1], filteredEvents.length),
+              ],
+            );
+          } else {
+            message.warning(res.status);
+          }
         })
         .catch((err) => {
           message.error(`évènement ${id} ne peut pas être supprimé: ${err}`);

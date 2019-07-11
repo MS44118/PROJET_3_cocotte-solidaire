@@ -18,8 +18,8 @@ const eventsReducer = (store = [], action) => {
       const registration = action.payload.reg[indexRegistrationToDelete];
 
       const idEventToUpdate = action.payload.reg[indexRegistrationToDelete].event_id;
-      const indexEvent = store.findIndex(i => i.id_event === idEventToUpdate);
-      const event = store[indexEvent];
+      const indexEventToUpdate = store.findIndex(i => i.id_event === idEventToUpdate);
+      const event = store[indexEventToUpdate];
 
       const eventModified = {
         NB_REG: event.NB_REG - 1,
@@ -31,21 +31,22 @@ const eventsReducer = (store = [], action) => {
         nb_children: event.nb_children - registration.quantity_children,
         nb_persons: event.nb_persons - (registration.quantity_adult + registration.quantity_children / 2),
         capacity: event.capacity,
-        nb_emails: event.nb_emails,
-        nb_allergies: event.nb_allergies,
-        nb_comment: event.nb_comment,
+        nb_emails: event.nb_emails - registration.nb_emails,
+        nb_allergies: event.nb_allergies - registration.nb_allergies,
+        nb_comments: event.nb_comments - registration.nb_comments,
       };
 
       console.log(event);
       console.log(registration);
       console.log(eventModified);
-      return store;
+      
+      // return store;
 
-      // return [
-      //   ...store.slice(0, [index]),
-      //   eventModified,
-      //   ...store.slice([index + 1], store.length),
-      // ];
+      return [
+        ...store.slice(0, [indexEventToUpdate]),
+        eventModified,
+        ...store.slice([indexEventToUpdate + 1], store.length),
+      ];
     }
 
     default:
