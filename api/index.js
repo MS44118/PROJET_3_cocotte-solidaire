@@ -538,7 +538,8 @@ api.get('/events', (req, res) => {
   );
 });
 //registrtion post
-api.post('/zboub/', (req, res) => {
+api.post('/zboub/', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
   const reservation = req.body
   console.log(reservation)
   // console.log(reservation)
@@ -563,7 +564,7 @@ api.post('/zboub/', (req, res) => {
                 console.log(err)
                 res.status(500).send("error while saving")
               }else {
-                res.status(200)
+                res.sendStatus(200)
               }
             });
         }
@@ -578,13 +579,15 @@ api.post('/zboub/', (req, res) => {
                 console.log(err)
                 res.status(500).send("error while saving")
               }else {
-                res.status(200)
+                res.sendStatus(200)
               }
             });
 
   }
+})
 });
-api.get('/registration/:id', (req, res) => {
+api.get('/registration/:id',verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
   const param = req.params.id
   console.log(param)
   const data= req.body
@@ -597,8 +600,10 @@ api.get('/registration/:id', (req, res) => {
     }
   })
 })
+})
 
-api.put('/zboub/:id', (req, res) => {
+api.put('/zboub/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
   const idRegistration = req.params.id
   const changeInfo = req.body
   {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
@@ -613,6 +618,7 @@ api.put('/zboub/:id', (req, res) => {
     }
   })  
 }
+  })
 })
 
 //   connection.query(

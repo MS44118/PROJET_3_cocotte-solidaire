@@ -4,7 +4,7 @@ import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import {
-  Input, Icon, AutoComplete, message,
+  Input, Icon, AutoComplete, message,Select,
 } from 'antd';
 import 'moment/locale/fr';
 import queryString from 'query-string';
@@ -12,6 +12,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import conf from '../../app.conf';
 import './Reservation.css';
+import setHeaderToken from '../../Utils/tokenUtil';
 
 function Reservation(
   {
@@ -70,26 +71,36 @@ function Reservation(
     existantUser,
     eventId,
     memberNumber,
+
   };
 
   const sendForm = () => {
     if (newReservation) {
-      axios.post(`${conf.url}/zboub/`, addReservation)
-        .then(() => {
-          message.success('La reservation a bien été prise en compte', 3);
-        })
-        .then(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
+      setHeaderToken(() => {
+        axios.post('http://localhost:8000/zboub/', addReservation)
+          .then((res) => {
+            console.log(res)
+            if (res.sendStatus === 200) {
+              return message.success('La reservation a bien été prise en compte', 3);
+            }
+          })
+          .catch(() => {
+            message.error("Une erreur s'est produite. Merci de réessayer", 10);
+          });
+      })
     } else {
-      axios.put(`${conf.url}/zboub/${idRegistration}`, addReservation)
-        .then(() => {
-          message.success('La reservation a bien été prise en compte', 3);
-        })
-        .then(() => {
-          message.error("Une erreur s'est produite. Merci de réessayer", 3);
-        });
-      setNewReservation(!newReservation);
+      setHeaderToken(() => {
+        axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
+          .then((res) => {
+            if (res.sendStatus === 200) {
+              return message.success('La reservation a bien été prise en compte', 3);
+            }
+          })
+          .catch(() => {
+            message.error("Une erreur s'est produite. Merci de réessayer", 3);
+          });
+        setNewReservation(!newReservation);
+      })
     }
   };
 
@@ -145,7 +156,7 @@ function Reservation(
       setIdRegistration(registration[0].id_registration);
     }
   }, [registration]);
-
+console.log(dataSource)
   return (
     <div className="container">
       <h1>Réservation</h1>
@@ -154,11 +165,12 @@ function Reservation(
           type="submit"
           className="waves-effect waves-light btn-small teal white-text right "
           onClick={sendForm}
+          disabled={eventId  === 0 ?  true : false}
+
         >
           Envoyer
         </button>
       </div>
-      <p>oublie pas de selectionner une cativité sinon ça plante</p>
       <div className="row">
         <div className=" input-field col s4 noFuckingmargin">
           <select id="events" className="browser-default color_select" value={eventId} onChange={changeEvent => setEventId(changeEvent.target.value)}>
@@ -195,8 +207,8 @@ function Reservation(
       <div className=" row ">
 
         <div className="input-field col s4 noFuckingmargin">
-          <p> nombres d&apos;Adultes</p>
-          <select value={quantityAdult} onChange={e => setQuantityAdult(e.target.value)}>
+          <p> Nombres d&apos;adultes</p>
+          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e.target.value)}>
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -204,12 +216,12 @@ function Reservation(
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-          </select>
+          </Select>
 
         </div>
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
-          <select onChange={e => setQuantityChildren(e.target.value)}>
+          <Select value={ quantityChildren } style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -217,7 +229,7 @@ function Reservation(
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-          </select>
+          </Select>
 
         </div>
 
