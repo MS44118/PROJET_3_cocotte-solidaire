@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { message } from 'antd';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import moment from 'moment';
 import fr from 'date-fns/locale/fr';
-import 'react-toastify/dist/ReactToastify.css';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import './Events.css';
@@ -25,7 +24,7 @@ function Events({ match }) {
   const [dateBegin, setDateBegin] = useState('');
   const [dateEnd, setDateEnd] = useState('');
   const [capacite, setCapacite] = useState('');
-  const [address, setAddress] = useState('La cocotte solidaire - Ile de versailles');
+  const [address, setAddress] = useState('La cocotte solidaire - Ile de versailles, 44000 Nantes');
   const [file, setFile] = useState('');
   const [indexSup, setIndexSup] = useState('default');
   const [nameFile, setNameFile] = useState('');
@@ -61,12 +60,11 @@ function Events({ match }) {
       data.append('file', newFile);
       axios.post('http://localhost:8000/uploaddufichier/', data)
         .then((response) => {
-          toast.info(response);
-          toast.info('Activité crée !');
+          message.success(`${response}`);
+          message.success('Activité crée !');
         })
         .catch((error) => {
-          toast.info(error);
-          toast.info(`${error}`);
+          message.success(`${error}`);
         });
     }
     axios.post('http://localhost:8000/events/', {
@@ -80,12 +78,11 @@ function Events({ match }) {
       activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
     })
       .then((response) => {
-        toast.info(response);
-        toast.info('Activité crée !');
+        message.success(`${response}`);
+        message.success('Activité crée !');
       })
       .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+        message.success(`${error}`);
       });
     setTitle('');
     setDescribtion('');
@@ -113,12 +110,11 @@ function Events({ match }) {
       axios.post('http://localhost:8000/uploaddufichier/', data, {
       })
         .then((response) => {
-          toast.info(response);
-          toast.info(`Votre activité ${title} à ete modifiee`);
+          message.success(`${response}`);
+          message.success(`Votre activité ${title} à ete modifiee`);
         })
         .catch((error) => {
-          toast.info(error);
-          toast.info(`${error}`);
+          message.success(`${error}`);
         });
     }
     const myCrazyTernary = file === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].picture ? '' : file;
@@ -133,12 +129,11 @@ function Events({ match }) {
       activityId: events[0].activity_id,
     })
       .then((response) => {
-        toast.info(response);
-        toast.info(`Votre activité ${title} à ete modifiee`);
+        message.success(`${response}`);
+        message.success(`Votre activité ${title} à ete modifiee`);
       })
       .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+        message.success(`${error}`);
       });
     setTimeout(() => setRedirection(true), 2000);
   };
@@ -174,10 +169,10 @@ function Events({ match }) {
   return (
     <div className="container">
       {redirection ? <Redirect to="/" /> : ''}
-      <ToastContainer
+      {/* <ToastContainer
         autoClose={4000}
         position="top-center"
-      />
+      /> */}
       <h1 className="center-align marg">{!id ? "Création d'un evenement" : "Modification d'un evenement"}</h1>
       <div className="row">
         <div className="input-field col s6">
@@ -264,7 +259,7 @@ function Events({ match }) {
         <div className="input-field col s12">
           <i className="material-icons prefix">add_location</i>
           <textarea id="address" className="materialize-textarea" value={address} onChange={e => handleChange(e, setAddress)} />
-          <label className={active} htmlFor="address">Adresse</label>
+          <label className="active" htmlFor="address">Adresse</label>
         </div>
       </div>
 

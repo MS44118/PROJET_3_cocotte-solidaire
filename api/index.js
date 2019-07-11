@@ -396,7 +396,7 @@ api.delete('/activities/:id', (req, res) => {
   connection.query('DELETE FROM activities WHERE id_activity = ?', [idActivity], err => {
     if (err) {
       console.log(err.errno);
-      res.sendStatus(500);
+      res.status(500).send("Erreur lors de la suppression d'une activité");
     } else {
       res.sendStatus(200);
     }
@@ -496,7 +496,7 @@ var storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 })
- 
+
 var upload = multer({ storage: storage })
 
 api.post('/uploaddufichier', upload.single('file'), (req, res, next) => {

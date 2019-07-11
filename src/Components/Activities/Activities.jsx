@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { message } from 'antd';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
 import './Activities.css';
@@ -50,22 +49,18 @@ function Activities() {
       description: describtion,
       picture: `./images/${newFile.name}`,
     })
-      .then((response) => {
-        toast.info(response);
-        toast.info('Activité crée !');
+      .then(() => {
+        message.success('Activité crée !', 3);
       })
-      .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+      .catch(() => {
+        message.error("L'actvité n'a pas été crée", 3);
       });
     axios.post('http://localhost:8000/uploaddufichier/', data)
-      .then((response) => {
-        toast.info(response);
-        toast.info('Activité crée !');
+      .then(() => {
+        message.success('Activité crée !', 3);
       })
-      .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+      .catch(() => {
+        message.error("L'actvité n'a pas été crée", 3);
       });
     setTitle('');
     setDescribtion('');
@@ -88,13 +83,11 @@ function Activities() {
       data.append('file', newFile);
       axios.post('http://localhost:8000/uploaddufichier/', data, {
       })
-        .then((response) => {
-          toast.info(response);
-          toast.info(`Votre activité ${title} à ete modifiee`);
+        .then(() => {
+          message.success(`Votre activité ${title} à été modifiée`, 3);
         })
-        .catch((error) => {
-          toast.info(error);
-          toast.info(`${error}`);
+        .catch(() => {
+          message.error("L'actvité n'a pas été modifiée", 3);
         });
     }
     axios.put(`http://localhost:8000/activities/${id}`, {
@@ -102,13 +95,11 @@ function Activities() {
       description: describtion,
       picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
     })
-      .then((response) => {
-        toast.info(response);
-        toast.info(`Votre activité ${title} à ete modifiee`);
+      .then(() => {
+        message.success(`Votre activité ${title} à été modifiée`, 3);
       })
-      .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+      .catch(() => {
+        message.error("L'actvité n'a pas été modifiée", 3);
       });
     setTitle('');
     setDescribtion('');
@@ -123,22 +114,20 @@ function Activities() {
   const removeActivity = () => {
     const sendFile = file.split('/');
     axios.delete(`http://localhost:8000/activities/${id}`)
-      .then((response) => {
-        toast.info(response);
-        toast.info(`L'activite ${title} a ete supprimee`);
+      .then(() => {
+        message.success(`L'activité ${title} à été supprimée`, 3);
       })
       .catch((error) => {
-        toast.info(error.data);
-        toast.info(`${error}`);
+        if (error) {
+          message.error('Des évenements sont liées à cette activité, vous ne pouvez pas la supprimer.', 3);
+        }
       });
     axios.delete(`http://localhost:8000/deletefile/${sendFile[2]}`)
-      .then((response) => {
-        toast.info(response);
-        toast.info(`L'activite ${title} a ete supprimee`);
+      .then(() => {
+        message.success(`L'activité ${title} à été supprimée`, 3);
       })
-      .catch((error) => {
-        toast.info(error);
-        toast.info(`${error}`);
+      .catch(() => {
+        message.error("L'actvité n'a pas été supprimée", 3);
       });
     setTitle('');
     setDescribtion('');
@@ -167,10 +156,10 @@ function Activities() {
   // ------------------------------------------------------RENDU------------------------------
   return (
     <div className="container">
-      <ToastContainer
+      {/* <ToastContainer
         autoClose={6000}
         position="top-center"
-      />
+      /> */}
       <h1 className="center-align marg">Création d&apos;une activité</h1>
       <div className="row">
         <div className="input-field col s6">
