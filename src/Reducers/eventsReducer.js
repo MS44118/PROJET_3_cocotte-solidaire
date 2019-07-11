@@ -12,12 +12,12 @@ const eventsReducer = (store = [], action) => {
       ];
     }
     case 'UPDATE_EVENT': {
-      const idRegistrationToDelete = action.payload.regId;
+      const idRegToDelete = action.payload.regId;
       const registrations = action.payload.reg;
-      const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === idRegistrationToDelete);
-      const registration = action.payload.reg[indexRegistrationToDelete];
+      const indexRegToDelete = registrations.findIndex(i => i.id_registration === idRegToDelete);
+      const registration = action.payload.reg[indexRegToDelete];
 
-      const idEventToUpdate = action.payload.reg[indexRegistrationToDelete].event_id;
+      const idEventToUpdate = action.payload.reg[indexRegToDelete].event_id;
       const indexEventToUpdate = store.findIndex(i => i.id_event === idEventToUpdate);
       const event = store[indexEventToUpdate];
 
@@ -29,18 +29,13 @@ const eventsReducer = (store = [], action) => {
         date_e: event.date_e,
         nb_adults: event.nb_adults - registration.quantity_adult,
         nb_children: event.nb_children - registration.quantity_children,
-        nb_persons: event.nb_persons - (registration.quantity_adult + registration.quantity_children / 2),
+        nb_persons:
+          event.nb_persons - (registration.quantity_adult + registration.quantity_children / 2),
         capacity: event.capacity,
         nb_emails: event.nb_emails - registration.nb_emails,
         nb_allergies: event.nb_allergies - registration.nb_allergies,
         nb_comments: event.nb_comments - registration.nb_comments,
       };
-
-      console.log(event);
-      console.log(registration);
-      console.log(eventModified);
-      
-      // return store;
 
       return [
         ...store.slice(0, [indexEventToUpdate]),

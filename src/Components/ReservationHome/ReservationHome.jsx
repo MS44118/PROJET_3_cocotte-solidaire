@@ -40,34 +40,29 @@ function ReservationHome(
 
   // delete function (once you hit the confirmation button)
   const deleteRegistration = (id) => {
-    message.config({
-      top: 200,
-      duration: 4,
-      maxCount: 3,
-    });
     let resultat = {};
     setHeaderToken(() => {
       axios.delete(`${conf.url}/registration/${id}`)
         .then((res) => {
-          message.success(res.data);
+          message.success(res.data, 3);
           resultat = res.status;
         })
         .then(() => {
           if (resultat === 200) {
             dispatch(updateEventAction({ regId: id, reg: registrations }));
           } else {
-            message.warning(resultat);
+            message.warning(resultat, 3);
           }
         })
         .then(() => {
           if (resultat === 200) {
             dispatch(removeRegistrationAction(id));
           } else {
-            message.warning(resultat);
+            message.warning(resultat, 3);
           }
         })
         .catch((err) => {
-          message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
+          message.error(`inscription ${id} ne peut pas être supprimé: ${err}`, 3);
         });
     });
   };

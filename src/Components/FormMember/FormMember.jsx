@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import conf from '../../app.conf';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import {
   Select, message, Row, Col,
@@ -11,6 +10,7 @@ import fr from 'date-fns/locale/fr';
 import 'react-datepicker/dist/react-datepicker.css';
 import '../Reservation/Reservation.css';
 import './FormMember.css';
+import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
 
 import { displayNewUserFormAction, displayKnownUserFormAction } from '../../Actions/displayUserFormAction';

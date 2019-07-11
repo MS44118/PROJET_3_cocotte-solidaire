@@ -35,11 +35,6 @@ function EventHome({ events, registrations, dispatch }) {
 
   // to delete an event
   const deleteEvent = (id) => {
-    // message.config({
-    //   top: 150,
-    //   duration: 3,
-    //   maxCount: 3,
-    // });
     setHeaderToken(() => {
       axios.delete(`${conf.url}/event/${id}`)
         .then((res) => {
@@ -61,7 +56,6 @@ function EventHome({ events, registrations, dispatch }) {
           message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
         });
     });
-
   };
 
   // { filtre_xxxxx: true, check_xxxxx: true }

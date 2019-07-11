@@ -4,7 +4,7 @@ import M from 'materialize-css/dist/js/materialize';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import {
-  Input, Icon, AutoComplete, message,Select,
+  Input, Icon, AutoComplete, message, Select,
 } from 'antd';
 import 'moment/locale/fr';
 import queryString from 'query-string';
@@ -79,28 +79,32 @@ function Reservation(
       setHeaderToken(() => {
         axios.post('http://localhost:8000/zboub/', addReservation)
           .then((res) => {
-            console.log(res)
+            message.success(res);
             if (res.sendStatus === 200) {
-              return message.success('La reservation a bien été prise en compte', 3);
+              message.success('La reservation a bien été prise en compte', 3);
+            } else {
+              message.warning(res, 3);
             }
           })
           .catch(() => {
             message.error("Une erreur s'est produite. Merci de réessayer", 10);
           });
-      })
+      });
     } else {
       setHeaderToken(() => {
         axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
           .then((res) => {
             if (res.sendStatus === 200) {
-              return message.success('La reservation a bien été prise en compte', 3);
+              message.success('La reservation a bien été prise en compte', 3);
+            } else {
+              message.warning(res, 3);
             }
           })
           .catch(() => {
             message.error("Une erreur s'est produite. Merci de réessayer", 3);
           });
         setNewReservation(!newReservation);
-      })
+      });
     }
   };
 
@@ -156,7 +160,9 @@ function Reservation(
       setIdRegistration(registration[0].id_registration);
     }
   }, [registration]);
-console.log(dataSource)
+
+  // console.log(dataSource);
+
   return (
     <div className="container">
       <h1>Réservation</h1>
@@ -165,8 +171,7 @@ console.log(dataSource)
           type="submit"
           className="waves-effect waves-light btn-small teal white-text right "
           onClick={sendForm}
-          disabled={eventId  === 0 ?  true : false}
-
+          disabled={eventId === 0 || false}
         >
           Envoyer
         </button>
@@ -208,7 +213,11 @@ console.log(dataSource)
 
         <div className="input-field col s4 noFuckingmargin">
           <p> Nombres d&apos;adultes</p>
-          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e.target.value)}>
+          <Select
+            value={quantityAdult}
+            style={{ width: 120 }}
+            onChange={e => setQuantityAdult(e.target.value)}
+          >
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -221,7 +230,7 @@ console.log(dataSource)
         </div>
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
-          <Select value={ quantityChildren } style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
+          <Select value={quantityChildren} style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
