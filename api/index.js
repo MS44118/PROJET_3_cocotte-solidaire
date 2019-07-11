@@ -446,8 +446,9 @@ api.delete('/event/:id', verifyToken, (req, res) => {
 });
 
 // to delete a specific event from event page or home admin
-api.delete('/registration/:id', verifyToken, (req, res) => {
-  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+  // api.delete('/registration/:id', (req, res) => {
+  api.delete('/registration/:id', verifyToken, (req, res) => {
+    jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
       res.sendStatus(403);

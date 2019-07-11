@@ -61,17 +61,27 @@ function ReservationHome(
       duration: 4,
       maxCount: 3,
     });
+    let resultat = {};
     setHeaderToken(() => {
       axios.delete(`http://localhost:8000/registration/${id}`)
         .then((res) => {
           message.success(res.data);
+          resultat = res.status;
         })
         .then(() => {
-          dispatch(updateEventAction(id));
+          if (resultat === 200) {
+            dispatch(updateEventAction({ regId: id, reg: registrations }));
+          } else {
+            message.warning(resultat);
+          }
         })
-        .then(() => {
-          dispatch(removeRegistrationAction(id));
-        })
+        // .then(() => {
+        //   if (resultat === 200) {
+        //     dispatch(removeRegistrationAction(id));
+        //   } else {
+        //     message.warning(resultat);
+        //   }
+        // })
         .catch((err) => {
           message.error(`inscription ${id} ne peut pas être supprimé: ${err}`);
         });

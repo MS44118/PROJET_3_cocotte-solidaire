@@ -12,15 +12,15 @@ const eventsReducer = (store = [], action) => {
       ];
     }
     case 'UPDATE_EVENT': {
-      const indexRegistrationToDelete = store.registrations.findIndex(i => i.id_registration === action.payload);
-      const id = store.registrations[indexRegistrationToDelete].event_id;
-      const index = store.findIndex(i => i.id_event === id);
-      const registration = store.registrations[indexRegistrationToDelete];
-      const event = store.events[index];
-      // console.log(action.payload);
-      // console.log(registration);
-      // console.log(index);
-      // return store;
+      const idRegistrationToDelete = action.payload.regId;
+      const registrations = action.payload.reg;
+      const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === idRegistrationToDelete);
+      const registration = action.payload.reg[indexRegistrationToDelete];
+
+      const idEventToUpdate = action.payload.reg[indexRegistrationToDelete].event_id;
+      const indexEvent = store.findIndex(i => i.id_event === idEventToUpdate);
+      const event = store[indexEvent];
+
       const eventModified = {
         NB_REG: event.NB_REG - 1,
         id_event: event.id_event,
@@ -35,11 +35,16 @@ const eventsReducer = (store = [], action) => {
         nb_allergies: event.nb_allergies,
         nb_comment: event.nb_comment,
       };
-      return [
-        ...store.slice(0, [index]),
-        eventModified,
-        ...store.slice([index + 1], store.length),
-      ];
+
+      console.log(event);
+      console.log(eventModified);
+      return store;
+
+      // return [
+      //   ...store.slice(0, [index]),
+      //   eventModified,
+      //   ...store.slice([index + 1], store.length),
+      // ];
     }
 
     default:
