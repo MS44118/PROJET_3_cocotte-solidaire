@@ -163,11 +163,26 @@ function App() {
         .then((res) => {
           if (res.status === 200) {
             message.success('Votre réservation a bien été prise en compte', 3);
+            const arrayTemp = [...events];
+            for (let i = 0; i < arrayTemp.length; i += 1) {
+              if (arrayTemp[i].id_event === reservation.eventId) {
+                const placesAvail = arrayTemp[i].placesAvailable;
+                arrayTemp[i] = {
+                  ...arrayTemp[i],
+                  placesAvailable:
+                  (placesAvail - reservation.numberAdults - reservation.numberChildrens / 2),
+                };
+              }
+            }
+            setEvents(arrayTemp);
+            setEventList(arrayTemp);
           }
         })
         .catch(() => {
           message.error("Une erreur s'est produite lors de votre réservation. Merci de réessayer", 3);
         });
+    } else {
+      message.error('Veuillez ajouter au moins un adulte.', 3);
     }
     setNumberAdult(0);
     setNumberChildren(0);

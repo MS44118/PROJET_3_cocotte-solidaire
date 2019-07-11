@@ -64,9 +64,9 @@ p {
   word-wrap: break-word;
  }
 
- .color_select{
+.color_select{
   color:#498e81 !important;
- }
+}
 .calendar_center{
   margin: auto;
   display: table;
@@ -146,6 +146,19 @@ p {
 .cards-calendar_right::-webkit-scrollbar {
   width: 0px;
   background: transparent; /* Chrome/Safari/Webkit */
+}
+
+.card {
+  border-color: #498e81!important;
+  border-style: solid!important;
+  border-width: 1px!important;
+}
+/* .card-image {
+  overflow: hidden;
+} */
+.card-image img {
+  object-fit: cover !important;
+  height: 100%;
 }
 
 @media screen and (min-width: 100px) and (max-width: 768px) {
