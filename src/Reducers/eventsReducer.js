@@ -37,6 +37,7 @@ const eventsReducer = (store = [], action) => {
       };
 
       console.log(event);
+      console.log(registration);
       console.log(eventModified);
       return store;
 

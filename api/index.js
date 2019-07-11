@@ -40,22 +40,6 @@ connection.connect((err) => {
   console.log('connected to MYSQL database');
 });
 
-// to request all the datas from all the tables from the mysql DB cocotte_booking
-// api.get('/', (req, res) => {
-//   connection.query(
-//     'SELECT registrations.*, users.*, events.*, activities.* FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id;',
-//     (err, result) => {
-//       if (err) throw err;
-//       res.send(result);
-//     }
-//   );
-// });
-// SELECT registrations.*, users.*, events.*, activities.* 
-// FROM registrations 
-// JOIN users ON users.id_user=registrations.user_id 
-//   JOIN events ON events.id_event=registrations.event_id 
-//     JOIN activities ON activities.id_activity=events.activity_id
-// ;
 
 // to request all the future events from now() ==> EventHome.js
 api.get('/api/future-events', verifyToken, (req, res) => {
@@ -94,14 +78,6 @@ api.get('/api/future-events', verifyToken, (req, res) => {
 // GROUP BY events.id_event
 // ORDER BY events.date_b ASC
 // ;
-
-// ---------- CONDIITON WERE date_b >  -----------------------
-// WHERE events.date_b > NOW()
-// WHERE events.date_b > CURDATE()
-// WHERE events.date_b > "2019-06-13 09:00:00"
-// WHERE events.date_b > "2019-06-14 09:00:00"
-
-
 
 // to request all the future registrations from now() ==> ReservationHome.js
 api.get('/api/future-registrations', verifyToken, (req, res) => {
