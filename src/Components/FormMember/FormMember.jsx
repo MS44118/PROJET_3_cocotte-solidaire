@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import conf from '../../app.conf';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import {
   Select, message, Row, Col,
@@ -96,7 +97,7 @@ function FormMember({ userSelected, dispatch }) {
     if (idUser) {
       dispatch(updateUserAction(user));
       setHeaderToken(() => {
-        axios.put(`http://localhost:8000/user/${idUser}`, user)
+        axios.put(`${conf.url}/user/${idUser}`, user)
           .then((res) => {
             if (res.status === 200) {
               dispatch(updateUserAction(user));
@@ -109,7 +110,7 @@ function FormMember({ userSelected, dispatch }) {
       });
     } else {
       setHeaderToken(() => {
-        axios.post('http://localhost:8000/user/', user)
+        axios.post(`${conf.url}/user/`, user)
           .then((data) => {
             if (data) {
               const userTemp = { ...user, idUser: data.data[0].id_user };
@@ -150,17 +151,17 @@ function FormMember({ userSelected, dispatch }) {
   };
 
   return (
-    <div className="container" style={{ marginBottom: '8em', marginTop: '3em' }}>
+    <div className="container form">
       <Row>
         <Col sm={24} md={8} className="input-field select">
-          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Genre :</span>
-          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} style={{ width: 200, color: '#498e81' }}>
+          <span className="spanForm">Genre :</span>
+          <Select value={gender !== null ? gender : ''} onChange={value => setGender(value)} className="selectForm" style={{ width: 200 }}>
             <Option value="female">Feminin</Option>
             <Option value="male">Masculin</Option>
           </Select>
         </Col>
         <Col sm={24} md={8} className="input-field">
-          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Date d&apos;adhésion :</span>
+          <span className="spanForm">Date d&apos;adhésion :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"
@@ -170,7 +171,7 @@ function FormMember({ userSelected, dispatch }) {
           />
         </Col>
         <Col sm={24} md={8} className="input-field">
-          <span style={{ color: 'black', fontSize: '1.2em', marginRight: '5px' }}>Date de naissance :</span>
+          <span className="spanForm">Date de naissance :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
             locale="fr"

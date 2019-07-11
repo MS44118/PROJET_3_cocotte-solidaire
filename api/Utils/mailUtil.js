@@ -25,11 +25,9 @@ module.exports = {
         Rappel: ${data.nbAdults} adulte(s) et ${data.nbChildrens} enfant(s)` // html body
     }, (error, response) => {
       if (error) {
-        return error
-        // console.log(error);
+        return error;
       } else {
-        return "Message sent: " + response.message
-        // console.log("Message sent: " + response.message);
+        return "Message sent: " + response.message;
       }
     });
   }

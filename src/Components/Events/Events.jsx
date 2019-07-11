@@ -9,6 +9,7 @@ import fr from 'date-fns/locale/fr';
 import 'react-toastify/dist/ReactToastify.css';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
+import conf from '../../app.conf';
 import './Events.css';
 
 registerLocale('fr', fr);
@@ -59,7 +60,7 @@ function Events({ match }) {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post('http://localhost:8000/uploaddufichier/', data)
+      axios.post(`${conf.url}/uploaddufichier/`, data)
         .then((response) => {
           toast.info(response);
           toast.info('Activité crée !');
@@ -69,7 +70,7 @@ function Events({ match }) {
           toast.info(`${error}`);
         });
     }
-    axios.post('http://localhost:8000/events/', {
+    axios.post(`${conf.url}/events/`, {
       dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
       dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
       nameEvent: (indexSup === 'default' ? false : title === activities[indexSup].name) ? '' : title,
@@ -110,7 +111,7 @@ function Events({ match }) {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post('http://localhost:8000/uploaddufichier/', data, {
+      axios.post(`${conf.url}/uploaddufichier/`, data, {
       })
         .then((response) => {
           toast.info(response);
@@ -122,7 +123,7 @@ function Events({ match }) {
         });
     }
     const myCrazyTernary = file === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].picture ? '' : file;
-    axios.put(`http://localhost:8000/events/${id}`, {
+    axios.put(`${conf.url}/events/${id}`, {
       dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
       dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
       capacity: capacite,
@@ -145,12 +146,12 @@ function Events({ match }) {
 
   // ---------------------------------------GET EVENTS----------------------------------------------
   useEffect(() => {
-    axios.get('http://localhost:8000/activities')
+    axios.get(`${conf.url}/activities`)
       .then((result) => {
         setActivities(result.data);
       });
     if (id) {
-      axios.get(`http://localhost:8000/events/${id}`)
+      axios.get(`${conf.url}/events/${id}`)
         .then((result) => {
           setEvents(result.data);
           setId(id);

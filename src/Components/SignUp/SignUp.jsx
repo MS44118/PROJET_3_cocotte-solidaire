@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { message } from 'antd';
+import conf from '../../app.conf';
 
 function SignUp() {
   const [emailSignUp, setEmailSignUp] = useState('');
@@ -18,7 +19,7 @@ function SignUp() {
   }, [emailSignUp, passwordSignUp, nameSignUp]);
 
   const handleSendSignUp = () => {
-    axios.post('http://localhost:8000/login/SignUp', adminSignUp)
+    axios.post(`${conf.url}/login/SignUp`, adminSignUp)
       .then(() => {
         message.success('Enregistré avec succès.', 3);
       })
@@ -66,7 +67,7 @@ function SignUp() {
             <label htmlFor="passwordSignUp">mot de passe</label>
           </div>
         </div>
-        <div className="input-field row">
+        <div className="input-field row loginButton">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text col s2 offset-s3"

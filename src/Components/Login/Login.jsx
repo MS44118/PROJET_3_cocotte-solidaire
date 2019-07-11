@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { message } from 'antd';
 import { tokenApprovedTrueAction } from '../../Actions/tokenAction';
+import conf from '../../app.conf';
+import './Login.css';
 
 function Login({ dispatch }) {
   const [emailSignIn, setEmailSignIn] = useState('');
@@ -19,7 +21,7 @@ function Login({ dispatch }) {
   }, [emailSignIn, passwordSignIn]);
 
   const handleSendSignIn = () => {
-    axios.post('http://localhost:8000/login', adminSignIn)
+    axios.post(`${conf.url}/login`, adminSignIn)
       .then((data) => {
         const token = data.data;
         localStorage.setItem('id_token', token);
@@ -32,8 +34,8 @@ function Login({ dispatch }) {
   };
 
   return (
-    <div className="valign-wrapper" style={{ width: '100vw', height: '100vh' }}>
-      <div style={{ width: '100vh', margin: 'auto' }} className="center-align">
+    <div className="valign-wrapper">
+      <div className="centerLogin">
         <h1>La cocotte solidaire</h1>
         <h2>Espace adminstrateur</h2>
         <div className="row">
@@ -60,7 +62,7 @@ function Login({ dispatch }) {
             <label htmlFor="passwordSignIn">Mot de passe</label>
           </div>
         </div>
-        <div className="input-field row">
+        <div className="input-field row loginButton">
           <button
             type="button"
             className="waves-effect waves-light btn-small teal darken-1 white-text col s2 offset-s3"

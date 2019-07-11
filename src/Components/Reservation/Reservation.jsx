@@ -10,6 +10,7 @@ import 'moment/locale/fr';
 import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import conf from '../../app.conf';
 import './Reservation.css';
 
 function Reservation(
@@ -41,7 +42,7 @@ function Reservation(
 
   useEffect(() => {
     M.AutoInit();
-    axios.get('http://localhost:8000/users')
+    axios.get(`${conf.url}/users`)
       .then((result) => {
         setUsers(result.data);
         let dataTemp = ['0 Tous les adhérents'];
@@ -50,7 +51,7 @@ function Reservation(
         }
         setDataSource(dataTemp);
       });
-    axios.get('http://localhost:8000/events')
+    axios.get(`${conf.url}/events`)
       .then((result) => {
         setEvent(result.data);
       });
@@ -73,7 +74,7 @@ function Reservation(
 
   const sendForm = () => {
     if (newReservation) {
-      axios.post('http://localhost:8000/zboub/', addReservation)
+      axios.post(`${conf.url}/zboub/`, addReservation)
         .then(() => {
           message.success('La reservation a bien été prise en compte', 3);
         })
@@ -81,7 +82,7 @@ function Reservation(
           message.error("Une erreur s'est produite. Merci de réessayer", 3);
         });
     } else {
-      axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
+      axios.put(`${conf.url}/zboub/${idRegistration}`, addReservation)
         .then(() => {
           message.success('La reservation a bien été prise en compte', 3);
         })
@@ -116,7 +117,7 @@ function Reservation(
     if (location.search.length > 0) {
       const params = queryString.parse(location.search);
       const registrationId = params.id;
-      axios.get(`http://localhost:8000/registration/${registrationId}`)
+      axios.get(`${conf.url}/registration/${registrationId}`)
         .then((data) => {
           setRegistration(data.data);
         })

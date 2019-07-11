@@ -6,6 +6,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
 import CalendarHome from '../CalendarHome/CalendarHome';
+import conf from '../../app.conf';
 
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
@@ -38,7 +39,7 @@ function EventHome({ events, registrations, dispatch }) {
       duration: 3,
       maxCount: 3,
     });
-    axios.delete(`http://localhost:8000/event/${id}`)
+    axios.delete(`${conf.url}/event/${id}`)
       .then((res) => {
         dispatch(removeEventAction(id));
         const index = filteredEvents.findIndex(i => i.id_event === id);
@@ -80,12 +81,12 @@ function EventHome({ events, registrations, dispatch }) {
 
   // api call while loading
   useEffect(() => {
-    axios.get('http://localhost:8000/api/future-events')
+    axios.get(`${conf.url}/api/future-events`)
       .then((result) => {
         setFilteredEvents(result.data);
         dispatch(initEventsAction(result.data));
       });
-    axios.get('http://localhost:8000/api/future-registrations')
+    axios.get(`${conf.url}/api/future-registrations`)
       .then((result) => {
         dispatch(initRegistrationsAction(result.data));
       });
@@ -133,7 +134,6 @@ function EventHome({ events, registrations, dispatch }) {
       setFilteredEvents(events);
     }
   };
-
 
   return (
     <div className="container">

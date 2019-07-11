@@ -5,6 +5,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import 'moment/locale/fr';
 import dayEvents from '../../Utils/calendarUtil';
+import conf from '../../app.conf';
 import 'antd/dist/antd.css';
 import './CalendarHome.css';
 
@@ -14,7 +15,7 @@ function CalendarHome({ selectedDate }) {
   const [monthEvents, setMonthsEvents] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/event/calendar')
+    axios.get(`${conf.url}/api/event/calendar`)
       .then((data) => {
         const eventsTemp = [...data.data];
         for (let i = 0; i < eventsTemp.length; i += 1) {

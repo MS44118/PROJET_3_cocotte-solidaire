@@ -8,6 +8,7 @@ import {
 } from 'antd';
 import FormMember from '../FormMember/FormMember';
 import setHeaderToken from '../../Utils/tokenUtil';
+import conf from '../../app.conf';
 import './Users.css';
 
 // ACTIONS
@@ -30,7 +31,7 @@ function Users(
 
   useEffect(() => {
     setHeaderToken(() => {
-      axios.get('http://localhost:8000/users')
+      axios.get(`${conf.url}/users`)
         .then((data) => {
           setUsers(data.data);
           setUserList(data.data.slice(0, 20));
@@ -102,7 +103,7 @@ function Users(
       cancelText: 'Non',
       onOk() {
         setHeaderToken(() => {
-          axios.put(`http://localhost:8000/user/anonym/${userList[index].idUser}`)
+          axios.put(`${conf.url}/user/anonym/${userList[index].idUser}`)
             .then((res) => {
               if (res.status === 200) {
                 const arrayTemp = [...userList];

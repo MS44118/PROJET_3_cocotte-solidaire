@@ -13,3 +13,18 @@
 .ant-select-selection:hover{
     border-color: #83bbb4!important;
 }
+.form{
+    margin-bottom: 8em;
+    margin-top: 3em;
+}
+.spanForm {
+    color: black;
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+.selectForm {
+    color: #498e81;
+}
+.ant-col{
+    padding: 0 1em;
+}

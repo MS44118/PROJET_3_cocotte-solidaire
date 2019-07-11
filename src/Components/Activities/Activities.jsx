@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
+import conf from '../../app.conf';
 import './Activities.css';
 
 function Activities() {
@@ -45,7 +46,7 @@ function Activities() {
     const newFile = new File([blob], fileName, { type: 'image/jpg' });
     const data = new FormData();
     data.append('file', newFile);
-    axios.post('http://localhost:8000/activities/', {
+    axios.post(`${conf.url}/activities/`, {
       name: title,
       description: describtion,
       picture: `./images/${newFile.name}`,
@@ -58,7 +59,7 @@ function Activities() {
         toast.info(error);
         toast.info(`${error}`);
       });
-    axios.post('http://localhost:8000/uploaddufichier/', data)
+    axios.post(`${conf.url}/uploaddufichier/`, data)
       .then((response) => {
         toast.info(response);
         toast.info('Activité crée !');
@@ -86,7 +87,7 @@ function Activities() {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post('http://localhost:8000/uploaddufichier/', data, {
+      axios.post(`${conf.url}/uploaddufichier/`, data, {
       })
         .then((response) => {
           toast.info(response);
@@ -97,7 +98,7 @@ function Activities() {
           toast.info(`${error}`);
         });
     }
-    axios.put(`http://localhost:8000/activities/${id}`, {
+    axios.put(`${conf.url}/activities/${id}`, {
       name: title,
       description: describtion,
       picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
@@ -122,7 +123,7 @@ function Activities() {
 
   const removeActivity = () => {
     const sendFile = file.split('/');
-    axios.delete(`http://localhost:8000/activities/${id}`)
+    axios.delete(`${conf.url}/activities/${id}`)
       .then((response) => {
         toast.info(response);
         toast.info(`L'activite ${title} a ete supprimee`);
@@ -131,7 +132,7 @@ function Activities() {
         toast.info(error.data);
         toast.info(`${error}`);
       });
-    axios.delete(`http://localhost:8000/deletefile/${sendFile[2]}`)
+    axios.delete(`${conf.url}/deletefile/${sendFile[2]}`)
       .then((response) => {
         toast.info(response);
         toast.info(`L'activite ${title} a ete supprimee`);
@@ -156,7 +157,7 @@ function Activities() {
 
   // ------------------------------------------------GET ACTIVITIES------------------------
   useEffect(() => {
-    axios.get('http://localhost:8000/activities')
+    axios.get(`${conf.url}/activities`)
       .then((result) => {
         setActivities(result.data);
       });

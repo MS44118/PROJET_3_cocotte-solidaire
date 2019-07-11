@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import { Tooltip, message, Modal } from 'antd';
+import conf from '../../app.conf';
 
 import './ReservationHome.css';
 import 'antd/dist/antd.css';
@@ -60,7 +61,7 @@ function ReservationHome(
       duration: 2,
       maxCount: 3,
     });
-    axios.delete(`http://localhost:8000/registration/${id}`)
+    axios.delete(`${conf.url}/registration/${id}`)
       .then((res) => {
         message.success(res.data);
         const indexRegistrationToDelete = registrations.findIndex(i => i.id_registration === id);
