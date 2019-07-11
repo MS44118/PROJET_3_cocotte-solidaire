@@ -57,7 +57,7 @@ function Activities() {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     axios.post(`${conf.url}/uploaddufichier/`, data)
       .then((response) => {
@@ -66,7 +66,7 @@ function Activities() {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     setTitle('');
     setDescribtion('');
@@ -95,7 +95,7 @@ function Activities() {
         })
         .catch((error) => {
           toast.info(error);
-          toast.info(`${error}`);
+          // toast.info(`${error}`);
         });
     }
     axios.put(`${conf.url}/activities/${id}`, {
@@ -109,7 +109,7 @@ function Activities() {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     setTitle('');
     setDescribtion('');
@@ -130,7 +130,7 @@ function Activities() {
       })
       .catch((error) => {
         toast.info(error.data);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     axios.delete(`${conf.url}/deletefile/${sendFile[2]}`)
       .then((response) => {
@@ -139,7 +139,7 @@ function Activities() {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     setTitle('');
     setDescribtion('');

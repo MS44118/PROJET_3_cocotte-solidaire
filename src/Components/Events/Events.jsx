@@ -67,7 +67,7 @@ function Events({ match }) {
         })
         .catch((error) => {
           toast.info(error);
-          toast.info(`${error}`);
+          // toast.info(`${error}`);
         });
     }
     axios.post(`${conf.url}/events/`, {
@@ -86,7 +86,7 @@ function Events({ match }) {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     setTitle('');
     setDescribtion('');
@@ -119,7 +119,7 @@ function Events({ match }) {
         })
         .catch((error) => {
           toast.info(error);
-          toast.info(`${error}`);
+          // toast.info(`${error}`);
         });
     }
     const myCrazyTernary = file === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].picture ? '' : file;
@@ -139,7 +139,7 @@ function Events({ match }) {
       })
       .catch((error) => {
         toast.info(error);
-        toast.info(`${error}`);
+        // toast.info(`${error}`);
       });
     setTimeout(() => setRedirection(true), 2000);
   };
