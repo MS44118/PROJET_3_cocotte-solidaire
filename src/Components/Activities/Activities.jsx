@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'materialize-css/dist/css/materialize.min.css';
+import { message, Modal } from 'antd';
 import M from 'materialize-css/dist/js/materialize';
 import conf from '../../app.conf';
+import setHeaderToken from '../../Utils/tokenUtil';
 import './Activities.css';
 
 function Activities() {
   // ----------------------------------HOOKS----------------------------------
+  const { confirm } = Modal;
   const [activities, setActivities] = useState([]);
   const [selectValue, setSelectValue] = useState('default');
   const [id, setId] = useState(null);
@@ -35,7 +35,7 @@ function Activities() {
     setTitle(activities[event.target.value] ? activities[event.target.value].name : '');
     setDescribtion(activities[event.target.value] ? activities[event.target.value].description : '');
     setFile(activities[event.target.value] ? activities[event.target.value].picture : '');
-    setActive(event.target.value === 'defaul' ? '' : 'active');
+    setActive(event.target.value === 'default' ? '' : 'active');
   };
 
   // -----------------------------------------------REQUETES-------------------------------
@@ -46,28 +46,26 @@ function Activities() {
     const newFile = new File([blob], fileName, { type: 'image/jpg' });
     const data = new FormData();
     data.append('file', newFile);
-    axios.post(`${conf.url}/activities/`, {
-      name: title,
-      description: describtion,
-      picture: `./images/${newFile.name}`,
-    })
-      .then((response) => {
-        toast.info(response);
-        toast.info('Activité crée !');
+    setHeaderToken(() => {
+      axios.post(`${conf.url}/api/activities/`, {
+        name: title,
+        description: describtion,
+        picture: `/images/${newFile.name}`,
       })
-      .catch((error) => {
-        toast.info(error);
-        // toast.info(`${error}`);
-      });
-    axios.post(`${conf.url}/uploaddufichier/`, data)
-      .then((response) => {
-        toast.info(response);
-        toast.info('Activité crée !');
-      })
-      .catch((error) => {
-        toast.info(error);
-        // toast.info(`${error}`);
-      });
+        .then(() => {
+          message.success('Activité crée !', 3);
+        })
+        .catch(() => {
+          message.error("L'actvité n'a pas été crée", 3);
+        });
+      axios.post(`${conf.url}/api/uploaddufichier/`, data)
+        .then(() => {
+          message.success('Activité crée !', 3);
+        })
+        .catch(() => {
+          message.error("L'actvité n'a pas été crée", 3);
+        });
+    });
     setTitle('');
     setDescribtion('');
     setFile('');
@@ -87,30 +85,30 @@ function Activities() {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post(`${conf.url}/uploaddufichier/`, data, {
-      })
-        .then((response) => {
-          toast.info(response);
-          toast.info(`Votre activité ${title} à ete modifiee`);
+      setHeaderToken(() => {
+        axios.post(`${conf.url}/api/uploaddufichier/`, data, {
         })
-        .catch((error) => {
-          toast.info(error);
-          // toast.info(`${error}`);
-        });
-    }
-    axios.put(`${conf.url}/activities/${id}`, {
-      name: title,
-      description: describtion,
-      picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
-    })
-      .then((response) => {
-        toast.info(response);
-        toast.info(`Votre activité ${title} à ete modifiee`);
-      })
-      .catch((error) => {
-        toast.info(error);
-        // toast.info(`${error}`);
+          .then(() => {
+            message.success(`Votre activité ${title} à été modifiée`, 3);
+          })
+          .catch(() => {
+            message.error("L'actvité n'a pas été modifiée", 3);
+          });
       });
+    }
+    setHeaderToken(() => {
+      axios.put(`${conf.url}/api/activities/${id}`, {
+        name: title,
+        description: describtion,
+        picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
+      })
+        .then(() => {
+          message.success(`Votre activité ${title} à été modifiée`, 3);
+        })
+        .catch(() => {
+          message.error("L'actvité n'a pas été modifiée", 3);
+        });
+    });
     setTitle('');
     setDescribtion('');
     setFile('');
@@ -122,33 +120,46 @@ function Activities() {
   };
 
   const removeActivity = () => {
-    const sendFile = file.split('/');
-    axios.delete(`${conf.url}/activities/${id}`)
-      .then((response) => {
-        toast.info(response);
-        toast.info(`L'activite ${title} a ete supprimee`);
-      })
-      .catch((error) => {
-        toast.info(error.data);
-        // toast.info(`${error}`);
-      });
-    axios.delete(`${conf.url}/deletefile/${sendFile[2]}`)
-      .then((response) => {
-        toast.info(response);
-        toast.info(`L'activite ${title} a ete supprimee`);
-      })
-      .catch((error) => {
-        toast.info(error);
-        // toast.info(`${error}`);
-      });
-    setTitle('');
-    setDescribtion('');
-    setFile('');
-    setNameFile('');
-    setSelectValue('default');
-    setIndexSup('default');
-    setRecharge(1);
-    setEmptyFile(0);
+    confirm({
+      title: `Etes vous sur de vouloir supprimer l'activité: ${title} ?`,
+      okText: 'Oui',
+      okType: 'danger',
+      cancelText: 'Non',
+      onOk() {
+        const sendFile = file.split('/');
+        setHeaderToken(() => {
+          axios.delete(`${conf.url}/api/activities/${id}`)
+            .then(() => {
+              message.success(`L'activité ${title} à été supprimée`, 3);
+              axios.delete(`${conf.url}/api/deletefile/${sendFile[2]}`)
+                .then(() => {
+                  message.success(`L'activité ${title} à été supprimée`, 3);
+                })
+                .catch(() => {
+                  message.error("L'actvité n'a pas été supprimée", 3);
+                });
+            })
+            .catch((error) => {
+              const getErr = `${error}`.split(' ');
+              if (getErr[getErr.length - 1] === '503') {
+                message.error('Des évenements sont liées à cette activité, vous ne pouvez pas la supprimer.', 3);
+              } else {
+                message.error("L'actvité n'a pas été supprimée", 3);
+              }
+            });
+        });
+        setTitle('');
+        setDescribtion('');
+        setFile('');
+        setNameFile('');
+        setSelectValue('default');
+        setIndexSup('default');
+        setRecharge(1);
+        setEmptyFile(0);
+      },
+      onCancel() {
+      },
+    });
   };
 
   const prevent = (e) => {
@@ -157,10 +168,12 @@ function Activities() {
 
   // ------------------------------------------------GET ACTIVITIES------------------------
   useEffect(() => {
-    axios.get(`${conf.url}/activities`)
-      .then((result) => {
-        setActivities(result.data);
-      });
+    setHeaderToken(() => {
+      axios.get(`${conf.url}/api/activities`)
+        .then((result) => {
+          setActivities(result.data);
+        });
+    });
     M.AutoInit();
     setRecharge(0);
   }, [recharge === 1]);
@@ -168,13 +181,9 @@ function Activities() {
   // ------------------------------------------------------RENDU------------------------------
   return (
     <div className="container">
-      <ToastContainer
-        autoClose={6000}
-        position="top-center"
-      />
       <h1 className="center-align marg">Création d&apos;une activité</h1>
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12">
           <select value={indexSup} onChange={valueSelected} className="browser-default color_select">
             <option value="default">Création d&apos;une nouvelle activité</option>
             {activities ? activities.map((activity, index) => (
@@ -182,13 +191,12 @@ function Activities() {
             )) : ''}
           </select>
         </div>
-        <div className="input-field col s6">
+        <div className="input-field col s12">
           <i className="material-icons prefix">title</i>
           <input id="titre_activité" type="text" value={title} onChange={e => handleChange(e, setTitle)} />
           <label className={active} htmlFor="titre_activité">Titre de l&apos;activité</label>
         </div>
       </div>
-
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">description</i>
@@ -196,7 +204,6 @@ function Activities() {
           <label className={active} htmlFor="description">Déscription de l&apos;activité</label>
         </div>
       </div>
-
       <div className="row">
         <div className="file-field input-field col s12">
           <div className="btn">
@@ -208,7 +215,6 @@ function Activities() {
           </div>
         </div>
       </div>
-
       <div className="center-align">
         {selectValue === 'default' ? (
           <button
@@ -238,7 +244,6 @@ function Activities() {
           </button>
         ) : ''}
       </div>
-
       <p className="center-align renduSize">Rendu de l&apos;activité</p>
       <div className="render container mssg">
         <h1 className="center-align subtitles"><span>{title}</span></h1>
