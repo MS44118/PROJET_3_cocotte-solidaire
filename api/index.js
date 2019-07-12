@@ -49,7 +49,7 @@ api.get('/api/future-events', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       connection.query(
-        'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
+        'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, activities.id_activity, activities.name_activity, events.date_b, events.date_e, SUM(IFNULL(registrations.quantity_adult, 0)) as nb_adults, SUM(IFNULL(registrations.quantity_children, 0)) as nb_children, SUM(IFNULL(registrations.quantity_adult + registrations.quantity_children/2, 0)) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM events LEFT JOIN activities ON activities.id_activity=events.activity_id LEFT JOIN registrations ON registrations.event_id=events.id_event LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
         (err, result) => {
           if (err) throw err;
           res.send(result);
@@ -68,7 +68,7 @@ api.get('/api/future-registrations', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       connection.query(
-        'SELECT registrations.id_registration, users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id WHERE events.date_b >= CURDATE() GROUP BY registrations.id_registration;',
+        'SELECT users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.id_registration, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id WHERE events.date_b >= CURDATE() GROUP BY registrations.id_registration;',
         (err, result) => {
           if (err) throw err;
           res.send(result);

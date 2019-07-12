@@ -146,7 +146,7 @@ function EventHome({ events, registrations, dispatch }) {
       </div>
 
       <div className="row calendar">
-        <CalendarHome selectedDate={selectedDate} />
+        {/* <CalendarHome selectedDate={selectedDate} /> */}
       </div>
 
       <div className="row checkbox">
