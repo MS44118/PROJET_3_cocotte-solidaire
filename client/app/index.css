@@ -1,6 +1,7 @@
 .container{
   width: 100%;
 }
+
 .render {
   width: 70vw;
   margin: auto;
@@ -50,10 +51,12 @@
   text-justify: inter-word;
   color: black !important;
 }
+
 .text {
   font-size: 1.2em;
   line-height: 2em;
 }
+
 p {
   font-family: Roboto;
 }
@@ -67,14 +70,17 @@ p {
 .color_select{
   color:#498e81 !important;
 }
+
 .calendar_center{
   margin: auto;
   display: table;
 }
+
 .calendar_right{
   float: right;
   margin-left: 5vw;
 }
+
 .container-calendar_right{
   display: grid;
   width: 100vw;
@@ -82,6 +88,7 @@ p {
   grid-template-columns: 75% 25%;
   grid-template-rows: 1fr;
 }
+
 .calendar-calendar_right{
   overflow-y: scroll;
   overflow: hidden;
@@ -90,6 +97,7 @@ p {
   justify-content: center;
   margin: auto;
 }
+
 .cards-calendar_right{
   overflow: hidden;
   min-height: 100vh;
@@ -101,9 +109,11 @@ p {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE 10+ */
 }
+
 .hidden-calendar_right{
   display: none;
 }
+
 .cards-calendar_center{
   width: 70vw;
   margin: auto;
@@ -115,21 +125,26 @@ p {
   border-width: 10px;
   padding: 20px;
 }
+
 .merci{
   color: #F8C8BE;
 }
+
 .send{
   display: grid;
   width: 20%;
 }
+
 .form-item{
   color:#498e81 !important;
- }
- .card-content-second{
+}
+
+.card-content-second{
   margin-left: 20px;
   vertical-align: bottom;
   padding-bottom: 0px;
 }
+
 .title{
   font-family: Simplifica;
   font-size: 1.5em;
@@ -137,6 +152,7 @@ p {
   margin-top: 10px;
   text-transform: uppercase;
 }
+
 .card-bottom{
   margin-left: 20px;
   vertical-align: bottom;
@@ -153,9 +169,7 @@ p {
   border-style: solid!important;
   border-width: 1px!important;
 }
-/* .card-image {
-  overflow: hidden;
-} */
+
 .card-image img {
   object-fit: cover !important;
   height: 100%;
@@ -169,10 +183,12 @@ p {
     grid-template-columns: 100% 0%;
     grid-template-rows: 1fr;
   }
+
   .send{
     display: grid;
     width: 50%;
   }
+  
   .CalendarMonth_table_p5jgym td{
     padding: 6px;
   }

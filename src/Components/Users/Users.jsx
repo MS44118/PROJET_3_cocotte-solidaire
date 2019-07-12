@@ -31,7 +31,7 @@ function Users(
 
   useEffect(() => {
     setHeaderToken(() => {
-      axios.get(`${conf.url}/users`)
+      axios.get(`${conf.url}/api/users`)
         .then((data) => {
           setUsers(data.data);
           setUserList(data.data.slice(0, 20));
@@ -46,7 +46,6 @@ function Users(
         });
     });
   }, []);
-
 
   useEffect(() => {
     const arrayTemp = [];

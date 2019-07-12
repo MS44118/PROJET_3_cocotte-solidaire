@@ -16,7 +16,7 @@ module.exports = {
   sendEmail: (data) => {
     console.log(data)
     smtpTransport.sendMail({
-      from: "Aure Wild <aurelia.roumesy@gmail.com>", // Expediteur
+      from: "La Cocotte Solidaire <mail la cocotte>", // Expediteur
       to: data.email, // Destinataires
       subject: "Reservation pour La Cocotte Solidaire !", // Sujet
       text: `Votre réservation pour l'évennement ${data.eventName} organisé le ${moment(data.eventDate).locale('fr').format('LLL')} a bien été enregistrée.

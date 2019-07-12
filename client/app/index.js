@@ -158,7 +158,7 @@ function App() {
 
   const sendReservation = () => {
     setDisplayForm('none');
-    if (reservation.numberAdults > 0) {
+    if (reservation.numberAdults > 0 && reservation.firstname && reservation.lastname) {
       axios.post('http://localhost:8000/api/reservation/public/', reservation)
         .then((res) => {
           if (res.status === 200) {
@@ -182,7 +182,7 @@ function App() {
           message.error("Une erreur s'est produite lors de votre réservation. Merci de réessayer", 3);
         });
     } else {
-      message.error('Veuillez ajouter au moins un adulte.', 3);
+      message.error('Veuillez ajouter au moins un adulte, un nom et un prénom.', 3);
     }
     setNumberAdult(0);
     setNumberChildren(0);

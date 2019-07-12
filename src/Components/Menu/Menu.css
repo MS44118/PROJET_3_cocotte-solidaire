@@ -1,6 +1,7 @@
 .green-font{
   color: #498e81;
 }
+
 i.icon-green {
   color:  #498e81;
 }
@@ -24,9 +25,11 @@ nav ul a, nav ul a:hover{
   margin-top: 300px;
   color: #ffffff;
 }
+
 .sidebarNO{
   display:none;
 }
+
 .sidebarYES{
   display:none;
 }
@@ -46,10 +49,10 @@ nav ul a, nav ul a:hover{
 
 @media only screen and (max-width : 600px) {
   nav .brand-logo img{
-      height: 56px;
+    height: 56px;
   }
 
   .headline{
-      margin-top: 250px;
+    margin-top: 250px;
   }
 }

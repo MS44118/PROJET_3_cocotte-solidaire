@@ -97,7 +97,7 @@ function FormMember({ userSelected, dispatch }) {
     if (idUser) {
       dispatch(updateUserAction(user));
       setHeaderToken(() => {
-        axios.put(`${conf.url}/user/${idUser}`, user)
+        axios.put(`${conf.url}/api/user/${idUser}`, user)
           .then((res) => {
             if (res.status === 200) {
               dispatch(updateUserAction(user));
@@ -110,7 +110,7 @@ function FormMember({ userSelected, dispatch }) {
       });
     } else {
       setHeaderToken(() => {
-        axios.post(`${conf.url}/user/`, user)
+        axios.post(`${conf.url}/api/user/`, user)
           .then((data) => {
             if (data) {
               const userTemp = { ...user, idUser: data.data[0].id_user };
@@ -237,7 +237,6 @@ function FormMember({ userSelected, dispatch }) {
           </label>
         </Col>
       </Row>
-
       <Row>
         <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">location_on</i>
@@ -266,7 +265,6 @@ function FormMember({ userSelected, dispatch }) {
           </label>
         </Col>
       </Row>
-
       <Row>
         <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">location_on</i>
@@ -293,7 +291,6 @@ function FormMember({ userSelected, dispatch }) {
           </label>
         </Col>
       </Row>
-
       <Row>
         <Col sm={24} md={12} className="input-field">
           <i className="material-icons prefix">person_add</i>
@@ -320,7 +317,6 @@ function FormMember({ userSelected, dispatch }) {
           </label>
         </Col>
       </Row>
-
       <Row>
         <Col sm={24} md={6} className="input-field">
           <label>

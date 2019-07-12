@@ -4,7 +4,6 @@ const cors = require('cors');
 const connection = require('./conf');
 const moment = require('moment');
 const multer = require('multer');
-// const upload = multer({ dest: 'tmp/' });
 const sendEmail = require('../api/Utils/mailUtil').sendEmail;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -49,7 +48,7 @@ api.get('/api/future-events', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       connection.query(
-        'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, events.date_b, events.date_e, IFNULL(SUM(registrations.quantity_adult), 0) as nb_adults, IFNULL(SUM(registrations.quantity_children), 0) as nb_children, IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email),"")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies,  COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments  FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event  LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
+        'SELECT COUNT(registrations.event_id) as NB_REG, events.id_event, events.name_event, activities.id_activity, activities.name_activity, events.date_b, events.date_e, SUM(IFNULL(registrations.quantity_adult, 0)) as nb_adults, SUM(IFNULL(registrations.quantity_children, 0)) as nb_children, SUM(IFNULL(registrations.quantity_adult + registrations.quantity_children/2, 0)) as nb_persons, events.capacity, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM events LEFT JOIN activities ON activities.id_activity=events.activity_id LEFT JOIN registrations ON registrations.event_id=events.id_event LEFT JOIN users ON users.id_user=registrations.user_id WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC;',
         (err, result) => {
           if (err) throw err;
           res.send(result);
@@ -80,7 +79,7 @@ api.get('/api/future-registrations', verifyToken, (req, res) => {
 
 
 // here explain what it is for
-api.get('/users', verifyToken, (req, res) => {
+api.get('/api/users', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -114,7 +113,7 @@ api.get('/users', verifyToken, (req, res) => {
   });
 });
 
-api.put('/user/:id', verifyToken, (req, res) => {
+api.put('/api/user/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -157,7 +156,7 @@ api.put('/user/:id', verifyToken, (req, res) => {
   });
 });
 
-api.post('/user/', verifyToken, (req, res) => {
+api.post('/api/user/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -185,7 +184,7 @@ api.post('/user/', verifyToken, (req, res) => {
   });
 });
 
-api.put('/user/anonym/:id', verifyToken, (req, res) => {
+api.put('/api/user/anonym/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -229,7 +228,7 @@ api.put('/user/anonym/:id', verifyToken, (req, res) => {
 });
 
 // api.post('/login/SignUp/', (req, res) => {
-api.post('/login/SignUp/', verifyToken, (req, res) => {
+api.post('/api/login/SignUp/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -253,7 +252,7 @@ api.post('/login/SignUp/', verifyToken, (req, res) => {
 });
 
 
-api.post('/login/', (req, res) => {
+api.post('/api/login/', (req, res) => {
   const values = req.body;
   console.log('login')
   connection.query(`SELECT * FROM admins WHERE email='${values.emailSignIn}'`,
@@ -279,7 +278,7 @@ api.post('/login/', (req, res) => {
     });
 });
 
-api.post('/auth/', verifyToken, (req, res) => {
+api.post('/api/auth/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -494,7 +493,7 @@ api.delete('/deletefile/:file', function(req, res) {
 })
 
 
-api.get('/events', (req, res) => {
+api.get('/api/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
     (err, result) => {
@@ -504,55 +503,55 @@ api.get('/events', (req, res) => {
   );
 });
 //registrtion post
-api.post('/zboub/', verifyToken, (req, res) => {
+api.post('/api/zboub/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-  const reservation = req.body
-  console.log(reservation)
-  // console.log(reservation)
-  { reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null }
-  { reservation.quantityAdult ? reservation.quantityAdult = parseInt(`${reservation.quantityAdult}`, 10) : reservation.quantityAdult = null }
-  { reservation.quantityChildren ? reservation.quantityChildren = parseInt(`${reservation.quantityChildren}`, 10) : reservation.quantityChildren = null }
-  //  console.log(reservation.quantityAdult)
-  if (reservation.existantUser === false) {
-    connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result) => {
-      if (err) {
-        console.log(err)
-        res.status(500).send("error while saving")
-      } else{
-    connection.query(`SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1` ,(err, result) => {
-        if(err){
+    const reservation = req.body
+    console.log(reservation)
+    // console.log(reservation)
+    { reservation.memberNumber ? reservation.memberNumber = `'${reservation.memberNumber}'` : reservation.memberNumber = null }
+    { reservation.quantityAdult ? reservation.quantityAdult = parseInt(`${reservation.quantityAdult}`, 10) : reservation.quantityAdult = null }
+    { reservation.quantityChildren ? reservation.quantityChildren = parseInt(`${reservation.quantityChildren}`, 10) : reservation.quantityChildren = null }
+    //  console.log(reservation.quantityAdult)
+    if (reservation.existantUser === false) {
+      connection.query(`INSERT INTO users (firstname,lastname,email,phone,anonym,member_id) VALUES ("${reservation.firstname}","${reservation.lastname}","${reservation.email}","${reservation.phone}",false, ${reservation.memberNumber})`, reservation, (err, result) => {
+        if (err) {
           console.log(err)
-  
-        }else{
-          connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`, 
-            reservation, (err, result)=>{
-              if (err) {
-                console.log(err)
-                res.status(500).send("error while saving")
-              }else {
-                res.sendStatus(200)
-              }
-            });
+          res.status(500).send("error while saving")
+        } else {
+          connection.query(`SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1`, (err, result) => {
+            if (err) {
+              console.log(err)
+
+            } else {
+              connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`,
+                reservation, (err, result) => {
+                  if (err) {
+                    console.log(err)
+                    res.status(500).send("error while saving")
+                  } else {
+                    res.sendStatus(200)
+                  }
+                });
+            }
+          })
         }
       })
-      }
-    })
-  } else {
-    connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`, 
-            reservation, (err, result)=>{
-              
-              if (err) {
-                console.log(err)
-                res.status(500).send("error while saving")
-              }else {
-                res.sendStatus(200)
-              }
-            });
+    } else {
+      connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`,
+        reservation, (err, result) => {
 
-  }
-})
+          if (err) {
+            console.log(err)
+            res.status(500).send("error while saving")
+          } else {
+            res.sendStatus(200)
+          }
+        });
+
+    }
+  })
 });
-api.get('/registration/:id',verifyToken, (req, res) => {
+api.get('/api/registration/:id',verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
   const param = req.params.id
   console.log(param)
@@ -568,7 +567,7 @@ api.get('/registration/:id',verifyToken, (req, res) => {
 })
 })
 
-api.put('/zboub/:id', verifyToken, (req, res) => {
+api.put('/api/zboub/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
   const idRegistration = req.params.id
   const changeInfo = req.body
@@ -587,35 +586,11 @@ api.put('/zboub/:id', verifyToken, (req, res) => {
   })
 })
 
-//   connection.query(
-
-
-// api.post('/newReservation/', (req,res)=>{
-//   const reservation= req.body
-//   console.log(req.body)
-
-// });
-
-// api.put('/changeUser', (req,res)=>{
-//   const reservationData = req.body
-
-// })
-
-api.get('/api/event/calendar', (req, res) => {
-  connection.query(
-    `SELECT events.id_event, events.name_event, events.date_b, activities.name_activity, activities.id_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC`,
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
-    }
-  );
-})
-
 api.get('/api/event/type/:id', (req, res) => {
   const idActivity = req.params.id;
   if (idActivity > 2) {
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity!=1 AND activities.id_activity!=2 LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -623,7 +598,7 @@ api.get('/api/event/type/:id', (req, res) => {
     );
   } else {
     connection.query(
-      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event GROUP BY events.id_event ORDER BY events.date_b ASC`,
+      `SELECT events.id_event, events.name_event, events.date_b, events.address_event, events.description_event, events.picture_event, activities.name_activity, activities.id_activity, activities.description_activity, activities.picture_activity, SUM(registrations.quantity_adult + registrations.quantity_children/2) as nb_persons, events.capacity FROM events JOIN activities ON activities.id_activity = events.activity_id AND activities.id_activity=${idActivity} LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.date_b >= CURDATE() GROUP BY events.id_event ORDER BY events.date_b ASC`,
       (err, result) => {
         if (err) throw err;
         res.send(result);
@@ -726,13 +701,6 @@ api.post('/api/reservation/public/', (req, res) => {
 });
 
 //---------------------------------------------------EVENTS---------------------------------------------------------
-api.get('/events', (req, res) => {
-  connection.query('SELECT * FROM events', (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
-});
-
 api.get('/events/:id', (req, res) => {
   const idEvent = req.params.id;
   // console.log(idEvent);

@@ -21,7 +21,7 @@ function Login({ dispatch }) {
   }, [emailSignIn, passwordSignIn]);
 
   const handleSendSignIn = () => {
-    axios.post(`${conf.url}/login`, adminSignIn)
+    axios.post(`${conf.url}/api/login`, adminSignIn)
       .then((data) => {
         const token = data.data;
         localStorage.setItem('id_token', token);

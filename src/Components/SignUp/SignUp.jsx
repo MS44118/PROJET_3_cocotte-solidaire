@@ -19,7 +19,7 @@ function SignUp() {
   }, [emailSignUp, passwordSignUp, nameSignUp]);
 
   const handleSendSignUp = () => {
-    axios.post(`${conf.url}/login/SignUp`, adminSignUp)
+    axios.post(`${conf.url}/api/login/SignUp`, adminSignUp)
       .then(() => {
         message.success('Enregistré avec succès.', 3);
       })

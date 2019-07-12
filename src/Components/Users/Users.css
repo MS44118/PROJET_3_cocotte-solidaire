@@ -23,30 +23,37 @@
 .ant-select-dropdown .ant-select-dropdown-menu-item-active {
   background-color: #83bbb4!important;
 }
+
 .ant-select-auto-complete.ant-select .ant-input:focus, .ant-select-auto-complete.ant-select .ant-input:hover{
   border-color: #83bbb4!important;
 }
+
 .ant-input-affix-wrapper:hover .ant-input:not(.ant-input-disabled){
   border-color: #83bbb4!important;
 }
+
 .title{
   width: 100%;
 }
+
 .title h2{
   font-size: 2em;
   margin: auto;
   margin-bottom: 5vh;
   margin-top: 5vh;
 }
+
 .autocomplete{
   align-self: flex-start;
 }
+
 .topTable{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
+
 .collection-item-header textbox{
   margin-right: 20px;
 }

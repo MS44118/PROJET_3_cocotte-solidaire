@@ -14,13 +14,14 @@ import Footer from './Components/Footer/Footer';
 import Login from './Components/Login/Login';
 import SignUp from './Components/SignUp/SignUp';
 import setHeaderToken from './Utils/tokenUtil';
+import conf from './app.conf';
 
 import { tokenApprovedTrueAction } from './Actions/tokenAction';
 
 function App({ tokenApproved, dispatch }) {
   useEffect(() => {
     setHeaderToken(() => {
-      axios.post('http://localhost:8000/auth')
+      axios.post(`${conf.url}/api/auth`)
         .then((res) => {
           if (res.status === 200) {
             dispatch(tokenApprovedTrueAction());
