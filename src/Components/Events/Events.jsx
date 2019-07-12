@@ -6,8 +6,8 @@ import { message } from 'antd';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import moment from 'moment';
 import fr from 'date-fns/locale/fr';
-import 'materialize-css/dist/css/materialize.min.css';
 import M from 'materialize-css/dist/js/materialize';
+import setHeaderToken from '../../Utils/tokenUtil';
 import './Events.css';
 
 registerLocale('fr', fr);
@@ -48,6 +48,7 @@ function Events({ match }) {
     setFile(activities[event.target.value] ? activities[event.target.value].picture : '');
     setActive(event.target.value === 'defaul' ? '' : 'active');
   };
+
   // --------------------------------------REQUETES-----------------------------------------------
   const submitEvents = () => {
     let newFile;
@@ -58,7 +59,28 @@ function Events({ match }) {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post('http://localhost:8000/uploaddufichier/', data)
+      setHeaderToken(() => {
+        axios.post('http://localhost:8000/api/uploaddufichier/', data)
+          .then((response) => {
+            message.success(`${response}`);
+            message.success('Activité crée !');
+          })
+          .catch((error) => {
+            message.success(`${error}`);
+          });
+      });
+    }
+    setHeaderToken(() => {
+      axios.post('http://localhost:8000/api/events/', {
+        dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
+        dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
+        nameEvent: (indexSup === 'default' ? false : title === activities[indexSup].name) ? '' : title,
+        capacity: capacite,
+        addressEvent: address,
+        descriptionEvent: (indexSup === 'default' ? false : describtion === activities[indexSup].description) ? '' : describtion,
+        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
+        activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
+      })
         .then((response) => {
           message.success(`${response}`);
           message.success('Activité crée !');
@@ -66,24 +88,7 @@ function Events({ match }) {
         .catch((error) => {
           message.success(`${error}`);
         });
-    }
-    axios.post('http://localhost:8000/events/', {
-      dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
-      dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
-      nameEvent: (indexSup === 'default' ? false : title === activities[indexSup].name) ? '' : title,
-      capacity: capacite,
-      addressEvent: address,
-      descriptionEvent: (indexSup === 'default' ? false : describtion === activities[indexSup].description) ? '' : describtion,
-      pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
-      activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
-    })
-      .then((response) => {
-        message.success(`${response}`);
-        message.success('Activité crée !');
-      })
-      .catch((error) => {
-        message.success(`${error}`);
-      });
+    });
     setTitle('');
     setDescribtion('');
     setFile('');
@@ -107,7 +112,29 @@ function Events({ match }) {
       newFile = new File([blob], fileName, { type: 'image/jpg' });
       const data = new FormData();
       data.append('file', newFile);
-      axios.post('http://localhost:8000/uploaddufichier/', data, {
+      setHeaderToken(() => {
+        axios.post('http://localhost:8000/api/uploaddufichier/', data, {
+        })
+          .then((response) => {
+            message.success(`${response}`);
+            message.success(`Votre activité ${title} à ete modifiee`);
+          })
+          .catch((error) => {
+            message.success(`${error}`);
+          });
+      });
+    }
+    const myCrazyTernary = file === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].picture ? '' : file;
+    setHeaderToken(() => {
+      axios.put(`http://localhost:8000/api/events/${id}`, {
+        dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
+        dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
+        capacity: capacite,
+        addressEvent: address,
+        nameEvent: title === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].name ? '' : title,
+        descriptionEvent: describtion === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].description ? '' : describtion,
+        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : myCrazyTernary,
+        activityId: events[0].activity_id,
       })
         .then((response) => {
           message.success(`${response}`);
@@ -116,50 +143,36 @@ function Events({ match }) {
         .catch((error) => {
           message.success(`${error}`);
         });
-    }
-    const myCrazyTernary = file === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].picture ? '' : file;
-    axios.put(`http://localhost:8000/events/${id}`, {
-      dateB: `${moment(dateBegin).format('YYYY-MM-DD HH:mm:ss')}`,
-      dateE: `${moment(dateEnd).format('YYYY-MM-DD HH:mm:ss')}`,
-      capacity: capacite,
-      addressEvent: address,
-      nameEvent: title === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].name ? '' : title,
-      descriptionEvent: describtion === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].description ? '' : describtion,
-      pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : myCrazyTernary,
-      activityId: events[0].activity_id,
-    })
-      .then((response) => {
-        message.success(`${response}`);
-        message.success(`Votre activité ${title} à ete modifiee`);
-      })
-      .catch((error) => {
-        message.success(`${error}`);
-      });
+    });
     setTimeout(() => setRedirection(true), 2000);
   };
 
   // ---------------------------------------GET EVENTS----------------------------------------------
   useEffect(() => {
-    axios.get('http://localhost:8000/activities')
-      .then((result) => {
-        setActivities(result.data);
-      });
-    if (id) {
-      axios.get(`http://localhost:8000/events/${id}`)
+    setHeaderToken(() => {
+      axios.get('http://localhost:8000/api/activities')
         .then((result) => {
-          setEvents(result.data);
-          setId(id);
-          setTitle(result.data[0].name_event);
-          setDescribtion(result.data[0].description_event);
-          setFile(result.data[0].picture_event);
-          setCapacite(result.data[0].capacity);
-          setDateBegin(result.data[0].date_b);
-          setDateEnd(result.data[0].date_e);
-          setAddress(result.data[0].address_event);
-          setSelectValue(result.data[0].activity_id > 2 ? 'default' : null);
-          setIdActivity(result.data[0].activity_id > 2 ? 1 : 0);
-          setActive('active');
+          setActivities(result.data);
         });
+    });
+    if (id) {
+      setHeaderToken(() => {
+        axios.get(`http://localhost:8000/api/events/${id}`)
+          .then((result) => {
+            setEvents(result.data);
+            setId(id);
+            setTitle(result.data[0].name_event);
+            setDescribtion(result.data[0].description_event);
+            setCapacite(result.data[0].capacity);
+            setDateBegin(result.data[0].date_b);
+            setDateEnd(result.data[0].date_e);
+            setAddress(result.data[0].address_event);
+            setSelectValue(result.data[0].activity_id > 2 ? 'default' : null);
+            setIdActivity(result.data[0].activity_id > 2 ? 1 : 0);
+            setFile(result.data[0].picture_event);
+            setActive('active');
+          });
+      });
     }
     setRecharge(0);
     M.AutoInit();
@@ -169,13 +182,9 @@ function Events({ match }) {
   return (
     <div className="container">
       {redirection ? <Redirect to="/" /> : ''}
-      {/* <ToastContainer
-        autoClose={4000}
-        position="top-center"
-      /> */}
       <h1 className="center-align marg">{!id ? "Création d'un evenement" : "Modification d'un evenement"}</h1>
       <div className="row">
-        <div className="input-field col s6">
+        <div className="input-field col s12">
           {id ? (
             <p>
               Modification de l&apos;evenement :
@@ -191,14 +200,12 @@ function Events({ match }) {
             </select>
           ) : ''}
         </div>
-
-        <div className="input-field col s6">
+        <div className="input-field col s12">
           <i className="material-icons prefix">title</i>
           <input id="titre_activité" type="text" className="validate" value={title} onChange={e => handleChange(e, setTitle)} />
           <label className={active} htmlFor="titre_activité">Titre de l&apos;evenement</label>
         </div>
       </div>
-
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">description</i>
@@ -206,7 +213,6 @@ function Events({ match }) {
           <label className={active} htmlFor="description">Déscription de l&apos;evenement</label>
         </div>
       </div>
-
       <div className="row">
         <div className="file-field input-field col s12">
           <div className="btn">
@@ -218,7 +224,6 @@ function Events({ match }) {
           </div>
         </div>
       </div>
-
       <div className="row center">
         <div className="input-field col s4">
           <span style={{ color: 'black', fontSize: '1.2em' }}>Date de début :</span>
@@ -254,7 +259,6 @@ function Events({ match }) {
           <label className={active} htmlFor="capacity">Capacity</label>
         </div>
       </div>
-
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">add_location</i>
@@ -262,12 +266,10 @@ function Events({ match }) {
           <label className="active" htmlFor="address">Adresse</label>
         </div>
       </div>
-
       <div className="center-align marge">
         {!id ? <button className="btn waves-effect waves-light pos_bt" onClick={submitEvents} type="submit">Creer</button> : ''}
         {id ? <button className="btn waves-effect waves-light pos_bt" onClick={modifyEvents} type="submit">Modifier</button> : ''}
       </div>
-
       {(selectValue === 'default' || indexSup > 1) || idActivity === 1 ? (
         <div className="card horizontal">
           <div className="card-image">
@@ -301,7 +303,6 @@ function Events({ match }) {
           </div>
         </div>
       ) : ''}
-
       {(selectValue !== 'default' && indexSup < 2) || idActivity === 0 ? (
         <div className="render">
           <div className="container mssg">
@@ -336,7 +337,6 @@ function Events({ match }) {
           </ul>
         </div>
       ) : ''}
-
     </div>
   );
 }

@@ -28,6 +28,7 @@ p {
   vertical-align: bottom;
   padding-bottom: 0px;
  }
+
  .title{
   font-family: Simplifica;
   font-size: 1.5em;
@@ -35,6 +36,7 @@ p {
   margin-top: 10px;
   text-transform: uppercase;
  }
+ 
  .card-bottom{
   vertical-align: bottom;
   padding-bottom: 0px;
