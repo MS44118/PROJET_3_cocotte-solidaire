@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import 'materialize-css/dist/css/materialize.min.css';
 import { NavLink } from 'react-router-dom';
+
+// CSS
+import 'materialize-css/dist/css/materialize.min.css';
 import './Menu.css';
 
+// ACTIONS
 import { tokenApprovedFalseAction } from '../../Actions/tokenAction';
 
 function Menu({ dispatch }) {
   const [sidebarDisplay, setSidebarDisplay] = useState('sidebarNO');
+
   const handleClick = () => {
     if (sidebarDisplay === 'sidebarNO') {
       setSidebarDisplay('sidebarYES');
@@ -73,8 +77,7 @@ Menu.propTypes = {
 };
 
 Menu.defaultProps = {
-  dispatch: null,
+  dispatch: connect.dispatch,
 };
-
 
 export default connect()(Menu);

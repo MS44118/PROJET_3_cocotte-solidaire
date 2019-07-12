@@ -67,7 +67,7 @@ api.get('/api/future-registrations', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       connection.query(
-        'SELECT registrations.id_registration, users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id WHERE events.date_b >= CURDATE() GROUP BY registrations.id_registration;',
+        'SELECT users.firstname, users.lastname, users.email, users.phone, users.member_id, registrations.id_registration, registrations.quantity_adult, registrations.quantity_children, registrations.event_id, registrations.allergie, registrations.comment, COUNT(NULLIF(TRIM(users.email), "")) as nb_emails, COUNT(NULLIF(TRIM(registrations.allergie), "")) as nb_allergies, COUNT(NULLIF(TRIM(registrations.comment), "")) as nb_comments FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id WHERE events.date_b >= CURDATE() GROUP BY registrations.id_registration;',
         (err, result) => {
           if (err) throw err;
           res.send(result);
@@ -385,7 +385,7 @@ api.delete('/api/activities/:id', verifyToken, (req, res) => {
 });
 
 // to delete a specific event from event page or home admin
-api.delete('/event/:id', verifyToken, (req, res) => {
+api.delete('/api/event/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)
@@ -435,7 +435,7 @@ api.delete('/event/:id', verifyToken, (req, res) => {
 
 // to delete a specific event from event page or home admin
   // api.delete('/registration/:id', (req, res) => {
-  api.delete('/registration/:id', verifyToken, (req, res) => {
+  api.delete('/api/registration/:id', verifyToken, (req, res) => {
     jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
       console.log(err)

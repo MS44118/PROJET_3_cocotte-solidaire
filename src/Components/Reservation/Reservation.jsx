@@ -1,6 +1,5 @@
 import axios from 'axios';
-import 'materialize-css/dist/css/materialize.min.css';
-import M from 'materialize-css/dist/js/materialize';
+import M from 'materialize-css';
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import {
@@ -11,8 +10,11 @@ import queryString from 'query-string';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import conf from '../../app.conf';
-import './Reservation.css';
 import setHeaderToken from '../../Utils/tokenUtil';
+
+// CSS
+import 'materialize-css/dist/css/materialize.min.css';
+import './Reservation.css';
 
 function Reservation(
   {
@@ -79,11 +81,10 @@ function Reservation(
       setHeaderToken(() => {
         axios.post(`${conf.url}/api/zboub/`, addReservation)
           .then((res) => {
-            message.success(res);
-            if (res.sendStatus === 200) {
+            if (res.status === 200) {
               message.success('La reservation a bien été prise en compte', 3);
             } else {
-              message.warning(res, 3);
+              message.warning(res.status, 3);
             }
           })
           .catch(() => {
@@ -161,8 +162,6 @@ function Reservation(
     }
   }, [registration]);
 
-  // console.log(dataSource);
-
   return (
     <div className="container">
       <h1>Réservation</h1>
@@ -209,8 +208,8 @@ function Reservation(
           </AutoComplete>
         </div>
       </div>
-      <div className=" row ">
 
+      <div className=" row ">
         <div className="input-field col s4 noFuckingmargin">
           <p> Nombres d&apos;adultes</p>
           <Select
@@ -226,8 +225,8 @@ function Reservation(
             <option value="5">5</option>
             <option value="6">6</option>
           </Select>
-
         </div>
+
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
           <Select value={quantityChildren} style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
@@ -239,13 +238,11 @@ function Reservation(
             <option value="5">5</option>
             <option value="6">6</option>
           </Select>
-
         </div>
-
       </div>
+
       {/* choose event collaps bar */}
       <div className="row">
-
         <div className="input-field col s6 noFuckingmargin">
           <i className="material-icons prefix">account_circle</i>
           <input
@@ -276,6 +273,7 @@ function Reservation(
           <label htmlFor="firstname" className={labelActive}>Prénom</label>
         </div>
       </div>
+
       {/* row name mail and tel */}
       <div className="row">
         <div className="input-field col s6">
@@ -358,12 +356,13 @@ function Reservation(
         </div>
       </div>
     </div>
-
   );
 }
+
 Reservation.propTypes = {
   location: PropTypes.shape({ root: PropTypes.string.isRequired }),
 };
+
 Reservation.defaultProps = {
   location: null,
 };

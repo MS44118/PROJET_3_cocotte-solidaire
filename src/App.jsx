@@ -9,7 +9,7 @@ import Activities from './Components/Activities/Activities';
 import Events from './Components/Events/Events';
 import Reservation from './Components/Reservation/Reservation';
 import Users from './Components/Users/Users';
-import Home from './Components/Home/Home';
+import EventHome from './Components/EventHome/EventHome';
 import Footer from './Components/Footer/Footer';
 import Login from './Components/Login/Login';
 import SignUp from './Components/SignUp/SignUp';
@@ -40,7 +40,7 @@ function App({ tokenApproved, dispatch }) {
       {tokenApproved ? (
         <div>
           <Menu />
-          <Route path="/" exact component={Home} />
+          <Route path="/" exact component={EventHome} />
           <Route path="/events" exact component={Events} />
           <Route path="/events/:id" exact component={Events} />
           <Route path="/activities" exact component={Activities} />
@@ -53,6 +53,7 @@ function App({ tokenApproved, dispatch }) {
         : (
           <div>
             <Login />
+            <Route path="/signup" exact component={SignUp} />
           </div>
         )}
     </div>

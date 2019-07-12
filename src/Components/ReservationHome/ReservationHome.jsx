@@ -42,7 +42,7 @@ function ReservationHome(
   const deleteRegistration = (id) => {
     let resultat = {};
     setHeaderToken(() => {
-      axios.delete(`${conf.url}/registration/${id}`)
+      axios.delete(`${conf.url}/api/registration/${id}`)
         .then((res) => {
           message.success(res.data, 3);
           resultat = res.status;
