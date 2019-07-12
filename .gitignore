@@ -15,3 +15,5 @@ api/.public.key
 
 # email auth
 api/.emailAuth.js
+
+.adherents_la_cocotte_solidaire.xlsx
