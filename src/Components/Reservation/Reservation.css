@@ -5,10 +5,11 @@ body{
 .color_select{
   border-radius: 80px !important;
 }
+
 .noFuckingmargin{
   margin-left: 0% !important;
 }
+
 .ant-select-selection{
   border-radius: 80px !important;
-  
 }

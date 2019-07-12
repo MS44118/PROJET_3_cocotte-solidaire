@@ -9,22 +9,22 @@ import CalendarHome from '../CalendarHome/CalendarHome';
 import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
 
+// CSS
 // import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
 import 'antd/dist/antd.css';
 
+// components
 import ReservationHome from '../ReservationHome/ReservationHome';
 
 // ACTIONS REDUX
 import { initEventsAction, initRegistrationsAction, removeEventAction } from '../../Actions/homeAction';
-
 
 function EventHome({ events, registrations, dispatch }) {
   // to collapse all the registrations for a specific event
   const [collapses, setCollapses] = useState([]);
   // to show modale asking confirmation to delete event
   const [deleteModal, setDeleteModal] = useState([]);
-
   // events filtered with checkboxes
   // and one day with date picked on the calendar
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -69,16 +69,6 @@ function EventHome({ events, registrations, dispatch }) {
       setFilterManger(false);
       setFilterAutres(false);
     }
-  };
-
-  const handleStateMapped = (i, state, func) => {
-    func(
-      [
-        ...state.slice(0, [i]),
-        !state[i],
-        ...state.slice([i + 1], state.length),
-      ],
-    );
   };
 
   // api call while loading
@@ -146,7 +136,7 @@ function EventHome({ events, registrations, dispatch }) {
       </div>
 
       <div className="row calendar">
-        {/* <CalendarHome selectedDate={selectedDate} /> */}
+        <CalendarHome selectedDate={selectedDate} />
       </div>
 
       <div className="row checkbox">
@@ -272,7 +262,11 @@ function EventHome({ events, registrations, dispatch }) {
                 <button
                   type="submit"
                   className="button link-button"
-                  onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+                  onClick={() => setDeleteModal([
+                    ...deleteModal.slice(0, [index]),
+                    !deleteModal[index],
+                    ...deleteModal.slice([index + 1], deleteModal.length),
+                  ])}
                 >
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
@@ -280,19 +274,43 @@ function EventHome({ events, registrations, dispatch }) {
                   title={`Vous aller supprimer l'évènement n° ${event.id_event}: `}
                   visible={deleteModal[index]}
                   onOk={() => {
-                    handleStateMapped(index, deleteModal, setDeleteModal);
+                    setDeleteModal([
+                      ...deleteModal.slice(0, [index]),
+                      !deleteModal[index],
+                      ...deleteModal.slice([index + 1], deleteModal.length),
+                    ]);
                     deleteEvent(event.id_event);
                   }}
-                  onCancel={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+                  onCancel={() => {
+                    setDeleteModal([
+                      ...deleteModal.slice(0, [index]),
+                      !deleteModal[index],
+                      ...deleteModal.slice([index + 1], deleteModal.length),
+                    ]);
+                  }}
                   footer={[
-                    <button type="submit" key="back" onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}>
+                    <button
+                      type="submit"
+                      key="back"
+                      onClick={() => {
+                        setDeleteModal([
+                          ...deleteModal.slice(0, [index]),
+                          !deleteModal[index],
+                          ...deleteModal.slice([index + 1], deleteModal.length),
+                        ]);
+                      }}
+                    >
                       annuler
                     </button>,
                     <button
                       type="submit"
                       key="submit"
                       onClick={() => {
-                        handleStateMapped(index, deleteModal, setDeleteModal);
+                        setDeleteModal([
+                          ...deleteModal.slice(0, [index]),
+                          !deleteModal[index],
+                          ...deleteModal.slice([index + 1], deleteModal.length),
+                        ]);
                         deleteEvent(event.id_event);
                       }}
                     >
@@ -320,7 +338,13 @@ function EventHome({ events, registrations, dispatch }) {
               >
                 <button
                   className="btn btn-small waves-effect waves-light"
-                  onClick={() => handleStateMapped(index, collapses, setCollapses)}
+                  onClick={() => {
+                    setCollapses([
+                      ...collapses.slice(0, [index]),
+                      !collapses[index],
+                      ...collapses.slice([index + 1], collapses.length),
+                    ]);
+                  }}
                   type="submit"
                   name="action"
                 >
