@@ -62,8 +62,7 @@ function Events({ match }) {
       data.append('file', newFile);
       setHeaderToken(() => {
         axios.post(`${conf.url}/api/uploaddufichier/`, data)
-          .then((response) => {
-            message.success(`${response}`);
+          .then(() => {
             message.success('Activité crée !');
           })
           .catch((error) => {
@@ -82,8 +81,7 @@ function Events({ match }) {
         pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
         activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
       })
-        .then((response) => {
-          message.success(`${response}`);
+        .then(() => {
           message.success('Activité crée !');
         })
         .catch((error) => {
@@ -116,8 +114,7 @@ function Events({ match }) {
       setHeaderToken(() => {
         axios.post(`${conf.url}/api/uploaddufichier/`, data, {
         })
-          .then((response) => {
-            message.success(`${response}`);
+          .then(() => {
             message.success(`Votre activité ${title} à ete modifiee`);
           })
           .catch((error) => {
@@ -137,8 +134,7 @@ function Events({ match }) {
         pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : myCrazyTernary,
         activityId: events[0].activity_id,
       })
-        .then((response) => {
-          message.success(`${response}`);
+        .then(() => {
           message.success(`Votre activité ${title} à ete modifiee`);
         })
         .catch((error) => {
