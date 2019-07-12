@@ -104,7 +104,7 @@ function EventHome({ events, registrations, dispatch }) {
           }
         }
         if (filterAutres) {
-          if (event.id_activity > 2) {
+          if (event.id_activity >= 3) {
             return event;
           }
         }
