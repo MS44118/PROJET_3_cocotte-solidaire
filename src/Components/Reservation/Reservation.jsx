@@ -77,13 +77,12 @@ function Reservation(
   const sendForm = () => {
     if (newReservation) {
       setHeaderToken(() => {
-        axios.post('http://localhost:8000/zboub/', addReservation)
+        axios.post(`${conf.url}/zboub/`, addReservation)
           .then((res) => {
-            message.success(res);
-            if (res.sendStatus === 200) {
+            if (res.status === 200) {
               message.success('La reservation a bien été prise en compte', 3);
             } else {
-              message.warning(res, 3);
+              message.warning(res.status, 3);
             }
           })
           .catch(() => {
@@ -92,7 +91,7 @@ function Reservation(
       });
     } else {
       setHeaderToken(() => {
-        axios.put(`http://localhost:8000/zboub/${idRegistration}`, addReservation)
+        axios.put(`${conf.url}/zboub/${idRegistration}`, addReservation)
           .then((res) => {
             if (res.sendStatus === 200) {
               message.success('La reservation a bien été prise en compte', 3);

@@ -52,6 +52,7 @@ function App({ tokenApproved, dispatch }) {
         : (
           <div>
             <Login />
+            <Route path="/signup" exact component={SignUp} />
           </div>
         )}
     </div>

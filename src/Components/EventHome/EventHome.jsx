@@ -208,8 +208,7 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1"><i className="material-icons icon-white">comment</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
           <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
-          <li className="col col-icon s1 hide-on-med-and-down"> </li>
-          <li className="col col-icon s1 hide-on-large-only"> </li>
+          <li className="col col-icon s1"><i className="material-icons">expand_more</i></li>
           {/* <i className="material-icons icon-white">pan_tool</i>
           <i className="material-icons icon-white">restaurant</i>
           <i className="material-icons icon-white">restaurant_menu</i>
@@ -220,7 +219,7 @@ function EventHome({ events, registrations, dispatch }) {
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
             <ul className="event-item row center-align">
-              <li className="col s2">{event.name_event}</li>
+              <li className="col s2">{event.name_event === '' ? event.name_activity : event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">
                 {moment(event.date_b).format('ddd DD/MM HH:mm-')}
@@ -301,7 +300,7 @@ function EventHome({ events, registrations, dispatch }) {
                     </button>,
                   ]}
                 >
-                  <p>{event.name_event}</p>
+                  <p>{event.name_event === '' ? event.name_activity : event.name_event}</p>
                   <p>
                     {moment(event.date_b).format('dddd Do/MM/YY')}
                   </p>
@@ -340,7 +339,7 @@ function EventHome({ events, registrations, dispatch }) {
                 : (
                   <ReservationHome
                     eventId={event.id_event}
-                    eventName={event.name_event}
+                    eventName={event.name_event === '' ? event.name_activity : event.name_event}
                     eventDate={event.date_b}
                     registrations={registrations}
                   />
