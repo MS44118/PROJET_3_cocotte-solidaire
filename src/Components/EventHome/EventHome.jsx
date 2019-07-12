@@ -57,7 +57,7 @@ function EventHome({ events, registrations, dispatch }) {
     });
   };
 
-  // { filtre_xxxxx: true/visible, check_xxxxx: true/visible }
+  // { filtre_xxxxx: true/visible or false/hidden, check_xxxxx: true/visible or false/hidden}
   const checkAll = () => {
     if (!filterCuisiner || !filterManger || !filterAutres) {
       setFilterCuisiner(true);
@@ -70,7 +70,7 @@ function EventHome({ events, registrations, dispatch }) {
     }
   };
 
-  // api call while loading
+  // api call setting events and registrations in redux store + filteredEvents
   useEffect(() => {
     setHeaderToken(() => {
       axios.get(`${conf.url}/api/future-events`)
@@ -86,21 +86,25 @@ function EventHome({ events, registrations, dispatch }) {
   }, []);
 
   // set filters according to checkboxes
+  // 1 = manger
+  // 2 = cuisiner et manger (also called "cuisiner" in home admin checkboxes)
+  // 3 = autres (default parameter for events created without activity selected)
+  // >3 = activities created other than "manger" or "cuisiner et manger" (ie: "poterie" or "yoga")
   useEffect(() => {
     if (events.length > 0) {
       setFilteredEvents(events.filter((event) => {
         if (filterManger) {
-          if (event.name_event === 'manger') {
+          if (event.id_activity === 1) {
             return event;
           }
         }
         if (filterCuisiner) {
-          if (event.name_event === 'cuisiner & manger') {
+          if (event.id_activity === 2) {
             return event;
           }
         }
         if (filterAutres) {
-          if (event.name_event !== 'manger' && event.name_event !== 'cuisiner & manger') {
+          if (event.id_activity > 2) {
             return event;
           }
         }
