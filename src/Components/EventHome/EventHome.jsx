@@ -10,11 +10,10 @@ import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
 
 // CSS
-// import M from 'materialize-css/dist/js/materialize';
 import './EventHome.css';
 import 'antd/dist/antd.css';
 
-// components
+// COMPONENTS
 import ReservationHome from '../ReservationHome/ReservationHome';
 
 // ACTIONS REDUX
@@ -38,8 +37,8 @@ function EventHome({ events, registrations, dispatch }) {
     setHeaderToken(() => {
       axios.delete(`${conf.url}/event/${id}`)
         .then((res) => {
-          message.success(res.data, 3);
           if (res.status === 200) {
+            message.success(res.data, 3);
             dispatch(removeEventAction(id));
             const index = filteredEvents.findIndex(i => i.id_event === id);
             setFilteredEvents(
@@ -58,7 +57,7 @@ function EventHome({ events, registrations, dispatch }) {
     });
   };
 
-  // { filtre_xxxxx: true, check_xxxxx: true }
+  // { filtre_xxxxx: true/visible, check_xxxxx: true/visible }
   const checkAll = () => {
     if (!filterCuisiner || !filterManger || !filterAutres) {
       setFilterCuisiner(true);
@@ -179,7 +178,6 @@ function EventHome({ events, registrations, dispatch }) {
       </div>
 
       <div className="row list-events">
-
         {/* entetes liste des évenements */}
         <ul className="event-header">
           <li className="col s2 hide-on-large-only"> </li>
@@ -190,8 +188,7 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
           <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
-          {/* <li className="col col-icon s1">email</li> */}
-          <li className="col col-icon s1"><i className="material-icons icon-white" title="email">email</i></li>
+          <li className="col col-icon s1"><i className="material-icons icon-white">email</i></li>
           {/* <li className="col col-icon s1">allergies</li> */}
           <li className="col col-icon s1"><i className="material-icons icon-white">warning</i></li>
           {/* <li className="col col-icon s1">commentaires</li> */}
@@ -387,12 +384,10 @@ function EventHome({ events, registrations, dispatch }) {
 
           </div>
         ))}
-
       </div>
     </div>
   );
 }
-
 
 const mapStateToProps = store => ({
   events: store.events,
@@ -411,5 +406,4 @@ EventHome.defaultProps = {
   registrations: mapStateToProps.registrations,
 };
 
-// export default EventHome;
 export default connect(mapStateToProps)(EventHome);
