@@ -227,7 +227,7 @@ api.put('/api/user/anonym/:id', verifyToken, (req, res) => {
   });
 });
 
-// api.post('/login/SignUp/', (req, res) => {
+// api.post('/api/login/SignUp/', (req, res) => {
 api.post('/api/login/SignUp/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -235,6 +235,7 @@ api.post('/api/login/SignUp/', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       const values = req.body;
+      console.log(values)
       bcrypt.hash(values.passwordSignUp, 10, (err, hash) => {
         connection.query(`INSERT INTO admins (email, password, name) VALUES ('${values.emailSignUp}', '${hash}', '${values.nameSignUp}')`,
           (err, results) => {
