@@ -40,6 +40,8 @@ connection.connect((err) => {
 });
 
 
+//---------------------------------------------------HOME---------------------------------------------------------
+
 // to request all the future events from today 00:00 ==> EventHome.js
 api.get('/api/future-events', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
@@ -58,8 +60,7 @@ api.get('/api/future-events', verifyToken, (req, res) => {
   })
 });
 
-
-// to request all the future registrations from now() ==> ReservationHome.js
+// to request all the future registrations from today 00:00 ==> EventHome.js
 api.get('/api/future-registrations', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -78,7 +79,7 @@ api.get('/api/future-registrations', verifyToken, (req, res) => {
 });
 
 
-// here explain what it is for
+//-------------------------------------------------------USERS-----------------------------------------
 api.get('/api/users', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -227,6 +228,8 @@ api.put('/api/user/anonym/:id', verifyToken, (req, res) => {
   });
 });
 
+//-------------------------------------------------------SIGNIN/SIGNUP-----------------------------------------
+
 // api.post('/api/login/SignUp/', (req, res) => {
 api.post('/api/login/SignUp/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
@@ -251,7 +254,6 @@ api.post('/api/login/SignUp/', verifyToken, (req, res) => {
     }
   });
 });
-
 
 api.post('/api/login/', (req, res) => {
   const values = req.body;
@@ -385,7 +387,7 @@ api.delete('/api/activities/:id', verifyToken, (req, res) => {
   });
 });
 
-// to delete a specific event from event page or home admin
+// to delete a specific event 
 api.delete('/api/event/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -434,8 +436,7 @@ api.delete('/api/event/:id', verifyToken, (req, res) => {
   })
 });
 
-// to delete a specific event from event page or home admin
-  // api.delete('/registration/:id', (req, res) => {
+// to delete a specific registration 
   api.delete('/api/registration/:id', verifyToken, (req, res) => {
     jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -470,21 +471,7 @@ api.delete('/api/event/:id', verifyToken, (req, res) => {
   })
 });
 
-
-// SELECT 
-//   IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons,
-//   events.id_event
-// FROM events 
-// LEFT JOIN registrations ON registrations.event_id=events.id_event
-// WHERE events.id_event = ?
-// GROUP BY events.id_event
-// ;
-
-
-//------------------------------------------------Upload file-------------------------------------------------
-
-//-------Upload file------
-
+//------------------------------------------------Upload image-------------------------------------------------
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, '../public/images')
@@ -513,7 +500,7 @@ api.post('/api/uploaddufichier', verifyToken, upload.single('file'), (req, res, 
   });
 })
 
-//-------delete file--------
+//------------------------------------------------delete image------------------------------------------------
 api.delete('/api/deletefile/:file', verifyToken, function(req, res) {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     if (err) {
@@ -537,6 +524,8 @@ api.delete('/api/deletefile/:file', verifyToken, function(req, res) {
 })
 
 
+//------------------------------------------------xxxxxxxx------------------------------------------------
+
 api.get('/api/events', (req, res) => {
   connection.query(
     'SELECT * FROM events',
@@ -546,7 +535,8 @@ api.get('/api/events', (req, res) => {
     },
   );
 });
-//registrtion post
+
+//registration post
 api.post('/api/zboub/', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
     const reservation = req.body
@@ -565,7 +555,6 @@ api.post('/api/zboub/', verifyToken, (req, res) => {
           connection.query(`SELECT id_user FROM users ORDER BY id_user DESC LIMIT 1`, (err, result) => {
             if (err) {
               console.log(err)
-
             } else {
               connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie,comment , user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}",${result[0].id_user},${reservation.eventId})`,
                 reservation, (err, result) => {
@@ -583,50 +572,68 @@ api.post('/api/zboub/', verifyToken, (req, res) => {
     } else {
       connection.query(`INSERT INTO registrations(quantity_adult , quantity_children, allergie, comment, user_id, event_id) VALUES(${reservation.quantityAdult},${reservation.quantityChildren},"${reservation.allergies}","${reservation.comment}","${reservation.idUser}",${reservation.eventId})`,
         reservation, (err, result) => {
-
           if (err) {
             console.log(err)
             res.status(500).send("error while saving")
           } else {
             res.sendStatus(200)
           }
-        });
-
+        }
+      );
     }
   })
 });
+
 api.get('/api/registration/:id',verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-  const param = req.params.id
-  console.log(param)
-  const data= req.body
-  console.log(data)
-  connection.query(`SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE id_registration= '${param}'`,(err,result)=>{
-    if (err){
-    res.status(500).send("penos")
-    }else{
-      res.send(result)
-    }
+    const param = req.params.id
+    console.log(param)
+    const data= req.body
+    console.log(data)
+    connection.query(`SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE id_registration= '${param}'`,(err,result)=>{
+      if (err){
+      res.status(500).send("penos")
+      }else{
+        res.send(result)
+      }
+    })
   })
 })
-})
+
+// api.get('/api/registration/filter?',verifyToken, (req, res) => {
+//   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+//     if (err) {
+//       console.log(err)
+//       res.sendStatus(403);
+//     } else {
+//     if(req.query.event) {
+//       connection.query(
+//       `SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE registrations.event_id = '${req.query.event}'`,
+//         (err,result) => {
+//           if (err) throw err;
+//           res.send(result);
+//         }
+//       )  
+//     }
+//   }
+// })
 
 api.put('/api/zboub/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-  const idRegistration = req.params.id
-  const changeInfo = req.body
-  {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
-  {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
- if (idRegistration>0){
-  connection.query(`UPDATE  registrations  SET  quantity_adult =${changeInfo.quantityAdult},quantity_children=${changeInfo.quantityChildren}, allergie="${changeInfo.allergies}", comment="${changeInfo.comment}", user_id=${changeInfo.idUser} WHERE id_registration= ${idRegistration}` , err=>{
-    if (err){
-      console.log(err)
-      res.status(500).send("raté pov tanche")
-    }else{
-      res.sendStatus(200)
+    const idRegistration = req.params.id
+    const changeInfo = req.body
+    {changeInfo.quantityAdult ? changeInfo.quantityAdult= parseInt(changeInfo.quantityAdult,10) : changeInfo.quantityAdult=null}
+    {changeInfo.quantityChildren ? changeInfo.quantityChildren= parseInt(changeInfo.quantityChildren,10) : changeInfo.quantityChildren=null}
+    if (idRegistration>0){
+      connection.query(`UPDATE  registrations  SET  quantity_adult =${changeInfo.quantityAdult},quantity_children=${changeInfo.quantityChildren}, allergie="${changeInfo.allergies}", comment="${changeInfo.comment}", user_id=${changeInfo.idUser} WHERE id_registration= ${idRegistration}` , err=>{
+        if (err){
+          console.log(err)
+          res.status(500).send("raté pov tanche")
+        }else{
+          res.sendStatus(200)
+        }
+      })  
     }
-  })  
-}
   })
 })
 
@@ -753,7 +760,6 @@ api.get('/api/events/:id', verifyToken, (req, res) => {
     } else {
       const idEvent = req.params.id;
       // console.log(idEvent);
-
       connection.query('SELECT * FROM events WHERE id_event = ?', idEvent, (err, result) => {
         if (err) throw err;
         let theEvents = result[0];

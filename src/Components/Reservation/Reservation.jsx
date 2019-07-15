@@ -19,6 +19,7 @@ import './Reservation.css';
 function Reservation(
   {
     location,
+    // homeEvent,
   },
 ) {
   const [events, setEvent] = useState([]);
@@ -73,7 +74,6 @@ function Reservation(
     existantUser,
     eventId,
     memberNumber,
-
   };
 
   const sendForm = () => {
@@ -82,7 +82,7 @@ function Reservation(
         axios.post(`${conf.url}/api/zboub/`, addReservation)
           .then((res) => {
             if (res.status === 200) {
-              message.success('La reservation a bien été prise en compte', 3);
+              message.success('La réservation a bien été prise en compte', 3);
             } else {
               message.warning(res.status, 3);
             }
@@ -96,7 +96,7 @@ function Reservation(
         axios.put(`${conf.url}/api/zboub/${idRegistration}`, addReservation)
           .then((res) => {
             if (res.sendStatus === 200) {
-              message.success('La reservation a bien été prise en compte', 3);
+              message.success('La réservation a bien été prise en compte', 3);
             } else {
               message.warning(res, 3);
             }
@@ -361,10 +361,12 @@ function Reservation(
 
 Reservation.propTypes = {
   location: PropTypes.shape({ root: PropTypes.string.isRequired }),
+  // homeEvent: PropTypes.number,
 };
 
 Reservation.defaultProps = {
   location: null,
+  // homeEvent: null,
 };
 
 export default withRouter(Reservation);
