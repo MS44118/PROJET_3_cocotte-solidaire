@@ -155,7 +155,7 @@ function Reservation(
       setIdRegistration(registration[0].id_registration);
     }
   }, [registration]);
-console.log(dataSource)
+
   return (
     <div className="container">
       <h1>Réservation</h1>
@@ -207,7 +207,7 @@ console.log(dataSource)
 
         <div className="input-field col s4 noFuckingmargin">
           <p> Nombres d&apos;adultes</p>
-          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e.target.value)}>
+          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e)}>
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -220,7 +220,7 @@ console.log(dataSource)
         </div>
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
-          <Select value={ quantityChildren } style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
+          <Select value={ quantityChildren } style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
