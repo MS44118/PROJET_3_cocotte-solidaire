@@ -260,7 +260,7 @@ api.post('/api/login/', (req, res) => {
     (err, result) => {
       if (result.length === 0) {
         console.log(err)
-        res.status(500).send("Erreur dans l'email.");
+        res.status(500).send("Erreur dans l'email ou le mot de passe.");
       } else {
         if (result.length > 0) {
           bcrypt.compare(values.passwordSignIn, result[0].password, (err, result) => {
@@ -271,7 +271,7 @@ api.post('/api/login/', (req, res) => {
               res.send(token);
             } else {
               console.log('mauvais mot de passe')
-              res.status(500).send("Erreur dans le mot de passe.");
+              res.status(500).send("Erreur dans l'email ou le mot de passe.");
             }
           });
         }
