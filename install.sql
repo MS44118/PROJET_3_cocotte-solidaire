@@ -132,3 +132,15 @@ VALUES
   registrations.quantity_children, registrations.event_id, registrations.allergie, 
   registrations.comment 
   FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id GROUP BY registrations.id_registration;',
+
+CREATE TABLE admins (
+  id_admin INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  name VARCHAR(255)
+);
+
+INSERT INTO cocotte_booking.admins 
+  (email, password, name)
+VALUES
+('aurelia@gmail.com', 'password', 'aurelia');

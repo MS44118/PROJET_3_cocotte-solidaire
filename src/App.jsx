@@ -52,6 +52,7 @@ function App({ tokenApproved, dispatch }) {
         : (
           <div>
             <Login />
+            {/* <SignUp/> */}
           </div>
         )}
     </div>
