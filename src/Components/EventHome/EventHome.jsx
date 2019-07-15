@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
 import { Modal, message, Tooltip } from 'antd';
-import CalendarHome from '../CalendarHome/CalendarHome';
 import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
 
@@ -15,6 +14,7 @@ import 'antd/dist/antd.css';
 
 // COMPONENTS
 import ReservationHome from '../ReservationHome/ReservationHome';
+import CalendarHome from '../CalendarHome/CalendarHome';
 
 // ACTIONS REDUX
 import { initEventsAction, initRegistrationsAction, removeEventAction } from '../../Actions/homeAction';
@@ -25,37 +25,11 @@ function EventHome({ events, registrations, dispatch }) {
   // to show modale asking confirmation to delete event
   const [deleteModal, setDeleteModal] = useState([]);
   // events filtered with checkboxes
-  // and one day with date picked on the calendar
   const [filteredEvents, setFilteredEvents] = useState([]);
   // checkboxes filters
   const [filterCuisiner, setFilterCuisiner] = useState(true);
   const [filterManger, setFilterManger] = useState(true);
   const [filterAutres, setFilterAutres] = useState(true);
-
-  // to delete an event
-  const deleteEvent = (id) => {
-    setHeaderToken(() => {
-      axios.delete(`${conf.url}/api/event/${id}`)
-        .then((res) => {
-          if (res.status === 200) {
-            message.success(res.data, 3);
-            dispatch(removeEventAction(id));
-            const index = filteredEvents.findIndex(i => i.id_event === id);
-            setFilteredEvents(
-              [
-                ...filteredEvents.slice(0, [index]),
-                ...filteredEvents.slice([index + 1], filteredEvents.length),
-              ],
-            );
-          } else {
-            message.warning(res.status, 3);
-          }
-        })
-        .catch((err) => {
-          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
-        });
-    });
-  };
 
   // { filtre_xxxxx: true/visible or false/hidden, check_xxxxx: true/visible or false/hidden}
   const checkAll = () => {
@@ -70,7 +44,7 @@ function EventHome({ events, registrations, dispatch }) {
     }
   };
 
-  // api call setting events and registrations in redux store + filteredEvents
+  // api call to get events and registrations and send in redux store + filteredEvents
   useEffect(() => {
     setHeaderToken(() => {
       axios.get(`${conf.url}/api/future-events`)
@@ -85,7 +59,7 @@ function EventHome({ events, registrations, dispatch }) {
     });
   }, []);
 
-  // set filters according to checkboxes
+  // to set filters according to checkboxes
   // 1 = manger
   // 2 = cuisiner et manger (also called "cuisiner" in home admin checkboxes)
   // 3 = autres (default parameter for events created without activity selected)
@@ -113,16 +87,15 @@ function EventHome({ events, registrations, dispatch }) {
     }
   }, [events, filterManger, filterCuisiner, filterAutres]);
 
-  // set for a specific event, if the list of registrations is visible or not
+  // for each event, set the visibility of registrations details + Modals to delete a registration
   useEffect(() => {
     let array = [];
     array = events.map(() => (false));
-    // if the list of registrations is visible or not
     setCollapses(array);
-    // if the list of modale to confirm deletion is visible or not
     setDeleteModal(array);
   }, [events, filteredEvents]);
 
+  // to filter events when a date selected on calendar
   const selectedDate = (date) => {
     const arrayTemp = events.filter(event => moment(event.date_b).format('LL') === date);
     if (arrayTemp.length > 0) {
@@ -130,6 +103,62 @@ function EventHome({ events, registrations, dispatch }) {
     } else {
       setFilteredEvents(events);
     }
+  };
+
+  // Request to delete an event
+  const deleteEvent = (id) => {
+    setHeaderToken(() => {
+      axios.delete(`${conf.url}/api/event/${id}`)
+        .then((res) => {
+          if (res.status === 200) {
+            message.success(res.data, 3);
+            dispatch(removeEventAction(id));
+            const index = filteredEvents.findIndex(i => i.id_event === id);
+            setFilteredEvents(
+              [
+                ...filteredEvents.slice(0, [index]),
+                ...filteredEvents.slice([index + 1], filteredEvents.length),
+              ],
+            );
+          } else {
+            message.warning(res.status, 3);
+          }
+        })
+        .catch((err) => {
+          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
+        });
+    });
+  };
+
+  // Modal to delete an event
+  const { confirm } = Modal;
+  const showDeleteConfirm = (index) => {
+    confirm({
+      title:
+        `Vous aller supprimer l'évènement n° ${events[index].id_event}:
+        ${events[index].name_event === '' ? events[index].name_activity : events[index].name_event}
+        du ${moment(events[index].date_b).format('dddd Do/MM/YY')}
+        ${moment(events[index].date_b).format('HH:mm-')}${moment(events[index].date_e).format('HH:mm')}
+        (${events[index].NB_REG} réservations)`,
+      okType: 'danger',
+      okText: 'Supprimer',
+      cancelText: 'Annuler',
+      onOk() {
+        setDeleteModal([
+          ...deleteModal.slice(0, [index]),
+          !deleteModal[index],
+          ...deleteModal.slice([index + 1], deleteModal.length),
+        ]);
+        deleteEvent(events[index].id_event);
+      },
+      onCancel() {
+        setDeleteModal([
+          ...deleteModal.slice(0, [index]),
+          !deleteModal[index],
+          ...deleteModal.slice([index + 1], deleteModal.length),
+        ]);
+      },
+    });
   };
 
   return (
@@ -266,84 +295,17 @@ function EventHome({ events, registrations, dispatch }) {
 
               <li className="col col-icon s1">
                 <button
-                  type="submit"
+                  type="button"
                   className="button link-button"
-                  onClick={() => setDeleteModal([
-                    ...deleteModal.slice(0, [index]),
-                    !deleteModal[index],
-                    ...deleteModal.slice([index + 1], deleteModal.length),
-                  ])}
+                  onClick={() => showDeleteConfirm(index)}
                 >
                   <i className="material-icons icon-green">delete_forever</i>
                 </button>
-                <Modal
-                  title={`Vous aller supprimer l'évènement n° ${event.id_event}: `}
-                  visible={deleteModal[index]}
-                  onOk={() => {
-                    setDeleteModal([
-                      ...deleteModal.slice(0, [index]),
-                      !deleteModal[index],
-                      ...deleteModal.slice([index + 1], deleteModal.length),
-                    ]);
-                    deleteEvent(event.id_event);
-                  }}
-                  onCancel={() => {
-                    setDeleteModal([
-                      ...deleteModal.slice(0, [index]),
-                      !deleteModal[index],
-                      ...deleteModal.slice([index + 1], deleteModal.length),
-                    ]);
-                  }}
-                  footer={[
-                    <button
-                      type="submit"
-                      key="back"
-                      onClick={() => {
-                        setDeleteModal([
-                          ...deleteModal.slice(0, [index]),
-                          !deleteModal[index],
-                          ...deleteModal.slice([index + 1], deleteModal.length),
-                        ]);
-                      }}
-                    >
-                      annuler
-                    </button>,
-                    <button
-                      type="submit"
-                      key="submit"
-                      onClick={() => {
-                        setDeleteModal([
-                          ...deleteModal.slice(0, [index]),
-                          !deleteModal[index],
-                          ...deleteModal.slice([index + 1], deleteModal.length),
-                        ]);
-                        deleteEvent(event.id_event);
-                      }}
-                    >
-                      Supprimer
-                    </button>,
-                  ]}
-                >
-                  <p>{event.name_event === '' ? event.name_activity : event.name_event}</p>
-                  <p>
-                    {moment(event.date_b).format('dddd Do/MM/YY')}
-                  </p>
-                  <p>
-                    {moment(event.date_b).format('HH:mm-')}
-                    {moment(event.date_e).format('HH:mm')}
-                  </p>
-                  <p>
-                    {event.NB_REG}
-                    {' réservations'}
-                  </p>
-                </Modal>
               </li>
 
-              <li
-                className="col col-icon s1"
-              >
+              <li className="col col-icon s1">
                 <button
-                  className="btn btn-small waves-effect waves-light"
+                  className="btn btn-small home-btn-collapse waves-effect waves-light"
                   onClick={() => {
                     setCollapses([
                       ...collapses.slice(0, [index]),
