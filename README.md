@@ -43,7 +43,8 @@ Go to folder /client and run command line :
 ### `npm run create`
 
 It will create a /client/dist folder with an index_bundle.js file.
-You can call this script in your html page with a div : <div id="app" type="1"></div>
-Type 1 => activity : manger
-Type 2 => activity : cuisiner & manger
-Type 3 => others activities. 
+You can call this script in your html page with a div : <br>
+<div id="app" type="1"></div><br>
+Type 1 => activity : manger<br>
+Type 2 => activity : cuisiner & manger<br>
+Type 3 => others activities. <br>
