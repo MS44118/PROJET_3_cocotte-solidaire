@@ -3,25 +3,25 @@ Install all dependencies.
 ### `npm install`
 
 Add files : 
-  - file name : api/.password.js , structre => 
-const myPassword = 'passwordSQL'
-module.exports = myPassword;
+  - file name : api/.password.js , structre => <br>
+const myPassword = 'passwordSQL'<br>
+module.exports = myPassword;<br>
 
-  - file name : api/.private.key and api/.public.key which contain RSA keys (you can make them on http://travistidwell.com/jsencrypt/demo/ , juste copy/paste lines) 
-  - file name : api/.emailAuth.js, structure =>
-const emailAuth = {
-  user: 'yourmail@gmail.com',
-  pass: 'password'
-}
-module.exports = emailAuth;
+  - file name : api/.private.key and api/.public.key which contain RSA keys (you can make them on http://travistidwell.com/jsencrypt/demo/ , juste copy/paste lines) <br>
+  - file name : api/.emailAuth.js, structure =><br>
+const emailAuth = {<br>
+  user: 'yourmail@gmail.com',<br>
+  pass: 'password'<br>
+}<br>
+module.exports = emailAuth;<br>
 (Note: you need to allow less secure app acces on https://myaccount.google.com/u/0/lesssecureapps)
 
 Use the install.sql script to create the database.<br>
-If you want to use another user than root, and another name of database than 'cocotte_booking' you need to change the configuration file api/conf.js and modify the CREATE DATABASE at the beginning of the install.sql file.
+If you want to use another user than root, and another name of database than 'cocotte_booking' you need to change the configuration file api/conf.js and modify the CREATE DATABASE at the beginning of the install.sql file.<br>
 
 Create the first admin in SQL with email 'admin@gmail.com' and password 'admin': <br>
-  - open mysql and enter this query : 
-INSERT INTO admins (email, password, name) VALUES ('admin@gmail.com', '$2a$10$frAzPBXeg.av/yvgBfRvyeMuS1MTwHvb2kF3oii.vtxA7A.ZKdQTu', 'admin');
+  - open mysql and enter this query : <br>
+INSERT INTO admins (email, password, name) VALUES ('admin@gmail.com', '$2a$10$frAzPBXeg.av/yvgBfRvyeMuS1MTwHvb2kF3oii.vtxA7A.ZKdQTu', 'admin');<br>
 
 Build the application : <br>
 Go to the root of the project and use:
