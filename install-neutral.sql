@@ -30,7 +30,7 @@ CREATE TABLE activities(
 );
 
 -- mock datas for activities TABLE
-INSERT INTO cocotte_booking.activities 
+INSERT INTO activities 
   (name_activity, description_activity, picture_activity)
 VALUES
   ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
