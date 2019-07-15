@@ -43,6 +43,12 @@ ul{
   margin: 0;
 }
 
+li{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .col-icon{
   display: flex;
   justify-content: center;
@@ -73,11 +79,6 @@ ul{
   align-items: center, */
 }
 
-li{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .registration-header{
   background-color: rgb(55,126,114, 0.3);

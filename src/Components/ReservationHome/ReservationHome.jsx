@@ -27,17 +27,6 @@ function ReservationHome(
     setDeleteModal(registrations.map(() => (false)));
   }, [registrations]);
 
-  // handle the show/hide Modale to confirm deletion
-  const handleStateMapped = (i, state, func) => {
-    func(
-      [
-        ...state.slice(0, [i]),
-        !state[i],
-        ...state.slice([i + 1], state.length),
-      ],
-    );
-  };
-
   // delete function (once you hit the confirmation button)
   const deleteRegistration = (id) => {
     let resultat = {};
@@ -67,10 +56,43 @@ function ReservationHome(
     });
   };
 
+  // Modal to delete a registration
+  const { confirm } = Modal;
+  const showDeleteConfirm = (index) => {
+    confirm({
+      title:
+        `ATTENTION vous allez supprimer l'inscription n°${registrations[index].id_registration} de 
+        ${registrations[index].firstname} ${registrations[index].lastname}
+        (${registrations[index].quantity_adult} adultes et 
+          ${registrations[index].quantity_children === null ? 0 : registrations[index].quantity_children} enfants)
+        pour l'évenement n°${registrations[index].event_id} - ${eventName} du ${moment(eventDate).format('dddd Do/MM/YY')}`,
+      okType: 'danger',
+      okText: 'Supprimer',
+      cancelText: 'Annuler',
+      onOk() {
+        setDeleteModal(
+          [
+            ...deleteModal.slice(0, [index]),
+            !deleteModal[index],
+            ...deleteModal.slice([index + 1], deleteModal.length),
+          ],
+        );
+        deleteRegistration(registrations[index].id_registration);
+      },
+      onCancel() {
+        setDeleteModal(
+          [
+            ...deleteModal.slice(0, [index]),
+            !deleteModal[index],
+            ...deleteModal.slice([index + 1], deleteModal.length),
+          ],
+        );
+      },
+    });
+  };
 
   return (
     <div className="row list-registrations">
-
       {/* entetes liste des réservations */}
       <ul className="registration-header">
         <li className="col s1 hide-on-med-and-down">n°adhérent</li>
@@ -93,7 +115,7 @@ function ReservationHome(
       {/* liste des réservations */}
       {registrations
         .filter(registration => registration.event_id === eventId)
-        .map((registration, index) => (
+        .map(registration => (
           <ul key={registration.id_registration} className="registration-item">
             <li className="col s1 hide-on-med-and-down">{registration.member_id}</li>
             <li className="col s2 hide-on-large-only">
@@ -148,58 +170,16 @@ function ReservationHome(
 
             <li className="col col-icon s1">
               <button
-                type="submit"
+                type="button"
                 className="button link-button"
-                onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}
+                onClick={() => {
+                  const idReg = registration.id_registration;
+                  const indexReg = registrations.findIndex(i => i.id_registration === idReg);
+                  showDeleteConfirm(indexReg);
+                }}
               >
                 <i className="material-icons icon-green">delete_forever</i>
               </button>
-              <Modal
-                title={(
-                  <h3>
-                    {'atelier '}
-                    {eventName}
-                    {' du '}
-                    {moment(eventDate).format('dddd Do/MM/YY')}
-                  </h3>
-                )}
-                visible={deleteModal[index]}
-                onOk={() => {
-                  handleStateMapped(index, deleteModal, setDeleteModal);
-                  deleteRegistration(registration.id_registration);
-                }}
-                onCancel={() => handleStateMapped(index, deleteModal, setDeleteModal)}
-                footer={[
-                  <button type="submit" key="back" onClick={() => handleStateMapped(index, deleteModal, setDeleteModal)}>
-                    annuler
-                  </button>,
-                  <button
-                    type="submit"
-                    key="submit"
-                    onClick={() => {
-                      handleStateMapped(index, deleteModal, setDeleteModal);
-                      deleteRegistration(registration.id_registration);
-                    }}
-                  >
-                    Supprimer
-                  </button>,
-                ]}
-              >
-                <h4>{`ATTENTION vous allez supprimer l'inscription n°${registration.id_registration} de l'évenement n°${registration.event_id}: `}</h4>
-                <p>
-                  {registration.firstname}
-                  {' '}
-                  {registration.lastname}
-                </p>
-                <p>
-                  {registration.quantity_adult}
-                  {' adulte(s)'}
-                </p>
-                <p>
-                  {registration.quantity_children}
-                  {' enfant(s)'}
-                </p>
-              </Modal>
             </li>
 
             <li className="col col-icon s1"> </li>
@@ -220,7 +200,6 @@ ReservationHome.propTypes = {
   eventDate: PropTypes.string,
 };
 
-
 ReservationHome.defaultProps = {
   dispatch: null,
   registrations: [],
@@ -230,4 +209,3 @@ ReservationHome.defaultProps = {
 };
 
 export default connect()(ReservationHome);
-// export default ReservationHome;
