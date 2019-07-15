@@ -43,7 +43,7 @@ Go to folder /client and run command line :
 ### `npm run create`
 
 It will create a /client/dist folder with an index_bundle.js file.
-You can call this script in your html page and add a devi with id='app' and type='x':<br>
+You can call this script in your html page and add a div with id='app' and type='x':<br>
 
 Type = 1 => activity : manger<br>
 Type = 2 => activity : cuisiner & manger<br>
