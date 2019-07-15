@@ -70,7 +70,7 @@ function Users(
   }, [newUser]);
 
   const handleCreate = (index) => {
-    const arrayTemp = activeFormMember;
+    const arrayTemp = [...activeFormMember];
     arrayTemp[index] = !activeFormMember[index];
     setActiveFormMember(arrayTemp);
     dispatch(displayKnownUserFormAction('block'));
@@ -151,9 +151,18 @@ function Users(
       <ul className="collection">
         <li style={{ display: displayNewUser }}><FormMember userSelected="new" /></li>
         <li className="collection-item-header row center-align">
-          <textbox className="col s4 m2" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])}>N°adhérent</textbox>
-          <textbox className="col s4 m2" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])}>Nom</textbox>
-          <textbox className="col s4 m2" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])}>Prénom</textbox>
+          <textbox className="col s4 m2">
+            N°adhérent
+            <i role="button" tabIndex="0" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])} onKeyDown={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])} className="material-icons user-icon">unfold_more</i>
+          </textbox>
+          <textbox className="col s4 m2">
+            Nom
+            <i role="button" tabIndex="0" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])} onKeyDown={() => filterUsers('lastname', [filterLastName, setFilterLastName])} className="material-icons user-icon">unfold_more</i>
+          </textbox>
+          <textbox className="col s4 m2">
+            Prénom
+            <i role="button" tabIndex="0" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])} onKeyDown={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])} className="material-icons user-icon">unfold_more</i>
+          </textbox>
           <textbox className="col s4 m2">Tel</textbox>
           <textbox className="col s4 m2">Mail</textbox>
           <textbox className="col s4 m2" />
