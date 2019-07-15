@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { message, Modal } from 'antd';
+import {
+  message, Modal, Row, Col,
+} from 'antd';
 import M from 'materialize-css/dist/js/materialize';
 import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
@@ -53,17 +55,16 @@ function Activities() {
         picture: `/images/${newFile.name}`,
       })
         .then(() => {
-          message.success('Activité crée !', 3);
+          axios.post(`${conf.url}/api/uploaddufichier/`, data)
+            .then(() => {
+              message.success('Activité créée !', 3);
+            })
+            .catch(() => {
+              message.error("L'actvité n'a pas été créée", 3);
+            });
         })
         .catch(() => {
-          message.error("L'actvité n'a pas été crée", 3);
-        });
-      axios.post(`${conf.url}/api/uploaddufichier/`, data)
-        .then(() => {
-          message.success('Activité crée !', 3);
-        })
-        .catch(() => {
-          message.error("L'actvité n'a pas été crée", 3);
+          message.error("L'actvité n'a pas été créée", 3);
         });
     });
     setTitle('');
@@ -89,10 +90,10 @@ function Activities() {
         axios.post(`${conf.url}/api/uploaddufichier/`, data, {
         })
           .then(() => {
-            message.success(`Votre activité ${title} à été modifiée`, 3);
+            message.success(`Votre image de l'activité ${title} a été modifiée`, 3);
           })
           .catch(() => {
-            message.error("L'actvité n'a pas été modifiée", 3);
+            message.error("L'image de l'actvité n'a pas été modifiée", 3);
           });
       });
     }
@@ -103,7 +104,7 @@ function Activities() {
         picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
       })
         .then(() => {
-          message.success(`Votre activité ${title} à été modifiée`, 3);
+          message.success(`Votre activité ${title} a été modifiée`, 3);
         })
         .catch(() => {
           message.error("L'actvité n'a pas été modifiée", 3);
@@ -130,10 +131,10 @@ function Activities() {
         setHeaderToken(() => {
           axios.delete(`${conf.url}/api/activities/${id}`)
             .then(() => {
-              message.success(`L'activité ${title} à été supprimée`, 3);
+              message.success(`L'activité ${title} a été supprimée`, 3);
               axios.delete(`${conf.url}/api/deletefile/${sendFile[2]}`)
                 .then(() => {
-                  message.success(`L'activité ${title} à été supprimée`, 3);
+                  message.success(`L'activité ${title} a été supprimée`, 3);
                 })
                 .catch(() => {
                   message.error("L'actvité n'a pas été supprimée", 3);
@@ -182,21 +183,21 @@ function Activities() {
   return (
     <div className="container">
       <h1 className="center-align marg">Création d&apos;une activité</h1>
-      <div className="row">
-        <div className="input-field col s12">
+      <Row>
+        <Col sm={24} lg={12} className="input-field">
           <select value={indexSup} onChange={valueSelected} className="browser-default color_select">
             <option value="default">Création d&apos;une nouvelle activité</option>
             {activities ? activities.map((activity, index) => (
               <option style={activity.id_activity === 3 ? { display: 'none' } : null} value={index} key={activity.id_activity}>{activity.name}</option>
             )) : ''}
           </select>
-        </div>
-        <div className="input-field col s12">
+        </Col>
+        <Col sm={24} lg={12} className="input-field">
           <i className="material-icons prefix">title</i>
           <input id="titre_activité" type="text" value={title} onChange={e => handleChange(e, setTitle)} />
           <label className={active} htmlFor="titre_activité">Titre de l&apos;activité</label>
-        </div>
-      </div>
+        </Col>
+      </Row>
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">description</i>
@@ -211,7 +212,7 @@ function Activities() {
             <input type="file" onChange={handleChangeFile} name="file" />
           </div>
           <div className="file-path-wrapper">
-            <input className="file-path" type="text" />
+            <input className="file-path" type="text" defaultValue={file} />
           </div>
         </div>
       </div>
@@ -244,8 +245,8 @@ function Activities() {
           </button>
         ) : ''}
       </div>
-      <p className="center-align renduSize">Rendu de l&apos;activité</p>
-      <div className="render container mssg">
+      <p className="renderSize row center-align">Rendu de l&apos;activité</p>
+      <div className="render container">
         <h1 className="center-align subtitles"><span>{title}</span></h1>
         <p className="justify text">{describtion}</p>
         {file ? <img className="activitie_pics" src={file} alt="cocotte_activite" /> : ''}

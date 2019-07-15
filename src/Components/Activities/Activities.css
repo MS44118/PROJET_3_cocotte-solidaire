@@ -4,22 +4,26 @@
   width: 100%;
   box-shadow: 1px 1px 12px #555;
   margin-bottom: 5em;
-}
-
-.mssg {
   max-width: inherit;
   word-break: break-all;
   word-wrap: break-word;
- }
+}
+
+.renderSize {
+  padding-top: 2em;
+  font-size: 3em;
+}
 
  .color_select{
   color:#498e81 !important;
  }
 
 .marg {
-  padding-top: 1.6em;
-  padding-bottom: 1em;
+
   font-size: 3.5em;
+  margin: 1em;
+  font-family: Simplifica;
+  text-transform: uppercase;
 }
 
 .activitie_pics {
