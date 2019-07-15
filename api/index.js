@@ -600,23 +600,23 @@ api.get('/api/registration/:id',verifyToken, (req, res) => {
   })
 })
 
-// api.get('/api/registration/filter?',verifyToken, (req, res) => {
-//   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-//     if (err) {
-//       console.log(err)
-//       res.sendStatus(403);
-//     } else {
-//     if(req.query.event) {
-//       connection.query(
-//       `SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE registrations.event_id = '${req.query.event}'`,
-//         (err,result) => {
-//           if (err) throw err;
-//           res.send(result);
-//         }
-//       )  
-//     }
-//   }
-// })
+api.get('/api/registration/filter?',verifyToken, (req, res) => {
+  // jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+  //   if (err) {
+  //     console.log(err)
+  //     res.sendStatus(403);
+  //   } else {
+    if(req.query.event) {
+      connection.query(
+      `SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE registrations.event_id = '${req.query.event}'`,
+        (err,result) => {
+          if (err) throw err;
+          res.send(result);
+        }
+      )  
+    }
+  // }
+})
 
 api.put('/api/zboub/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
