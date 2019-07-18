@@ -100,7 +100,7 @@ function Events({ match }) {
         capacity: capacite,
         addressEvent: address,
         descriptionEvent: (indexSup === 'default' ? false : describtion === activities[indexSup].description) ? '' : describtion,
-        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
+        pictureEvent: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : '',
         activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
       })
         .then(() => {
@@ -153,7 +153,7 @@ function Events({ match }) {
         addressEvent: address,
         nameEvent: title === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].name ? '' : title,
         descriptionEvent: describtion === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].description ? '' : describtion,
-        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : myCrazyTernary,
+        pictureEvent: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : myCrazyTernary,
         activityId: events[0].activity_id,
       })
         .then(() => {

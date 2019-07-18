@@ -52,7 +52,7 @@ function Activities() {
       axios.post(`${conf.url}/api/activities/`, {
         name: title,
         description: describtion,
-        picture: `/images/${newFile.name}`,
+        picture: `${conf.url}/images/${newFile.name}`,
       })
         .then(() => {
           axios.post(`${conf.url}/api/uploaddufichier/`, data)
@@ -101,7 +101,7 @@ function Activities() {
       axios.put(`${conf.url}/api/activities/${id}`, {
         name: title,
         description: describtion,
-        picture: emptyFile === 1 ? `/images/${newFile.name}` : activities[indexSup].picture,
+        picture: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : activities[indexSup].picture,
       })
         .then(() => {
           message.success(`Votre activité ${title} a été modifiée`, 3);
@@ -132,7 +132,7 @@ function Activities() {
           axios.delete(`${conf.url}/api/activities/${id}`)
             .then(() => {
               message.success(`L'activité ${title} a été supprimée`, 3);
-              axios.delete(`${conf.url}/api/deletefile/${sendFile[2]}`)
+              axios.delete(`${conf.url}/api/deletefile/${sendFile[sendFile.length - 1]}`)
                 .then(() => {
                   message.success(`L'activité ${title} a été supprimée`, 3);
                 })
