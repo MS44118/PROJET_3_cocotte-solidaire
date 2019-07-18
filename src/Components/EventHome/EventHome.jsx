@@ -345,7 +345,12 @@ function EventHome({ events, registrations, dispatch }) {
                 ? (
                   <li className="create-registration col s12">
                     <Link to="/reservation" homeEvent={event.id_event}>
-                      il reste de la place: créer une nouvelle réservation
+                      <button
+                        className="btn btn-small waves-effect waves-light"
+                        type="submit"
+                      >
+                        créer une nouvelle réservation
+                      </button>
                     </Link>
                   </li>
                 )

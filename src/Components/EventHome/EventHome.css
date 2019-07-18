@@ -63,7 +63,6 @@ li{
   max-width: 15px;
 }
 
-
 /* events list settings */
 .event-header{
   background-color: rgb(55,126,114, 1);
@@ -94,6 +93,7 @@ li{
 .create-registration{
   text-align: center;
   text-decoration: underline;
+  margin: 15px;
 }
 
 .warning-icon{
