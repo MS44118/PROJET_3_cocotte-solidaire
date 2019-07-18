@@ -139,6 +139,7 @@ function Reservation(
       axios.get(`${conf.url}/api/registration/${registrationId}`)
         .then((data) => {
           setRegistration(data.data);
+          setDisableInput(true);
         })
         .catch(() => {
           message.error("Une erreur s'est produite lors du chargement. Merci de rafraichir la page", 3);

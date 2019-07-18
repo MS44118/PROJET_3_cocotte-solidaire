@@ -32,3 +32,7 @@
 .ant-fullcalendar-today .ant-fullcalendar-date{
   border-top-color: #84b9af!important;
 }
+
+.ant-fullcalendar-next-month-btn-day .events, .ant-fullcalendar-last-month-cell .events{
+  display: none;
+}

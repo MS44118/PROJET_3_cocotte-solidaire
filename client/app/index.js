@@ -256,7 +256,7 @@ function App() {
           )}
         </div>
       </div>
-      <div className={`container cards-${display.style}`}>
+      <div className={`cards-${display.style}`}>
         {eventList.length && size <= 768
           && (
             <div className="calendar-mobile">

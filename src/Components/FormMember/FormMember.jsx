@@ -42,26 +42,38 @@ function FormMember({ userSelected, dispatch }) {
 
   useEffect(() => {
     if (userSelected.user) {
-      setIdUser(userSelected.user.idUser);
-      setAdress(userSelected.user.adress);
-      setBirthday(userSelected.user.birthday !== 'Invalid date' ? userSelected.user.birthday : '');
-      setCity(userSelected.user.city);
-      setEmail(userSelected.user.email);
-      setFirstname(userSelected.user.firstname);
-      setGender(userSelected.user.gender);
-      setImageCopyright(userSelected.user.imageCopyright);
-      setLastname(userSelected.user.lastname);
-      setMailingActive(userSelected.user.mailingActive);
-      setMemberActive(userSelected.user.memberActive);
-      setMemberId(userSelected.user.memberId);
-      setMembershipDateLast(userSelected.user.membershipDateLast !== 'Invalid date' ? userSelected.user.membershipDateLast : '');
-      setMembershipPlace(userSelected.user.membershipPlace);
-      setNeighborhood(userSelected.user.neighborhood);
-      setPhone(userSelected.user.phone);
-      setZip(userSelected.user.zip);
-      setLabelActive('active');
+      axios.get(`${conf.url}/api/user/${userSelected.user.idUser}`)
+        .then((data) => {
+          setUser(data.data[0]);
+        })
+        .catch(() => {
+          message.error("Problème lors de la récupération de l'utilisateur.", 3);
+        });
     }
   }, [userSelected]);
+
+  useEffect(() => {
+    if (user.idUser) {
+      setIdUser(user.idUser);
+      setAdress(user.adress);
+      setBirthday(user.birthday !== 'Invalid date' ? user.birthday : '');
+      setCity(user.city);
+      setEmail(user.email);
+      setFirstname(user.firstname);
+      setGender(user.gender);
+      setImageCopyright(user.imageCopyright);
+      setLastname(user.lastname);
+      setMailingActive(user.mailingActive);
+      setMemberActive(user.memberActive);
+      setMemberId(user.memberId);
+      setMembershipDateLast(user.membershipDateLast !== 'Invalid date' ? user.membershipDateLast : '');
+      setMembershipPlace(user.membershipPlace);
+      setNeighborhood(user.neighborhood);
+      setPhone(user.phone);
+      setZip(user.zip);
+      setLabelActive('active');
+    }
+  }, [user]);
 
   useEffect(() => {
     const userTemp = {

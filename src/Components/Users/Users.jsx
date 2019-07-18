@@ -102,7 +102,7 @@ function Users(
       cancelText: 'Non',
       onOk() {
         setHeaderToken(() => {
-          axios.put(`${conf.url}/user/anonym/${userList[index].idUser}`)
+          axios.put(`${conf.url}/api/user/anonym/${userList[index].idUser}`)
             .then((res) => {
               if (res.status === 200) {
                 const arrayTemp = [...userList];

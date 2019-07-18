@@ -86,7 +86,29 @@ api.get('/api/users', verifyToken, (req, res) => {
       console.log(err)
       res.sendStatus(403);
     } else {
-      connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
+      connection.query('SELECT id_user, firstname, lastname, email, phone, member_id FROM users WHERE anonym = 0', (err, result) => {
+        const data = result.map((user, index) => ({
+          idUser: user.id_user,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          phone: user.phone,
+          memberId: user.member_id,
+        }))
+        if (err) throw err;
+        res.json(data);
+      });
+    }
+  });
+});
+
+api.get('/api/user/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      connection.query(`SELECT * FROM users WHERE id_user = ${req.params.id}`, (err, result) => {
         const data = result.map((user, index) => ({
           idUser: user.id_user,
           firstname: user.firstname,
@@ -193,25 +215,15 @@ api.put('/api/user/anonym/:id', verifyToken, (req, res) => {
     } else {
       const idUser = req.params.id;
       const values = req.body;
-      { values.birthday ? values.birthday = `${moment(values.birthday).format("YYYY-MM-DD HH:mm:ss")}` : values.birthday = null }
-      { values.membershipDateLast ? values.membershipDateLast = `${moment(values.membershipDateLast).format("YYYY-MM-DD HH:mm:ss")}` : values.membershipDateLast = null }
+      console.log(idUser)
       const data = {
         firstname: 'firstname',
         lastname: 'lastname',
         email: 'email@toto.com',
         phone: 'phone',
-        birthday: values.birthday,
-        gender: values.gender,
-        member_id: values.memberId,
-        member_active: values.memberActive,
-        membership_date_last: values.membershipDateLast,
-        membership_place: values.membershipPlace,
         address_user: 'address',
         zip: '00000',
         city: values.city,
-        neighborhood: values.neighborhood,
-        image_copyright: values.imageCopyright,
-        mailing_active: values.mailingActive,
         anonym: true,
       }
       if (idUser) {
@@ -599,24 +611,6 @@ api.get('/api/registration/:id',verifyToken, (req, res) => {
     })
   })
 })
-
-// api.get('/api/registration/filter?',verifyToken, (req, res) => {
-  // jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-  //   if (err) {
-  //     console.log(err)
-  //     res.sendStatus(403);
-  //   } else {
-    // if(req.query.event) {
-    //   connection.query(
-    //   `SELECT registrations.*, users.lastname, users.firstname, users.phone, users.email, users.member_id, events.name_event, events.date_b FROM registrations LEFT JOIN users ON users.id_user=registrations.user_id  LEFT JOIN events ON events.id_event=registrations.event_id WHERE registrations.event_id = '${req.query.event}'`,
-    //     (err,result) => {
-    //       if (err) throw err;
-    //       res.send(result);
-    //     }
-    //   )  
-    // }
-  // }
-// })
 
 api.put('/api/zboub/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {

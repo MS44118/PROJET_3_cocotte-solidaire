@@ -81,25 +81,27 @@ function Events({ match }) {
         pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
         activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
       })
-        .then(() => {
-          message.success('Activité crée !');
+        .then((res) => {
+          if (res.status === 200) {
+            message.success('Activité crée !');
+            setTitle('');
+            setDescribtion('');
+            setFile('');
+            setNameFile('');
+            setCapacite('');
+            setDateBegin('');
+            setDateEnd('');
+            setAddress('');
+            setSelectValue('default');
+            setIndexSup('default');
+            setEmptyFile(0);
+            setRecharge(1);
+          }
         })
         .catch((error) => {
           message.success(`${error}`);
         });
     });
-    setTitle('');
-    setDescribtion('');
-    setFile('');
-    setNameFile('');
-    setCapacite('');
-    setDateBegin('');
-    setDateEnd('');
-    setAddress('');
-    setSelectValue('default');
-    setIndexSup('default');
-    setEmptyFile(0);
-    setRecharge(1);
   };
 
   const modifyEvents = () => {
