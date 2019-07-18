@@ -212,15 +212,12 @@ function Reservation(
       <div className=" row ">
         <div className="input-field col s4 noFuckingmargin">
           <p> Nombres d&apos;adultes</p>
-<<<<<<< HEAD
+
           <Select
-            value={quantityAdult}
-            style={{ width: 120 }}
+            value={quantityAdult}  
+            style={{ width: 120 }}    
             onChange={e => setQuantityAdult(e)}
           >
-=======
-          <Select  value={quantityAdult}  style={{ width: 120 }}  onChange={e => setQuantityAdult(e)}>
->>>>>>> lastChange
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
             <option value="2">2</option>
