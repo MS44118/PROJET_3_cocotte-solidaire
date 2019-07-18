@@ -7,7 +7,7 @@ import {
 } from 'antd';
 import 'moment/locale/fr';
 import queryString from 'query-string';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import conf from '../../app.conf';
 import setHeaderToken from '../../Utils/tokenUtil';
@@ -43,6 +43,7 @@ function Reservation(
   const [newReservation, setNewReservation] = useState(true);
   const [idRegistration, setIdRegistration] = useState();
   const [dataSource, setDataSource] = useState([]);
+  const [toHome, setToHome] = useState(false);
 
   useEffect(() => {
     M.AutoInit();
@@ -83,6 +84,7 @@ function Reservation(
           .then((res) => {
             if (res.status === 200) {
               message.success('La réservation a bien été prise en compte', 3);
+              setToHome(true);
             } else {
               message.warning(res.status, 3);
             }
@@ -97,6 +99,7 @@ function Reservation(
           .then((res) => {
             if (res.status === 200) {
               message.success('La réservation a bien été modifiée', 3);
+              setToHome(true);
             } else {
               message.warning(res.status, 3);
             }
@@ -162,8 +165,10 @@ function Reservation(
     }
   }, [registration]);
 
+  
   return (
     <div className="container">
+    {toHome ? <Redirect to ='/' />: null}
       <h1>Réservation</h1>
       <div className="input-field col s4 mr-8">
         <button
