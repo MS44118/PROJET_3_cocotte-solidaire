@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
-
-// CSS
-import 'materialize-css/dist/css/materialize.min.css';
 import './Menu.css';
 
 // ACTIONS

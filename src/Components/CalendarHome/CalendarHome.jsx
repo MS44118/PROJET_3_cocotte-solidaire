@@ -32,97 +32,97 @@ function CalendarHome({
     let listData;
     switch (parseInt(moment(value).format('D'), 10)) {
       case 1:
-        listData = dayEvents(monthEvents, filters, 1);
+        listData = dayEvents(monthEvents, filters, 1, actualMonth.split('-')[1]);
         break;
       case 2:
-        listData = dayEvents(monthEvents, filters, 2);
+        listData = dayEvents(monthEvents, filters, 2, actualMonth.split('-')[1]);
         break;
       case 3:
-        listData = dayEvents(monthEvents, filters, 3);
+        listData = dayEvents(monthEvents, filters, 3, actualMonth.split('-')[1]);
         break;
       case 4:
-        listData = dayEvents(monthEvents, filters, 4);
+        listData = dayEvents(monthEvents, filters, 4, actualMonth.split('-')[1]);
         break;
       case 5:
-        listData = dayEvents(monthEvents, filters, 5);
+        listData = dayEvents(monthEvents, filters, 5, actualMonth.split('-')[1]);
         break;
       case 6:
-        listData = dayEvents(monthEvents, filters, 6);
+        listData = dayEvents(monthEvents, filters, 6, actualMonth.split('-')[1]);
         break;
       case 7:
-        listData = dayEvents(monthEvents, filters, 7);
+        listData = dayEvents(monthEvents, filters, 7, actualMonth.split('-')[1]);
         break;
       case 8:
-        listData = dayEvents(monthEvents, filters, 8);
+        listData = dayEvents(monthEvents, filters, 8, actualMonth.split('-')[1]);
         break;
       case 9:
-        listData = dayEvents(monthEvents, filters, 9);
+        listData = dayEvents(monthEvents, filters, 9, actualMonth.split('-')[1]);
         break;
       case 10:
-        listData = dayEvents(monthEvents, filters, 10);
+        listData = dayEvents(monthEvents, filters, 10, actualMonth.split('-')[1]);
         break;
       case 11:
-        listData = dayEvents(monthEvents, filters, 11);
+        listData = dayEvents(monthEvents, filters, 11, actualMonth.split('-')[1]);
         break;
       case 12:
-        listData = dayEvents(monthEvents, filters, 12);
+        listData = dayEvents(monthEvents, filters, 12, actualMonth.split('-')[1]);
         break;
       case 13:
-        listData = dayEvents(monthEvents, filters, 13);
+        listData = dayEvents(monthEvents, filters, 13, actualMonth.split('-')[1]);
         break;
       case 14:
-        listData = dayEvents(monthEvents, filters, 14);
+        listData = dayEvents(monthEvents, filters, 14, actualMonth.split('-')[1]);
         break;
       case 15:
-        listData = dayEvents(monthEvents, filters, 15);
+        listData = dayEvents(monthEvents, filters, 15, actualMonth.split('-')[1]);
         break;
       case 16:
-        listData = dayEvents(monthEvents, filters, 16);
+        listData = dayEvents(monthEvents, filters, 16, actualMonth.split('-')[1]);
         break;
       case 17:
-        listData = dayEvents(monthEvents, filters, 17);
+        listData = dayEvents(monthEvents, filters, 17, actualMonth.split('-')[1]);
         break;
       case 18:
-        listData = dayEvents(monthEvents, filters, 18);
+        listData = dayEvents(monthEvents, filters, 18, actualMonth.split('-')[1]);
         break;
       case 19:
-        listData = dayEvents(monthEvents, filters, 19);
+        listData = dayEvents(monthEvents, filters, 19, actualMonth.split('-')[1]);
         break;
       case 20:
-        listData = dayEvents(monthEvents, filters, 20);
+        listData = dayEvents(monthEvents, filters, 20, actualMonth.split('-')[1]);
         break;
       case 21:
-        listData = dayEvents(monthEvents, filters, 21);
+        listData = dayEvents(monthEvents, filters, 21, actualMonth.split('-')[1]);
         break;
       case 22:
-        listData = dayEvents(monthEvents, filters, 22);
+        listData = dayEvents(monthEvents, filters, 22, actualMonth.split('-')[1]);
         break;
       case 23:
-        listData = dayEvents(monthEvents, filters, 23);
+        listData = dayEvents(monthEvents, filters, 23, actualMonth.split('-')[1]);
         break;
       case 24:
-        listData = dayEvents(monthEvents, filters, 24);
+        listData = dayEvents(monthEvents, filters, 24, actualMonth.split('-')[1]);
         break;
       case 25:
-        listData = dayEvents(monthEvents, filters, 25);
+        listData = dayEvents(monthEvents, filters, 25, actualMonth.split('-')[1]);
         break;
       case 26:
-        listData = dayEvents(monthEvents, filters, 26);
+        listData = dayEvents(monthEvents, filters, 26, actualMonth.split('-')[1]);
         break;
       case 27:
-        listData = dayEvents(monthEvents, filters, 27);
+        listData = dayEvents(monthEvents, filters, 27, actualMonth.split('-')[1]);
         break;
       case 28:
-        listData = dayEvents(monthEvents, filters, 28);
+        listData = dayEvents(monthEvents, filters, 28, actualMonth.split('-')[1]);
         break;
       case 29:
-        listData = dayEvents(monthEvents, filters, 29);
+        listData = dayEvents(monthEvents, filters, 29, actualMonth.split('-')[1]);
         break;
       case 30:
-        listData = dayEvents(monthEvents, filters, 30);
+        listData = dayEvents(monthEvents, filters, 30, actualMonth.split('-')[1]);
         break;
       case 31:
-        listData = dayEvents(monthEvents, filters, 31);
+        listData = dayEvents(monthEvents, filters, 31, actualMonth.split('-')[1]);
         break;
       default:
     }

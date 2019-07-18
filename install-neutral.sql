@@ -74,3 +74,4 @@ CREATE TABLE admins (
   name VARCHAR(255)
 );
 
+INSERT INTO admins (email, password, name) VALUES ('admin@gmail.com', '$2a$10$frAzPBXeg.av/yvgBfRvyeMuS1MTwHvb2kF3oii.vtxA7A.ZKdQTu', 'admin');

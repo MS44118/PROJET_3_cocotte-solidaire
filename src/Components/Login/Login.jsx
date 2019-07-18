@@ -37,7 +37,7 @@ function Login({ dispatch }) {
     <div className="valign-wrapper">
       <div className="centerLogin">
         <h1>La cocotte solidaire</h1>
-        <h2>Espace adminstrateur</h2>
+        <h2>Espace administrateur</h2>
         <div className="row">
           <div className="input-field col s6">
             <input

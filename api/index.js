@@ -85,7 +85,29 @@ api.get('/api/users', verifyToken, (req, res) => {
       console.log(err)
       res.sendStatus(403);
     } else {
-      connection.query('SELECT * FROM users WHERE anonym = 0', (err, result) => {
+      connection.query('SELECT id_user, firstname, lastname, email, phone, member_id FROM users WHERE anonym = 0', (err, result) => {
+        const data = result.map((user, index) => ({
+          idUser: user.id_user,
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          phone: user.phone,
+          memberId: user.member_id,
+        }))
+        if (err) throw err;
+        res.json(data);
+      });
+    }
+  });
+});
+
+api.get('/api/user/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      connection.query(`SELECT * FROM users WHERE id_user = ${req.params.id}`, (err, result) => {
         const data = result.map((user, index) => ({
           idUser: user.id_user,
           firstname: user.firstname,

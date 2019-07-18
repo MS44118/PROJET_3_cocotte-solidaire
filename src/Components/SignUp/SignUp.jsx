@@ -31,7 +31,7 @@ function SignUp() {
   return (
     <div className="valign-wrapper" style={{ width: '100vw', height: '80vh' }}>
       <div style={{ width: '100vh', margin: 'auto' }} className="center-align">
-        <h1>Sign up</h1>
+        <h1>Enregistrement d'un nouvel administrateur</h1>
         <div className="row">
           <div className="input-field col s4">
             <input
