@@ -226,13 +226,33 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
           <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
-          <li className="col col-icon s1"><i className="material-icons icon-white">email</i></li>
+          <li className="col col-icon s1">
+            <Tooltip title="email manquant">
+              <i className="material-icons icon-white">email</i>
+            </Tooltip>
+          </li>
           {/* <li className="col col-icon s1">allergies</li> */}
-          <li className="col col-icon s1"><i className="material-icons icon-white">warning</i></li>
+          <li className="col col-icon s1">
+            <Tooltip title="allergies">
+              <i className="material-icons icon-white">warning</i>
+            </Tooltip>
+          </li>
           {/* <li className="col col-icon s1">commentaires</li> */}
-          <li className="col col-icon s1"><i className="material-icons icon-white">comment</i></li>
-          <li className="col col-icon s1"><i className="material-icons icon-white">create</i></li>
-          <li className="col col-icon s1"><i className="material-icons icon-white">delete_forever</i></li>
+          <li className="col col-icon s1">
+            <Tooltip title="commentaires">
+              <i className="material-icons icon-white">comment</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="modifier">
+              <i className="material-icons icon-white">create</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="supprimer">
+              <i className="material-icons icon-white">delete_forever</i>
+            </Tooltip>
+          </li>
           <li className="col col-icon s1"><i className="material-icons">expand_more</i></li>
           {/* <i className="material-icons icon-white">pan_tool</i>
           <i className="material-icons icon-white">restaurant</i>

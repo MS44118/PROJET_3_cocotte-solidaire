@@ -95,10 +95,10 @@ function Reservation(
       setHeaderToken(() => {
         axios.put(`${conf.url}/api/zboub/${idRegistration}`, addReservation)
           .then((res) => {
-            if (res.sendStatus === 200) {
-              message.success('La réservation a bien été prise en compte', 3);
+            if (res.status === 200) {
+              message.success('La réservation a bien été modifiée', 3);
             } else {
-              message.warning(res, 3);
+              message.warning(res.status, 3);
             }
           })
           .catch(() => {
@@ -133,7 +133,7 @@ function Reservation(
     if (location.search.length > 0) {
       const params = queryString.parse(location.search);
       const registrationId = params.id;
-      axios.get(`${conf.url}/registration/${registrationId}`)
+      axios.get(`${conf.url}/api/registration/${registrationId}`)
         .then((data) => {
           setRegistration(data.data);
         })
@@ -215,7 +215,7 @@ function Reservation(
           <Select
             value={quantityAdult}
             style={{ width: 120 }}
-            onChange={e => setQuantityAdult(e.target.value)}
+            onChange={e => setQuantityAdult(e)}
           >
             <option value="0" disabled selected>Nombres Adultes</option>
             <option value="1">1</option>
@@ -229,7 +229,7 @@ function Reservation(
 
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
-          <Select value={quantityChildren} style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e.target.value)}>
+          <Select value={quantityChildren} style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
