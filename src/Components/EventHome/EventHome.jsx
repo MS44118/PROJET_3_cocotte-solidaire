@@ -108,7 +108,8 @@ function EventHome({ events, registrations, dispatch }) {
   // Request to delete an event
   const deleteEvent = (id) => {
     setHeaderToken(() => {
-      axios.delete(`${conf.url}/api/event/${id}`)
+      axios
+        .delete(`${conf.url}/api/event/${id}`)
         .then((res) => {
           if (res.status === 200) {
             message.success(res.data, 3);
@@ -121,11 +122,11 @@ function EventHome({ events, registrations, dispatch }) {
               ],
             );
           } else {
-            message.warning(res.status, 3);
+            message.warning(res.data, 3);
           }
         })
         .catch((err) => {
-          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
+          message.error(err.response.data, 3);
         });
     });
   };
