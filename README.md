@@ -1,79 +1,50 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
+Clone the project.
+Install all dependencies.
 ### `npm install`
 
-install the modules required to run the app.
-- react 
-- mysql
-- express
+Add files : 
+  - file name : api/.password.js , structre => <br>
+const myPassword = 'passwordSQL'<br>
+module.exports = myPassword;<br>
 
-react-router-dom?
-bootstrap?
-nodemon?
+  - file name : api/.private.key and api/.public.key which contain RSA keys (you can make them on http://travistidwell.com/jsencrypt/demo/ , juste copy/paste lines) <br>
+  - file name : api/.emailAuth.js, structure =><br>
+const emailAuth = {<br>
+  user: 'yourmail@gmail.com',<br>
+  pass: 'password'<br>
+}<br>
+module.exports = emailAuth;<br>
+(Note: you need to allow less secure app acces on https://myaccount.google.com/u/0/lesssecureapps)
 
+Use the install.sql script to create the database.<br>
+If you want to use another user than root, and another name of database than 'cocotte_booking' you need to change the configuration file api/conf.js and modify the CREATE DATABASE at the beginning of the install.sql file.<br>
+
+Create the first admin in SQL with email 'admin@gmail.com' and password 'admin': <br>
+  - open mysql and enter this query : <br>
+INSERT INTO admins (email, password, name) VALUES ('admin@gmail.com', '$2a$10$frAzPBXeg.av/yvgBfRvyeMuS1MTwHvb2kF3oii.vtxA7A.ZKdQTu', 'admin');<br>
+
+Build the application : <br>
+Go to the root of the project and use:
+### `npm run build`
+It will create a build folder. <br>
+Move all build files at the root of the project. <br>
+
+Go into api folder and enter command line :
+### `nohup node index.js`
+(nohup is used to run the application server even when you quit the server. You can also use pm2 package : https://www.npmjs.com/package/pm2)
+Go to the root of the project and enter command line :
 ### `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Your admin page is ready to use !!!
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+Create script for reseration on public site : 
 
-### `npm test`
+Go to folder /client and run command line : 
+### `npm run create`
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+It will create a /client/dist folder with an index_bundle.js file.
+You can call this script in your html page and add a div with id='app' and type='x':<br>
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Type = 1 => activity : manger<br>
+Type = 2 => activity : cuisiner & manger<br>
+Type = 3 => others activities. <br>

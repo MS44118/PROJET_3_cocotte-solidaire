@@ -24,19 +24,6 @@ CREATE TABLE users (
   anonym BOOLEAN
 );
 
--- -- mock datas for users TABLE
--- INSERT INTO cocotte_booking.users 
---   (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active, anonym)
--- VALUES
---   ('maelenn', 'sallic', '', '0677251296', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Einstein', 44300, 'Nantes', true, true, false, false),
---   ('cedric', 'gardianot', 'cedric@gmail.com', '0655983322', NOW(), 'male', 550067, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false, false),
---   ('aurelia', 'roumesy', 'aurelia@gmail.com', '', NOW(), 'female', 550068, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false, false),
---   ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550069, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false, false);
-  
--- -- controls
--- SELECT firstname, lastname, email, phone, birthday, gender, anonym FROM users;
--- SELECT  member_id, member_active, membership_date_last, membership_place, address_user, zip, city, neighborhood, image_copyright, mailing_active FROM users;
-
 -- activities TABLE CREATION
 CREATE TABLE activities(
   id_activity INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
@@ -51,14 +38,8 @@ INSERT INTO cocotte_booking.activities
 VALUES
   ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
   ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ('autres', null, null),
-  ('poterie', "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg");
--- controls
-SELECT id_activity, name_activity, description_activity FROM activities;
-SELECT id_activity, name_activity, picture_activity FROM activities;
+  ('Autre', null, null);
 
-
--- events TABLE CREATION + foreign keys
 CREATE TABLE events (
   id_event INT NOT NULL AUTO_INCREMENT,
   date_b DATETIME,
@@ -73,36 +54,6 @@ CREATE TABLE events (
   FOREIGN KEY (activity_id) REFERENCES activities(id_activity)
 );
 
-
--- mock datas for events TABLE
-INSERT INTO cocotte_booking.events 
-  (date_b, date_e, name_event, capacity, address_event, activity_id, description_event, picture_event)
-
-VALUES
-  ('2019-07-14',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('2019-07-15',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-08-17',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('2019-08-18',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ('2019-08-19',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-09-14',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('2019-09-15',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ('2019-09-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-10-17',NOW(), "manger", 30, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 1, "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('2019-10-18',NOW(), "cuisiner & manger", 10, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 2, "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg"),
-  ('2019-10-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-16',NOW(), "poterie", 8, "la cocotte solidaire - ile de versailles 44000 Nantes. Tram 2 - arret 'motte rouge' ", 4, "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('2019-07-19',NOW(), "autre", 8, "evènement unique ", 3, "evènement unique ", null);
-
--- controls
-SELECT * FROM events;
-
-
--- registrations (bookings) TABLE CREATION + foreign keys
 CREATE TABLE registrations (
   id_registration INT NOT NULL AUTO_INCREMENT,
   quantity_adult INT,
@@ -116,31 +67,9 @@ CREATE TABLE registrations (
   FOREIGN KEY (event_id) REFERENCES events(id_event)
 );
 
--- mock datas for registrations TABLE
-INSERT INTO cocotte_booking.registrations (quantity_adult, quantity_children, allergie, comment, user_id, event_id)
-VALUES
-  (2, 2, " ", "besoin d'1 chaise bébé", 1, 4),
-  (3, 0, " ", " ", 2, 4),
-  (1, 0, "cacahuètes", " ", 3, 4),
-  (5, 0, " ", " ", 4, 6),
-  (3, 0, " ", " ", 1, 6),
-(1, 0, " ", " ", 2, 2);
-
- 'SELECT registrations.id_registration,
-  users.firstname, users.lastname, users.email, 
-  users.phone, users.member_id, registrations.quantity_adult, 
-  registrations.quantity_children, registrations.event_id, registrations.allergie, 
-  registrations.comment 
-  FROM registrations JOIN users ON users.id_user=registrations.user_id JOIN events ON events.id_event=registrations.event_id JOIN activities ON activities.id_activity=events.activity_id GROUP BY registrations.id_registration;',
-
 CREATE TABLE admins (
   id_admin INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   email VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   name VARCHAR(255)
 );
-
-INSERT INTO cocotte_booking.admins 
-  (email, password, name)
-VALUES
-  ('toto@gmail.com', 'toto', 'toto');
