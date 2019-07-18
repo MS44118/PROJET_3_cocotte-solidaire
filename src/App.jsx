@@ -30,7 +30,7 @@ function App({ tokenApproved, dispatch }) {
           }
         })
         .catch(() => {
-          message.error('Votre session a expiré, merci de vous authentifier à nouveu', 3);
+          message.error('Votre session a expiré, merci de vous authentifier à nouveau', 3);
         });
     });
   }, []);
