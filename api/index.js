@@ -34,6 +34,9 @@ api.use(bodyParser.urlencoded({
 // api.use(cors());
 api.use(cors({ origin: '*' }));
 
+// rendre les images accessible
+api.use('/images', express.static('./images'));
+
 connection.connect((err) => {
   if (err) throw err;
   console.log('connected to MYSQL database');
@@ -486,7 +489,7 @@ api.delete('/api/event/:id', verifyToken, (req, res) => {
 //------------------------------------------------Upload image-------------------------------------------------
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../public/images')
+    cb(null, './images')
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname);
@@ -520,15 +523,17 @@ api.delete('/api/deletefile/:file', verifyToken, function(req, res) {
       res.sendStatus(403);
     } else {
       let file = req.params.file;
-      fs.stat(`../public/images/${file}`, function(err) {
+      console.log(file);
+      fs.stat(`./images/${file}`, function(err) {
         if (!err) {
-          fs.unlink(`../public/images/${file}`, function(err) {
+          fs.unlink(`./images/${file}`, function(err) {
             if (err) throw err;
             console.log('file deleted');
           })
         }
         else if (err.code === 'ENOENT') {
           console.log('file or directory does not exist');
+          console.log(err);
         }
       })
     }

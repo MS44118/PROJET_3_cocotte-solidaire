@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { message } from 'antd';
+import {
+  message, Row, Col,
+} from 'antd';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import moment from 'moment';
 import fr from 'date-fns/locale/fr';
@@ -13,8 +15,28 @@ import './Events.css';
 
 registerLocale('fr', fr);
 
+function useWindowSize() {
+  const isClient = typeof window === 'object';
+  function getSize() {
+    return isClient ? window.innerWidth : undefined;
+  }
+  const [windowSize, setWindowSize] = useState(getSize);
+  useEffect(() => {
+    if (!isClient) {
+      return false;
+    }
+    function handleResize() {
+      setWindowSize(getSize());
+    }
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); // Empty array ensures that effect is only run on mount and unmount
+  return windowSize;
+}
+
 function Events({ match }) {
   // ----------------------------------------HOOKS-----------------------------------------------
+  const size = useWindowSize();
   const [activities, setActivities] = useState([]);
   const [events, setEvents] = useState({});
   const [selectValue, setSelectValue] = useState('default');
@@ -63,10 +85,10 @@ function Events({ match }) {
       setHeaderToken(() => {
         axios.post(`${conf.url}/api/uploaddufichier/`, data)
           .then(() => {
-            message.success('Activité crée !');
+            message.success('Image de l\'évènement créée !');
           })
-          .catch((error) => {
-            message.success(`${error}`);
+          .catch(() => {
+            message.success('l\'image de l\'évènement n\'a pas été créée !');
           });
       });
     }
@@ -78,12 +100,12 @@ function Events({ match }) {
         capacity: capacite,
         addressEvent: address,
         descriptionEvent: (indexSup === 'default' ? false : describtion === activities[indexSup].description) ? '' : describtion,
-        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : '',
+        pictureEvent: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : '',
         activityId: indexSup !== 'default' ? activities[indexSup].id_activity : 3,
       })
         .then((res) => {
           if (res.status === 200) {
-            message.success('Activité crée !');
+            message.success('L\'évènement a été créé !');
             setTitle('');
             setDescribtion('');
             setFile('');
@@ -98,8 +120,8 @@ function Events({ match }) {
             setRecharge(1);
           }
         })
-        .catch((error) => {
-          message.success(`${error}`);
+        .catch(() => {
+          message.success('L\'évènement n\'a pas été créé !');
         });
     });
   };
@@ -117,10 +139,10 @@ function Events({ match }) {
         axios.post(`${conf.url}/api/uploaddufichier/`, data, {
         })
           .then(() => {
-            message.success(`Votre activité ${title} à ete modifiee`);
+            message.success(`Votre image de l'évènement ${title} a été modifiée`);
           })
-          .catch((error) => {
-            message.success(`${error}`);
+          .catch(() => {
+            message.success(`Votre image de l'évènement ${title} n'a pas été modifiée`);
           });
       });
     }
@@ -133,14 +155,14 @@ function Events({ match }) {
         addressEvent: address,
         nameEvent: title === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].name ? '' : title,
         descriptionEvent: describtion === activities.filter(activity => activity.id_activity === events[0].activity_id)[0].description ? '' : describtion,
-        pictureEvent: emptyFile === 1 ? `/images/${newFile.name}` : myCrazyTernary,
+        pictureEvent: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : myCrazyTernary,
         activityId: events[0].activity_id,
       })
         .then(() => {
-          message.success(`Votre activité ${title} à ete modifiee`);
+          message.success(`Votre évènement ${title} a été modifié`);
         })
-        .catch((error) => {
-          message.success(`${error}`);
+        .catch(() => {
+          message.success(`Votre évènement ${title} n'a pas été modifié`);
         });
     });
     setTimeout(() => setRedirection(true), 2000);
@@ -181,13 +203,13 @@ function Events({ match }) {
   return (
     <div className="container">
       {redirection ? <Redirect to="/" /> : ''}
-      <h1 className="center-align marg">{!id ? "Création d'un evenement" : "Modification d'un evenement"}</h1>
-      <div className="row">
-        <div className="input-field col s12">
+      <h2 className="center-align marge">{!id ? "Création d'un évènement" : "Modification d'un évènement"}</h2>
+      <Row>
+        <Col sm={24} lg={12} className="input-field">
           {id ? (
-            <p>
+            <p className="modifText">
               Modification de l&apos;evenement :
-              {events[0] ? events[0].name_event : ''}
+              {events[0] ? ` ${events[0].name_event}` : ''}
             </p>
           ) : ''}
           {!id ? (
@@ -198,13 +220,13 @@ function Events({ match }) {
               )) : ''}
             </select>
           ) : ''}
-        </div>
-        <div className="input-field col s12">
+        </Col>
+        <Col sm={24} lg={12} className="input-field">
           <i className="material-icons prefix">title</i>
           <input id="titre_activité" type="text" className="validate" value={title} onChange={e => handleChange(e, setTitle)} />
           <label className={active} htmlFor="titre_activité">Titre de l&apos;evenement</label>
-        </div>
-      </div>
+        </Col>
+      </Row>
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">description</i>
@@ -219,12 +241,12 @@ function Events({ match }) {
             <input type="file" onChange={handleChangeFile} name="file" />
           </div>
           <div className="file-path-wrapper">
-            <input className="file-path" type="text" />
+            <input className="file-path" type="text" defaultValue={file} />
           </div>
         </div>
       </div>
-      <div className="row center">
-        <div className="input-field col s4">
+      <Row className="center">
+        <Col sm={24} md={12} lg={8} className="input-field">
           <span style={{ color: 'black', fontSize: '1.2em' }}>Date de début :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
@@ -237,8 +259,8 @@ function Events({ match }) {
             selected={dateBegin && new Date(dateBegin)}
             onChange={date => date && setDateBegin(moment(date).format())}
           />
-        </div>
-        <div className="input-field col s4">
+        </Col>
+        <Col sm={24} md={12} lg={8} className="input-field">
           <span style={{ color: 'black', fontSize: '1.2em' }}>Date de fin :</span>
           <i className="material-icons">calendar_today</i>
           <DatePicker
@@ -251,13 +273,13 @@ function Events({ match }) {
             selected={dateEnd && new Date(dateEnd)}
             onChange={date => date && setDateEnd(moment(date).format())}
           />
-        </div>
-        <div className="input-field col s4">
+        </Col>
+        <Col sm={24} md={24} lg={8} className="input-field">
           <i className="material-icons prefix">supervisor_account</i>
           <textarea id="capacity" className="materialize-textarea" value={capacite} onChange={e => handleChange(e, setCapacite)} />
           <label className={active} htmlFor="capacity">Capacity</label>
-        </div>
-      </div>
+        </Col>
+      </Row>
       <div className="row">
         <div className="input-field col s12">
           <i className="material-icons prefix">add_location</i>
@@ -265,12 +287,13 @@ function Events({ match }) {
           <label className="active" htmlFor="address">Adresse</label>
         </div>
       </div>
-      <div className="center-align marge">
+      <div className="center-align">
         {!id ? <button className="btn waves-effect waves-light pos_bt" onClick={submitEvents} type="submit">Creer</button> : ''}
         {id ? <button className="btn waves-effect waves-light pos_bt" onClick={modifyEvents} type="submit">Modifier</button> : ''}
       </div>
+      <p className="renderSize row center-align">Rendu de l&apos;évènement</p>
       {(selectValue === 'default' || indexSup > 1) || idActivity === 1 ? (
-        <div className="card horizontal">
+        <div className={`card ${size < 768 ? null : 'horizontal'}`}>
           <div className="card-image">
             <img src={file} alt={title} />
           </div>
@@ -307,6 +330,10 @@ function Events({ match }) {
           <div className="container mssg">
             <h1 className="center-align subtitles"><span>{title}</span></h1>
             <p className="justify text">{describtion}</p>
+            <p>
+              Lieu :
+              {address}
+            </p>
             <img className="activitie_pics" src={file} alt="cocotte_activite" />
           </div>
         </div>
@@ -315,16 +342,16 @@ function Events({ match }) {
         <div>
           <ul className="collection">
             <li className="collection-item row center-align">
-              <p className="col s3">{title}</p>
-              <p className="col s3">
+              <p className="col m6 s3">{title}</p>
+              <p className="col m6 s3">
                 Places restantes :
                 {capacite}
               </p>
-              <p className="col s3">
+              <p className="col m6 s3">
                 Date :
                 {dateBegin !== '' ? moment(dateBegin).format('DD-MM-YYYY HH:mm:ss') : ''}
               </p>
-              <p className="col s3">
+              <p className="col m6 s3">
                 <button
                   type="button"
                   className="waves-effect waves-light btn-small teal darken-1 white-text col right"
