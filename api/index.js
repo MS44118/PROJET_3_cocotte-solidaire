@@ -217,27 +217,45 @@ api.put('/api/user/anonym/:id', verifyToken, (req, res) => {
       res.sendStatus(403);
     } else {
       const idUser = req.params.id;
-      const values = req.body;
       console.log(idUser)
-      const data = {
-        firstname: 'firstname',
-        lastname: 'lastname',
-        email: 'email@toto.com',
-        phone: 'phone',
-        address_user: 'address',
-        zip: '00000',
-        city: values.city,
-        anonym: true,
-      }
       if (idUser) {
-        connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
-          if (err) {
-            console.log(err);
-            res.status(500).send("Erreur lors de l'anonymisation");
-          } else {
-            res.sendStatus(200);
-          }
-        });
+        connection.query(`SELECT * FROM users WHERE id_user='${idUser}'`,
+          (err, result) => {
+            if (err) {
+              console.log(err)
+              res.sendStatus(403);
+            } else {
+              const values = result[0]
+              const data = {
+                firstname: 'firstname',
+                lastname: 'lastname',
+                email: 'email@toto.com',
+                phone: 'phone',
+                birthday: values.birthday,
+                gender: values.gender,
+                member_id: values.memberId,
+                member_active: values.memberActive,
+                membership_date_last: values.membershipDateLast,
+                membership_place: values.membershipPlace,
+                address_user: 'address',
+                zip: '00000',
+                city: values.city,
+                neighborhood: values.neighborhood,
+                image_copyright: values.imageCopyright,
+                mailing_active: values.mailingActive,
+                anonym: true,
+              }
+              console.log(data)
+              connection.query('UPDATE users SET ? WHERE id_user = ?', [data, idUser], err => {
+                if (err) {
+                  console.log(err);
+                  res.status(500).send("Erreur lors de l'anonymisation");
+                } else {
+                  res.sendStatus(200);
+                }
+              });
+            }
+          })
       }
     }
   });
