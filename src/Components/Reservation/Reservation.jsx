@@ -166,10 +166,9 @@ function Reservation(
     }
   }, [registration]);
 
-  
   return (
     <div className="container">
-    {toHome ? <Redirect to ='/' />: null}
+      {toHome ? <Redirect to="/" /> : null}
       <h1>Réservation</h1>
       <div className="input-field col s4 mr-8">
         <button
@@ -220,8 +219,8 @@ function Reservation(
           <p> Nombres d&apos;adultes</p>
 
           <Select
-            value={quantityAdult}  
-            style={{ width: 120 }}    
+            value={quantityAdult}
+            style={{ width: 120 }}
             onChange={e => setQuantityAdult(e)}
           >
             <option value="0" disabled selected>Nombres Adultes</option>
@@ -236,7 +235,7 @@ function Reservation(
 
         <div className="input-field col s4 ">
           <p>Nombres d&apos;enfants</p>
-          <Select value={ quantityChildren } style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e)}>
+          <Select value={quantityChildren} style={{ width: 120 }} className="test" onChange={e => setQuantityChildren(e)}>
             <option value="0" disabled selected>Nombres Enfants</option>
             <option value="1">1</option>
             <option value="2">2</option>
