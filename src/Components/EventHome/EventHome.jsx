@@ -241,7 +241,7 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
-          <li className="col col-icon s1 show-on-medium">
+          <li className="col col-icon s1 hide-on-small-only hide-on-large-only">
             <Tooltip title="capacité" trigger="click hover">
               <i className="material-icons icon-white">people</i>
             </Tooltip>
