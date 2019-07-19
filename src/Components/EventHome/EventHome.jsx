@@ -266,7 +266,7 @@ function EventHome({ events, registrations, dispatch }) {
               className={
                 event.nb_persons < event.capacity
                   ? 'event-item row center-align'
-                  : 'event-item-complete row center-align'
+                  : 'event-item grey lighten-1 row center-align'
               }
 
             >
@@ -376,6 +376,21 @@ function EventHome({ events, registrations, dispatch }) {
                         type="submit"
                       >
                         créer une nouvelle réservation
+                      </button>
+                    </Link>
+                  </li>
+                )
+                : null
+              }
+              {collapses[index] === true && event.nb_persons >= event.capacity
+                ? (
+                  <li className="create-registration col s12">
+                    <Link to="/reservation" homeEvent={event.id_event}>
+                      <button
+                        className="btn btn-small grey lighten-1 waves-effect waves-light"
+                        type="submit"
+                      >
+                        COMPLET: voulez-vous surbooker?
                       </button>
                     </Link>
                   </li>
