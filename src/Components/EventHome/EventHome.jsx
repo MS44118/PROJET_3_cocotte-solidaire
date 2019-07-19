@@ -226,19 +226,17 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
-          <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
+          <li className="col col-icon s1 hide-on-small-only"><i className="material-icons icon-white">people</i></li>
           <li className="col col-icon s1">
             <Tooltip title="email manquant">
               <i className="material-icons icon-white">email</i>
             </Tooltip>
           </li>
-          {/* <li className="col col-icon s1">allergies</li> */}
           <li className="col col-icon s1">
             <Tooltip title="allergies">
               <i className="material-icons icon-white">warning</i>
             </Tooltip>
           </li>
-          {/* <li className="col col-icon s1">commentaires</li> */}
           <li className="col col-icon s1">
             <Tooltip title="commentaires">
               <i className="material-icons icon-white">comment</i>
@@ -264,7 +262,14 @@ function EventHome({ events, registrations, dispatch }) {
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
-            <ul className="event-item row center-align">
+            <ul
+              className={
+                event.nb_persons < event.capacity
+                  ? 'event-item row center-align'
+                  : 'event-item-complete row center-align'
+              }
+
+            >
               <li className="col s2">{event.name_event === '' ? event.name_activity : event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">
@@ -273,7 +278,7 @@ function EventHome({ events, registrations, dispatch }) {
               </li>
               <li className="col col-icon s1 hide-on-med-and-down">{event.nb_adults}</li>
               <li className="col col-icon s1 hide-on-med-and-down">{event.nb_children}</li>
-              <li className="col s1">
+              <li className="col s1 hide-on-small-only">
                 {event.nb_persons}
                 /
                 {event.capacity}
