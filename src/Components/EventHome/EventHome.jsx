@@ -232,34 +232,42 @@ function EventHome({ events, registrations, dispatch }) {
         <ul className="event-header">
           <li className="col s2 hide-on-large-only"> </li>
           <li className="col s2 hide-on-med-and-down">Evènement</li>
-          <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">today</i></li>
+          <li className="col col-icon s1 hide-on-large-only">
+            <Tooltip title="date" trigger="click hover">
+              <i className="material-icons icon-white">today</i>
+            </Tooltip>
+          </li>
           <li className="col s1 hide-on-med-and-down">Date/Heure</li>
           <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
-          <li className="col col-icon s1 hide-on-small-only"><i className="material-icons icon-white">people</i></li>
+          <li className="col col-icon s1 show-on-medium">
+            <Tooltip title="capacité" trigger="click hover">
+              <i className="material-icons icon-white">people</i>
+            </Tooltip>
+          </li>
           <li className="col col-icon s1">
-            <Tooltip title="email manquant">
+            <Tooltip title="email manquant" trigger="click hover">
               <i className="material-icons icon-white">email</i>
             </Tooltip>
           </li>
           <li className="col col-icon s1">
-            <Tooltip title="allergies">
+            <Tooltip title="allergies" trigger="click hover">
               <i className="material-icons icon-white">warning</i>
             </Tooltip>
           </li>
           <li className="col col-icon s1">
-            <Tooltip title="commentaires">
+            <Tooltip title="commentaires" trigger="click hover">
               <i className="material-icons icon-white">comment</i>
             </Tooltip>
           </li>
           <li className="col col-icon s1">
-            <Tooltip title="modifier">
+            <Tooltip title="modifier" trigger="click hover">
               <i className="material-icons icon-white">create</i>
             </Tooltip>
           </li>
           <li className="col col-icon s1">
-            <Tooltip title="supprimer">
+            <Tooltip title="supprimer" trigger="click hover">
               <i className="material-icons icon-white">delete_forever</i>
             </Tooltip>
           </li>
@@ -298,7 +306,7 @@ function EventHome({ events, registrations, dispatch }) {
                 {event.nb_emails === event.NB_REG
                   ? null
                   : (
-                    <Tooltip title={event.NB_REG - event.nb_emails}>
+                    <Tooltip title={event.NB_REG - event.nb_emails} trigger="click hover">
                       <i className="material-icons warning-icon">email</i>
                     </Tooltip>
                   )
@@ -307,7 +315,7 @@ function EventHome({ events, registrations, dispatch }) {
               <li className="col col-icon s1">
                 {event.nb_allergies > 0
                   ? (
-                    <Tooltip title={event.nb_allergies}>
+                    <Tooltip title={event.nb_allergies} trigger="click hover">
                       <i className="material-icons warning-icon">warning</i>
                     </Tooltip>
                   )
@@ -317,7 +325,7 @@ function EventHome({ events, registrations, dispatch }) {
               <li className="col col-icon s1">
                 {event.nb_comments > 0
                   ? (
-                    <Tooltip title={event.nb_comments}>
+                    <Tooltip title={event.nb_comments} trigger="click hover">
                       <i className="material-icons icon-green">comment</i>
                     </Tooltip>
                   )
@@ -325,7 +333,7 @@ function EventHome({ events, registrations, dispatch }) {
                 }
               </li>
               <li className="col col-icon s1">
-                <Link to={`/events/${event.id_event}`}>
+                <Link to={`/events/${event.id_event}`} trigger="click hover">
                   <i className="material-icons icon-green">create</i>
                 </Link>
               </li>
