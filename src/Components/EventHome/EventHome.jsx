@@ -187,7 +187,7 @@ function EventHome({ events, registrations, dispatch }) {
           />
           <span>Tous</span>
         </label>
-        <label className="col" htmlFor="filterCuisiner">
+        <label className="col hide-on-med-and-up" htmlFor="filterCuisiner">
           <input
             type="checkbox"
             id="filterCuisiner"
@@ -196,6 +196,17 @@ function EventHome({ events, registrations, dispatch }) {
           />
           <span>Cuisiner</span>
         </label>
+
+        <label className="col hide-on-small-only" htmlFor="filterCuisiner">
+          <input
+            type="checkbox"
+            id="filterCuisiner"
+            checked={filterCuisiner ? 'checked' : ''}
+            onChange={e => setFilterCuisiner(e.target.checked)}
+          />
+          <span>Cuisiner & Manger</span>
+        </label>
+
         <label className="col" htmlFor="filterManger">
           <input
             type="checkbox"
