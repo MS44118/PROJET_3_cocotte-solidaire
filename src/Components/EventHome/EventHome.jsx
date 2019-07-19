@@ -108,7 +108,8 @@ function EventHome({ events, registrations, dispatch }) {
   // Request to delete an event
   const deleteEvent = (id) => {
     setHeaderToken(() => {
-      axios.delete(`${conf.url}/api/event/${id}`)
+      axios
+        .delete(`${conf.url}/api/event/${id}`)
         .then((res) => {
           if (res.status === 200) {
             message.success(res.data, 3);
@@ -121,11 +122,11 @@ function EventHome({ events, registrations, dispatch }) {
               ],
             );
           } else {
-            message.warning(res.status, 3);
+            message.warning(res.data, 3);
           }
         })
         .catch((err) => {
-          message.error(`évènement ${id} ne peut pas être supprimé: ${err}`, 3);
+          message.error(err.response.data, 3);
         });
     });
   };
@@ -225,19 +226,17 @@ function EventHome({ events, registrations, dispatch }) {
           <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
           <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
           <li className="col s1 hide-on-med-and-down">capacité</li>
-          <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-white">people</i></li>
+          <li className="col col-icon s1 hide-on-small-only"><i className="material-icons icon-white">people</i></li>
           <li className="col col-icon s1">
             <Tooltip title="email manquant">
               <i className="material-icons icon-white">email</i>
             </Tooltip>
           </li>
-          {/* <li className="col col-icon s1">allergies</li> */}
           <li className="col col-icon s1">
             <Tooltip title="allergies">
               <i className="material-icons icon-white">warning</i>
             </Tooltip>
           </li>
-          {/* <li className="col col-icon s1">commentaires</li> */}
           <li className="col col-icon s1">
             <Tooltip title="commentaires">
               <i className="material-icons icon-white">comment</i>
@@ -263,7 +262,14 @@ function EventHome({ events, registrations, dispatch }) {
         {/* liste des evenements */}
         {filteredEvents.map((event, index) => (
           <div className="event" key={event.id_event} data-genre={event.name_event}>
-            <ul className="event-item row center-align">
+            <ul
+              className={
+                event.nb_persons < event.capacity
+                  ? 'event-item row center-align'
+                  : 'event-item grey lighten-1 row center-align'
+              }
+
+            >
               <li className="col s2">{event.name_event === '' ? event.name_activity : event.name_event}</li>
               <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
               <li className="col s1 hide-on-med-and-down">
@@ -272,7 +278,7 @@ function EventHome({ events, registrations, dispatch }) {
               </li>
               <li className="col col-icon s1 hide-on-med-and-down">{event.nb_adults}</li>
               <li className="col col-icon s1 hide-on-med-and-down">{event.nb_children}</li>
-              <li className="col s1">
+              <li className="col s1 hide-on-small-only">
                 {event.nb_persons}
                 /
                 {event.capacity}
@@ -370,6 +376,21 @@ function EventHome({ events, registrations, dispatch }) {
                         type="submit"
                       >
                         créer une nouvelle réservation
+                      </button>
+                    </Link>
+                  </li>
+                )
+                : null
+              }
+              {collapses[index] === true && event.nb_persons >= event.capacity
+                ? (
+                  <li className="create-registration col s12">
+                    <Link to="/reservation" homeEvent={event.id_event}>
+                      <button
+                        className="btn btn-small grey lighten-1 waves-effect waves-light"
+                        type="submit"
+                      >
+                        COMPLET: voulez-vous surbooker?
                       </button>
                     </Link>
                   </li>

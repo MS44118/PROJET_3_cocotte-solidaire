@@ -34,7 +34,7 @@ function ReservationHome(
       axios.delete(`${conf.url}/api/registration/${id}`)
         .then((res) => {
           message.success(res.data, 3);
-          resultat = res.status;
+          resultat = res.data;
         })
         .then(() => {
           if (resultat === 200) {
@@ -51,7 +51,7 @@ function ReservationHome(
           }
         })
         .catch((err) => {
-          message.error(`inscription ${id} ne peut pas être supprimé: ${err}`, 3);
+          message.error(err.response.data, 3);
         });
     });
   };
