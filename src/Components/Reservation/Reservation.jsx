@@ -168,9 +168,9 @@ function Reservation(
 
   
   return (
-    <div className="container">
+    <div className="container title">
     {toHome ? <Redirect to ='/' />: null}
-      <h1>Réservation</h1>
+      <h2>Réservation</h2>
       <div className="input-field col s4 mr-8">
         <button
           type="submit"

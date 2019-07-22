@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-function dayEvents(monthEvents, filters, day, month) {
+function dayEvents(monthEvents, filters, day) {
   let listData = [];
   for (let i = 0; i < monthEvents.length; i += 1) {
-    if (parseInt(moment(monthEvents[i].date_b).format('D'), 10) === day && parseInt(moment(monthEvents[i].date_b).format('M'), 10) === parseInt(month, 10)) {
+    if (parseInt(moment(monthEvents[i].date_b).format('D'), 10) === day) {
       if (monthEvents[i].placesAvailable <= 0) {
         if (filters.manger && monthEvents[i].id_activity === 1) {
           listData = [...listData,

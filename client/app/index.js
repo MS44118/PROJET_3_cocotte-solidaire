@@ -102,8 +102,9 @@ function App() {
   useEffect(() => {
     let arrayTempFocus = [];
     let arrayTempBlocked = [];
+    const eventsTemp = [...events];
     for (let i = 0; i < events.length; i += 1) {
-      if (events[i].nb_persons >= events[i].capacity) {
+      if (eventsTemp[i].placesAvailable <= 0) {
         arrayTempBlocked = [...arrayTempBlocked, moment(events[i].date_b)];
         setBlockedList(arrayTempBlocked);
       } else {
@@ -111,7 +112,7 @@ function App() {
         setFocusList(arrayTempFocus);
       }
     }
-  }, [events.length]);
+  }, [events]);
 
   useEffect(() => {
     const arrayTemp = [];
@@ -245,13 +246,11 @@ function App() {
             <DayPickerSingleDateController
               daySize={50}
               numberOfMonths={2}
-              autoFocus
               hideKeyboardShortcutsPanel
               date={dateSelected || moment()}
               onDateChange={date => setDateSelected(date)}
               isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
               isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
-              id="reservation_calendar_type_less2"
             />
           )}
         </div>
@@ -263,18 +262,16 @@ function App() {
               <DayPickerSingleDateController
                 daySize={30}
                 numberOfMonths={1}
-                autoFocus
                 hideKeyboardShortcutsPanel
                 date={dateSelected || moment()}
                 onDateChange={date => setDateSelected(date)}
                 isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
                 isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
-                id="reservation_calendar_mobile"
               />
             </div>
           )}
         {eventList && eventList.map((event, index) => (
-          <div>
+          <div key={event.id_event}>
             {type > 2
               ? (
                 <div className={`card ${size < 768 ? null : 'horizontal'}`} key={event[index]}>
@@ -310,7 +307,7 @@ function App() {
                       onClick={() => handleCreate(index)}
                       disabled={event.placesAvailable <= 0 || false}
                     >
-                      RESERVER
+                      {event.placesAvailable <= 0 ? 'COMPLET' : 'RESERVER'}
                     </button>
                   </div>
                 </div>
@@ -335,7 +332,7 @@ function App() {
                           onClick={() => handleCreate(index)}
                           disabled={event.placesAvailable <= 0 || false}
                         >
-                          RESERVER
+                          {event.placesAvailable <= 0 ? 'COMPLET' : 'RESERVER'}
                         </button>
                       </p>
                     </li>
@@ -347,7 +344,7 @@ function App() {
                 <div className="row">
                   <div className="input-field col s12 m6">
                     <select className="browser-default form-item" value={numberAdults} onChange={e => setNumberAdult(e.target.value)}>
-                      <option value="0" disabled selected>Nombre d&apos;adultes</option>
+                      <option value="0" disabled>Nombre d&apos;adultes</option>
                       <option value="1">1</option>
                       <option value="2" disabled={event.placesAvailable - numberChildrens / 2 < 2 || false}>2</option>
                       <option value="3" disabled={event.placesAvailable - numberChildrens / 2 < 3 || false}>3</option>
@@ -358,7 +355,7 @@ function App() {
                   </div>
                   <div className="input-field col s12 m6">
                     <select className="browser-default form-item" value={numberChildrens} onChange={e => setNumberChildren(e.target.value)}>
-                      <option value="0" disabled selected>Nombres d&apos;enfants (1/2 place)</option>
+                      <option value="0" disabled>Nombres d&apos;enfants (1/2 place)</option>
                       <option value="1" disabled={event.placesAvailable - numberAdults < 1 || false}>1</option>
                       <option value="2" disabled={event.placesAvailable - numberAdults < 1 || false}>2</option>
                       <option value="3" disabled={event.placesAvailable - numberAdults < 2 || false}>3</option>
@@ -463,7 +460,7 @@ function App() {
                           onChange={e => setInformation(e.target.value)}
                         />
                         <label htmlFor="importantInfo">
-                          Informations complémentaires
+                          Info
                         </label>
                       </div>
                     </div>
@@ -508,14 +505,12 @@ function App() {
           <DayPickerSingleDateController
             daySize={50}
             numberOfMonths={2}
-            autoFocus
             orientation={display.orientation}
             hideKeyboardShortcutsPanel
             date={dateSelected || moment()}
             onDateChange={date => setDateSelected(date)}
             isDayHighlighted={day1 => focusList.some(day2 => isSameDay(day1, day2))}
             isDayBlocked={day1 => blockedList.some(day2 => isSameDay(day1, day2))}
-            id="reservation_calendar_type_more2"
           />
         </div>
       )}

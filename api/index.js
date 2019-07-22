@@ -701,10 +701,13 @@ api.post('/api/reservation/public/', (req, res) => {
                           console.log(err)
                         } else {
                           if (values.email) {
+                            console.log('mail')
                             const data = { email: values.email, eventName: values.eventName, eventDate: values.eventDateB, nbAdults: values.numberAdults, nbChildrens: values.numberChildrens }
                             const repMail = sendEmail(data);
                             console.log(repMail)
                           }
+                          console.log('pas mail')
+                          
                           res.sendStatus(200)
                         }
                       }

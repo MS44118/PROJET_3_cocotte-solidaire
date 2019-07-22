@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import _ from 'underscore';
 import {
-  Input, Icon, AutoComplete, message, Modal,
+  message, Modal, Select,
 } from 'antd';
 import FormMember from '../FormMember/FormMember';
 import setHeaderToken from '../../Utils/tokenUtil';
@@ -20,6 +20,7 @@ function Users(
   },
 ) {
   const { confirm } = Modal;
+  const { Option } = Select;
   const [users, setUsers] = useState([]);
   const [userList, setUserList] = useState([]);
   const [activeFormMember, setActiveFormMember] = useState([]);
@@ -27,7 +28,6 @@ function Users(
   const [filterLastName, setFilterLastName] = useState(false);
   const [filterMemberId, setFilterMemberId] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [dataSource, setDataSource] = useState([]);
 
   useEffect(() => {
     setHeaderToken(() => {
@@ -35,11 +35,6 @@ function Users(
         .then((data) => {
           setUsers(data.data);
           setUserList(data.data.slice(0, 20));
-          let dataTemp = ['0 Tous les adhérents'];
-          for (let i = 0; i < data.data.length; i += 1) {
-            dataTemp = [...dataTemp, `${data.data[i].idUser} ${data.data[i].firstname} ${data.data[i].lastname}`];
-          }
-          setDataSource(dataTemp);
         })
         .catch(() => {
           message.error('Problème lors de la récupération des utilisateurs.', 3);
@@ -130,15 +125,19 @@ function Users(
       </div>
       <div className="topTable">
         <div>
-          <AutoComplete
+          <Select
+            showSearch
             style={{ width: 300 }}
-            dataSource={dataSource}
-            onSelect={value => setSearchValue(value.split(' ')[0])}
-            placeholder="Recherche (par nom ou prénom)"
+            placeholder="Rechercher un adhérent"
+            optionFilterProp="children"
+            onChange={value => setSearchValue(value)}
             filterOption={(inputValue, option) => option.props.children.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().indexOf(inputValue.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase()) !== -1}
           >
-            <Input suffix={<Icon type="search" className="certain-category-icon" />} />
-          </AutoComplete>
+            <Option value="0">Tous les adhérents</Option>
+            {users.map((user, index) => (
+              <Option key={user[index]} value={user.idUser}>{`${user.memberId} ${user.firstname} ${user.lastname}`}</Option>
+            ))}
+          </Select>
         </div>
         <button
           type="button"
@@ -149,26 +148,26 @@ function Users(
         </button>
       </div>
       <ul className="collection">
-        <li style={{ display: displayNewUser }}><FormMember userSelected="new" /></li>
+        <li style={{ display: displayNewUser }}><FormMember userSelected={{ type: 'new' }} /></li>
         <li className="collection-item-header row center-align">
-          <textbox className="col s4 m2">
+          <span className="col s4 m2">
             N°adhérent
             <i role="button" tabIndex="0" onClick={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])} onKeyDown={() => filterUsers('memberId', [filterMemberId, setFilterMemberId])} className="material-icons user-icon">unfold_more</i>
-          </textbox>
-          <textbox className="col s4 m2">
+          </span>
+          <span className="col s4 m2">
             Nom
             <i role="button" tabIndex="0" onClick={() => filterUsers('lastname', [filterLastName, setFilterLastName])} onKeyDown={() => filterUsers('lastname', [filterLastName, setFilterLastName])} className="material-icons user-icon">unfold_more</i>
-          </textbox>
-          <textbox className="col s4 m2">
+          </span>
+          <span className="col s4 m2">
             Prénom
             <i role="button" tabIndex="0" onClick={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])} onKeyDown={() => filterUsers('firstname', [filterFirstName, setFilterFirstName])} className="material-icons user-icon">unfold_more</i>
-          </textbox>
-          <textbox className="col s4 m2">Tel</textbox>
-          <textbox className="col s4 m2">Mail</textbox>
-          <textbox className="col s4 m2" />
+          </span>
+          <span className="col s4 m2">Tel</span>
+          <span className="col s4 m2">Mail</span>
+          <span className="col s4 m2" />
         </li>
         {userList.length && userList.map((user, index) => (
-          <div key={user[index]}>
+          <div key={user.idUser}>
             <li className="collection-item row">
               <p className="col s4 m2">{user.memberId}</p>
               <p className="col s4 m2">{user.lastname}</p>
@@ -211,43 +210,8 @@ Users.propTypes = {
   displayNewUser: PropTypes.string,
   displayKnownUser: PropTypes.string,
   dispatch: PropTypes.func,
-  updateUser: PropTypes.shape({
-    adress: PropTypes.string,
-    birthday: PropTypes.string,
-    city: PropTypes.string,
-    email: PropTypes.string,
-    firstname: PropTypes.string,
-    gender: PropTypes.string,
-    imageCopyright: PropTypes.bool,
-    lastname: PropTypes.string,
-    mailingActive: PropTypes.bool,
-    memberActive: PropTypes.bool,
-    memberId: PropTypes.string,
-    membershipDateLast: PropTypes.string,
-    membershipPlace: PropTypes.string,
-    neighborhood: PropTypes.bool,
-    phone: PropTypes.string,
-    zip: PropTypes.string,
-    idUser: PropTypes.string,
-  }),
-  newUser: PropTypes.shape({
-    adress: PropTypes.string,
-    birthday: PropTypes.string,
-    city: PropTypes.string,
-    email: PropTypes.string,
-    firstname: PropTypes.string,
-    gender: PropTypes.string,
-    imageCopyright: PropTypes.bool,
-    lastname: PropTypes.string,
-    mailingActive: PropTypes.bool,
-    memberActive: PropTypes.bool,
-    memberId: PropTypes.string,
-    membershipDateLast: PropTypes.string,
-    membershipPlace: PropTypes.string,
-    neighborhood: PropTypes.bool,
-    phone: PropTypes.string,
-    zip: PropTypes.string,
-  }),
+  updateUser: PropTypes.arrayOf(PropTypes.object),
+  newUser: PropTypes.arrayOf(PropTypes.object),
 };
 
 Users.defaultProps = {

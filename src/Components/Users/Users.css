@@ -54,7 +54,7 @@
   align-items: center;
 }
 
-.collection-item-header textbox{
+.collection-item-header span{
   margin-right: 20px;
 }
 

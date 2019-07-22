@@ -101,7 +101,7 @@ function FormMember({ userSelected, dispatch }) {
     membershipPlace, neighborhood, phone, zip]);
 
   const handleSend = () => {
-    if (userSelected === 'new') {
+    if (userSelected.type === 'new') {
       dispatch(displayNewUserFormAction('none'));
     } else {
       dispatch(displayKnownUserFormAction('none'));
@@ -155,7 +155,7 @@ function FormMember({ userSelected, dispatch }) {
   };
 
   const handleClose = () => {
-    if (userSelected === 'new') {
+    if (userSelected.type === 'new') {
       dispatch(displayNewUserFormAction('none'));
     } else {
       dispatch(displayKnownUserFormAction('none'));
@@ -376,24 +376,7 @@ function FormMember({ userSelected, dispatch }) {
 }
 
 FormMember.propTypes = {
-  userSelected: PropTypes.shape({
-    adress: PropTypes.string,
-    birthday: PropTypes.string,
-    city: PropTypes.string,
-    email: PropTypes.string,
-    firstname: PropTypes.string,
-    gender: PropTypes.string,
-    imageCopyright: PropTypes.bool,
-    lastname: PropTypes.string,
-    mailingActive: PropTypes.bool,
-    memberActive: PropTypes.bool,
-    memberId: PropTypes.string,
-    membershipDateLast: PropTypes.string,
-    membershipPlace: PropTypes.string,
-    neighborhood: PropTypes.bool,
-    phone: PropTypes.string,
-    zip: PropTypes.string,
-  }),
+  userSelected: PropTypes.objectOf(PropTypes.object),
   dispatch: PropTypes.func,
 };
 
