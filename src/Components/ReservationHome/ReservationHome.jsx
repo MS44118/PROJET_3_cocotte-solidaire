@@ -100,9 +100,17 @@ function ReservationHome(
         <li className="col s1 hide-on-med-and-down">prénom</li>
         <li className="col s1 hide-on-med-and-down">nom</li>
         <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
-        <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb adultes">person_outline</i></li>
+        <li className="col col-icon s1 hide-on-large-only">
+          <Tooltip title="nb adultes" trigger="click hover">
+            <i className="material-icons icon-green" title="nb adultes">person_outline</i>
+          </Tooltip>
+        </li>
         <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
-        <li className="col col-icon s1 hide-on-large-only"><i className="material-icons icon-green" title="nb enfants">child_care</i></li>
+        <li className="col col-icon s1 hide-on-large-only">
+          <Tooltip title="nb enfants" trigger="click hover">
+            <i className="material-icons icon-green" title="nb enfants">child_care</i>
+          </Tooltip>
+        </li>
         <li className="col s1 hide-on-med-and-down">téléphone</li>
         <li className="col col-icon s1"><i className="material-icons icon-green">email</i></li>
         <li className="col col-icon s1"><i className="material-icons icon-green">warning</i></li>
@@ -131,7 +139,7 @@ function ReservationHome(
             <li className="col col-icon s1">
               { registration.email === ' ' || '' || !registration.email
                 ? (
-                  <Tooltip title="envoyer un SMS">
+                  <Tooltip title="envoyer un SMS" trigger="click hover">
                     <i className="material-icons warning-icon">email</i>
                   </Tooltip>
                 )
@@ -142,7 +150,7 @@ function ReservationHome(
               { registration.allergie === ' ' || '' || !registration.allergie
                 ? null
                 : (
-                  <Tooltip title={registration.allergie}>
+                  <Tooltip title={registration.allergie} trigger="click hover">
                     <i className="material-icons warning-icon">warning</i>
                   </Tooltip>
                 )
@@ -152,7 +160,7 @@ function ReservationHome(
               { registration.comment === ' ' || '' || !registration.comment
                 ? null
                 : (
-                  <Tooltip title={registration.comment}>
+                  <Tooltip title={registration.comment} trigger="click hover">
                     <i className="material-icons icon-green">comment</i>
                   </Tooltip>
                 )
