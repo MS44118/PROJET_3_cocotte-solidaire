@@ -62,10 +62,10 @@ function Login({ dispatch }) {
             <label htmlFor="passwordSignIn">Mot de passe</label>
           </div>
         </div>
-        <div className="input-field row loginButton">
+        <div className="input-field row">
           <button
             type="button"
-            className="waves-effect waves-light btn-small teal darken-1 white-text col s2 offset-s3"
+            className="btn-small waves-effect waves-light"
             onClick={handleSendSignIn}
           >
             Se connecter
