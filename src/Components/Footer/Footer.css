@@ -1,10 +1,15 @@
-/* .footer-copyrigth{
-  max-height: 50px;
-} */
-
 .page-footer {
-  position: fixed;   /* Set the navbar to fixed position */
-  bottom: 0;            /* Position the navbar at the top of the page */
+  /* position: fixed; 
+  bottom: 0;            */
   width: 100%;
-  padding: 0;
+  max-height: 50px;
+  padding: 5px;
+  background-color: white !important;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-footer{
+  margin: 0;
 }

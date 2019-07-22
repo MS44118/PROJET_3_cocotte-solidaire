@@ -163,7 +163,7 @@ function EventHome({ events, registrations, dispatch }) {
   };
 
   return (
-    <div className="container">
+    <div className="container home-container">
       <div className="row title">
         <h1>Evènements à venir</h1>
       </div>
