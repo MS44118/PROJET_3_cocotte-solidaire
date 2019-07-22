@@ -81,6 +81,89 @@ api.get('/api/future-registrations', verifyToken, (req, res) => {
   })
 });
 
+// to delete a specific event 
+api.delete('/api/event/:id', verifyToken, (req, res) => {
+  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const idEvent = req.params.id;
+      console.log(`lancement suppression de l'evenement ${idEvent}: `);
+      // controle si l'evenement existe
+      connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
+        if (err) {
+          console.log(`Erreur lors de l'appel a la base de données: ${err}`);
+          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+        };
+        if (result[0].nb_event === 0) {
+          console.log(`l'évènement n°${idEvent} n'existe pas.`);
+          res.status(410).send(`l'évènement n°${idEvent} n'existe pas.`);
+        } else {
+          // controle si l'evenement contient des inscriptions
+          connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
+            if (err) {
+              console.log(`Erreur lors de l'appel a la base de données: ${err}`);
+              res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+            };
+            if (result[0].nb_persons === 0) {
+              // supprime l'evenement (si evenement existant et pas d'inscription)
+              connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
+                if (err) {
+                  console.log(`Erreur lors de la suppression d'un évènement: ${err}`);
+                  res.status(409).send(`l'évènement n°${idEvent} contient des réservations. impossible de le supprimer`)
+                } else {
+                  console.log(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+                  res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
+                }
+              });
+            } else {
+              console.log(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
+              res.status(409).send(`l'évènement n°${idEvent} contient des réservations. impossible de le supprimer`)
+            };
+          });
+        }
+      });
+    }
+  })
+});
+
+// to delete a specific registration 
+  api.delete('/api/registration/:id', verifyToken, (req, res) => {
+    jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
+    if (err) {
+      console.log(err)
+      res.sendStatus(403);
+    } else {
+      const idRegistration = req.params.id;
+      console.log(`lancement suppression de l'inscription ${idRegistration}: `);
+      // controle si l'inscription existe
+      connection.query(`SELECT COUNT(id_registration) as nb_registration FROM registrations WHERE id_registration = ? `, [idRegistration], (err, result) => {
+        if (err) {
+          console.log(`Erreur lors de l'appel a la base de données: ${err}`);
+          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
+        };
+        if (result[0].nb_registration === 0) {
+          console.log(`l'inscription n°${idRegistration} n'existe pas.`);
+          res.status(410).send(`l'inscription n°${idRegistration} n'existe pas.`);
+        } else {
+          // supprime l'inscription 
+          connection.query('DELETE FROM registrations WHERE id_registration = ?', [idRegistration], (err, result) => {
+            if (err) {
+              console.log(`l'inscription n°${idRegistration}. impossible de le supprimer`);
+              res.status(409).send(`l'inscription n°${idRegistration}. impossible de le supprimer`)
+            } else {
+              console.log(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+              res.status(200).send(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
+            }
+          });
+        }
+      });
+    }
+  })
+});
+
+
 
 //-------------------------------------------------------USERS-----------------------------------------
 api.get('/api/users', verifyToken, (req, res) => {
@@ -420,89 +503,6 @@ api.delete('/api/activities/:id', verifyToken, (req, res) => {
   });
 });
 
-// to delete a specific event 
-api.delete('/api/event/:id', verifyToken, (req, res) => {
-  jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-    if (err) {
-      console.log(err)
-      res.sendStatus(403);
-    } else {
-      const idEvent = req.params.id;
-      console.log(`lancement suppression de l'evenement ${idEvent}: `);
-      // controle si l'evenement existe
-      connection.query(`SELECT COUNT(id_event) as nb_event FROM events WHERE id_event = ? `, [idEvent], (err, result) => {
-        if (err) {
-          console.log(`Erreur lors de l'appel a la base de données: ${err}`);
-          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
-        };
-        if (result[0].nb_event === 0) {
-          console.log(`l'évènement n°${idEvent} n'existe pas.`);
-          res.status(410).send(`l'évènement n°${idEvent} n'existe pas.`);
-        } else {
-          // controle si l'evenement contient des inscriptions
-          connection.query(`SELECT IFNULL(SUM(registrations.quantity_adult + registrations.quantity_children/2), 0) as nb_persons, events.id_event FROM events LEFT JOIN registrations ON registrations.event_id=events.id_event WHERE events.id_event = ? GROUP BY events.id_event`, [idEvent], (err, result) => {
-            if (err) {
-              console.log(`Erreur lors de l'appel a la base de données: ${err}`);
-              res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
-            };
-
-            if (result[0].nb_persons === 0) {
-              // supprime l'evenement (si evenement existant et pas d'inscription)
-              connection.query('DELETE FROM events WHERE id_event = ?', [idEvent], (err, result) => {
-                if (err) {
-                  console.log(`Erreur lors de la suppression d'un évènement: ${err}`);
-                  res.status(500).send(`Erreur lors de la suppression d'un évènement: ${err}`);
-                } else {
-                  console.log(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
-                  res.status(200).send(`l'évènement n°${idEvent} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`)
-                }
-              });
-            } else {
-              console.log(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-              res.status(304).send(`l'évènement n°${idEvent} contient des réservations. il faut supprimer les réservations concernées avant de pouvoir supprimer l'évènement`)
-            };
-
-          });
-        }
-      });
-    }
-  })
-});
-
-// to delete a specific registration 
-  api.delete('/api/registration/:id', verifyToken, (req, res) => {
-    jwt.verify(req.token, publicKEY, verifyOptions, (err, authData) => {
-    if (err) {
-      console.log(err)
-      res.sendStatus(403);
-    } else {
-      const idRegistration = req.params.id;
-      console.log(`lancement suppression de l'inscription ${idRegistration}: `);
-      // controle si l'inscription existe
-      connection.query(`SELECT COUNT(id_registration) as nb_registration FROM registrations WHERE id_registration = ? `, [idRegistration], (err, result) => {
-        if (err) {
-          console.log(`Erreur lors de l'appel a la base de données: ${err}`);
-          res.status(500).send(`Erreur lors de l'appel a la base de données: ${err}`);
-        };
-        if (result[0].nb_registration === 0) {
-          console.log(`l'inscription n°${idRegistration} n'existe pas.`);
-          res.status(410).send(`l'inscription n°${idRegistration} n'existe pas.`);
-        } else {
-          // supprime l'inscription 
-          connection.query('DELETE FROM registrations WHERE id_registration = ?', [idRegistration], (err, result) => {
-            if (err) {
-              console.log(`Erreur lors de la suppression d'un inscription: ${err}`);
-              res.status(500).send(`Erreur lors de la suppression d'un inscription: ${err}`);
-            } else {
-              console.log(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
-              res.status(200).send(`l'inscription n°${idRegistration} vient d'être supprimé (${result.affectedRows} affectedRows, ${result.warningCount} warnings)`);
-            }
-          });
-        }
-      });
-    }
-  })
-});
 
 //------------------------------------------------Upload image-------------------------------------------------
 var storage = multer.diskStorage({
