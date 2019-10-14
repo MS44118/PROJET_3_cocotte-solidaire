@@ -11,3 +11,9 @@ Baskerville */
 vert: rgb(55, 126, 114, 1);
 rose: rgb(248, 200, 190, 1);
 gris: darkgrey; */
+
+h1{
+  margin-top: 0.5em;
+  font-size: 2.5rem;
+  text-align: center;
+}

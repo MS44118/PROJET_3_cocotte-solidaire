@@ -1,160 +1,445 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import moment from 'moment';
-import Calendar from 'react-calendar';
-import 'materialize-css/dist/css/materialize.min.css';
-import M from 'materialize-css/dist/js/materialize';
+import { Modal, message, Tooltip } from 'antd';
+import conf from '../../app.conf';
+import setHeaderToken from '../../Utils/tokenUtil';
 
-
+// CSS
 import './EventHome.css';
+import 'antd/dist/antd.css';
 
+// COMPONENTS
 import ReservationHome from '../ReservationHome/ReservationHome';
+import CalendarHome from '../CalendarHome/CalendarHome';
 
+// ACTIONS REDUX
+import { initEventsAction, initRegistrationsAction, removeEventAction } from '../../Actions/homeAction';
 
-function EventHome() {
-  // to store api response
-  const [events, setEvents] = useState([]);
+function EventHome({ events, registrations, dispatch }) {
   // to collapse all the registrations for a specific event
-  const [collapseRegistrations, setCollapseRegistrations] = useState([]);
+  const [collapses, setCollapses] = useState([]);
+  // to show modale asking confirmation to delete event
+  const [deleteModal, setDeleteModal] = useState([]);
+  // events filtered with checkboxes
+  const [filteredEvents, setFilteredEvents] = useState([]);
+  // checkboxes filters
+  const [filterCuisiner, setFilterCuisiner] = useState(true);
+  const [filterManger, setFilterManger] = useState(true);
+  const [filterAutres, setFilterAutres] = useState(true);
 
-  // Auto Init allows you to initialize all of the Materialize Components
+  // { filtre_xxxxx: true/visible or false/hidden, check_xxxxx: true/visible or false/hidden}
+  const checkAll = () => {
+    if (!filterCuisiner || !filterManger || !filterAutres) {
+      setFilterCuisiner(true);
+      setFilterManger(true);
+      setFilterAutres(true);
+    } else {
+      setFilterCuisiner(false);
+      setFilterManger(false);
+      setFilterAutres(false);
+    }
+  };
+
+  // api call to get events and registrations and send in redux store + filteredEvents
   useEffect(() => {
-    M.AutoInit();
+    setHeaderToken(() => {
+      axios.get(`${conf.url}/api/future-events`)
+        .then((result) => {
+          setFilteredEvents(result.data);
+          dispatch(initEventsAction(result.data));
+        });
+      axios.get(`${conf.url}/api/future-registrations`)
+        .then((result) => {
+          dispatch(initRegistrationsAction(result.data));
+        });
+    });
   }, []);
 
-  // api call
+  // to set filters according to checkboxes
+  // 1 = manger
+  // 2 = cuisiner et manger (also called "cuisiner" in home admin checkboxes)
+  // 3 = autres (default parameter for events created without activity selected)
+  // >3 = activities created other than "manger" or "cuisiner et manger" (ie: "poterie" or "yoga")
   useEffect(() => {
-    axios.get('http://localhost:8000/')
-      .then((result) => {
-        setEvents(result.data);
-      });
-  }, []);
+    if (events.length > 0) {
+      setFilteredEvents(events.filter((event) => {
+        if (filterManger) {
+          if (event.id_activity === 1) {
+            return event;
+          }
+        }
+        if (filterCuisiner) {
+          if (event.id_activity === 2) {
+            return event;
+          }
+        }
+        if (filterAutres) {
+          if (event.id_activity >= 3) {
+            return event;
+          }
+        }
+        return false;
+      }));
+    }
+  }, [events, filterManger, filterCuisiner, filterAutres]);
 
-  // set for a specific event, if the list of registrations is visible or not
+  // for each event, set the visibility of registrations details + Modals to delete a registration
   useEffect(() => {
     let array = [];
     array = events.map(() => (false));
-    setCollapseRegistrations(array);
-  }, [events.length > 0]);
+    setCollapses(array);
+    setDeleteModal(array);
+  }, [events, filteredEvents]);
 
+  // to filter events when a date selected on calendar
+  const selectedDate = (date) => {
+    const arrayTemp = events.filter(event => moment(event.date_b).format('LL') === date);
+    if (arrayTemp.length > 0) {
+      setFilteredEvents(arrayTemp);
+    } else {
+      setFilteredEvents(events);
+    }
+  };
+
+  // Request to delete an event
+  const deleteEvent = (id) => {
+    setHeaderToken(() => {
+      axios
+        .delete(`${conf.url}/api/event/${id}`)
+        .then((res) => {
+          if (res.status === 200) {
+            message.success(res.data, 3);
+            dispatch(removeEventAction(id));
+            const index = filteredEvents.findIndex(i => i.id_event === id);
+            setFilteredEvents(
+              [
+                ...filteredEvents.slice(0, [index]),
+                ...filteredEvents.slice([index + 1], filteredEvents.length),
+              ],
+            );
+          } else {
+            message.warning(res.data, 3);
+          }
+        })
+        .catch((err) => {
+          message.error(err.response.data, 3);
+        });
+    });
+  };
+
+  // Modal to delete an event
+  const { confirm } = Modal;
+  const showDeleteConfirm = (index) => {
+    confirm({
+      title:
+        `Vous aller supprimer l'évènement n° ${events[index].id_event}:
+        ${events[index].name_event === '' ? events[index].name_activity : events[index].name_event}
+        du ${moment(events[index].date_b).format('dddd Do/MM/YY')}
+        ${moment(events[index].date_b).format('HH:mm-')}${moment(events[index].date_e).format('HH:mm')}
+        (${events[index].NB_REG} réservations)`,
+      okType: 'danger',
+      okText: 'Supprimer',
+      cancelText: 'Annuler',
+      onOk() {
+        setDeleteModal([
+          ...deleteModal.slice(0, [index]),
+          !deleteModal[index],
+          ...deleteModal.slice([index + 1], deleteModal.length),
+        ]);
+        deleteEvent(events[index].id_event);
+      },
+      onCancel() {
+        setDeleteModal([
+          ...deleteModal.slice(0, [index]),
+          !deleteModal[index],
+          ...deleteModal.slice([index + 1], deleteModal.length),
+        ]);
+      },
+    });
+  };
 
   return (
-    <div>
-      <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages au calendrier </p>
-      <Calendar />
+    <div className="container home-container">
+      <div className="row title">
+        <h1>Evènements à venir</h1>
+      </div>
 
-      <form action="#">
-        <p className="RAF"> RESTE A FAIRE: lier les actions de filtrages aux checkbox </p>
-        <p>
-          <label htmlFor="checkManger">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Manger</span>
-          </label>
-          <label htmlFor="checkCuisiner">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Cuisiner & Manger</span>
-          </label>
-          <label htmlFor="checkAteliers">
-            <input type="checkbox" className="filled-in" checked="checked" />
-            <span>Ateliers</span>
-          </label>
-        </p>
-      </form>
+      <div className="row calendar">
+        <CalendarHome
+          selectedDate={selectedDate}
+          filterCuisiner={filterCuisiner}
+          filterManger={filterManger}
+          filterAutres={filterAutres}
+        />
+      </div>
 
-      <div className="events-registrations-list container">
-        <h3>Liste des evenements</h3>
-        <ul className="RAF">
-          <p> RESTE A FAIRE: </p>
-          <li> icone devient rouge sur mail non alimenté </li>
-          <li> icone devient orange sur allergies non null </li>
-          <li> action supprimer évènement (ou bien lien vers modification/suppression event ?) </li>
-          <li> action modifier évènement (ou bien lien vers modification/suppression event ?) </li>
-          <li> xxx </li>
-        </ul>
+      <div className="row checkbox">
+        <label className="col hide-on-small-only" htmlFor="filterAll">
+          <input
+            type="checkbox"
+            id="filterAll"
+            checked={filterCuisiner === true && filterManger === true && filterAutres === true ? 'checked' : ''}
+            onChange={() => checkAll()}
+          />
+          <span>Tous</span>
+        </label>
+        <label className="col hide-on-med-and-up" htmlFor="filterCuisiner">
+          <input
+            type="checkbox"
+            id="filterCuisiner"
+            checked={filterCuisiner ? 'checked' : ''}
+            onChange={e => setFilterCuisiner(e.target.checked)}
+          />
+          <span>Cuisiner</span>
+        </label>
 
+        <label className="col hide-on-small-only" htmlFor="filterCuisiner">
+          <input
+            type="checkbox"
+            id="filterCuisiner"
+            checked={filterCuisiner ? 'checked' : ''}
+            onChange={e => setFilterCuisiner(e.target.checked)}
+          />
+          <span>Cuisiner & Manger</span>
+        </label>
 
+        <label className="col" htmlFor="filterManger">
+          <input
+            type="checkbox"
+            id="filterManger"
+            checked={filterManger ? 'checked' : ''}
+            onChange={e => setFilterManger(e.target.checked)}
+          />
+          <span>Manger</span>
+        </label>
+        <label className="col" htmlFor="filterAutres">
+          <input
+            type="checkbox"
+            id="filterAutres"
+            checked={filterAutres ? 'checked' : ''}
+            onChange={e => setFilterAutres(e.target.checked)}
+          />
+          <span>Autres</span>
+        </label>
+      </div>
+
+      <div className="row list-events">
         {/* entetes liste des évenements */}
-        <ul className="events with-header">
-          <li className="event-header row">
-            <p className="col s1">Atelier</p>
-            <p className="col s2">Date</p>
-            <p className="col s1">Heure</p>
-            <p className="col s1">adultes</p>
-            <p className="col s1">enfants</p>
-            <p className="col s1">capacité</p>
-            <p className="col s1">modifier</p>
-            <p className="col s1">supprimer</p>
-            <p className="col s1">alertes</p>
-            <p className="col s1">alertes</p>
-            <p className="col s1">détails</p>
+        <ul className="event-header">
+          <li className="col s2 hide-on-large-only"> </li>
+          <li className="col s2 hide-on-med-and-down">Evènement</li>
+          <li className="col col-icon s1 hide-on-large-only">
+            <Tooltip title="date" trigger="click hover">
+              <i className="material-icons icon-white">today</i>
+            </Tooltip>
           </li>
+          <li className="col s1 hide-on-med-and-down">Date/Heure</li>
+          <li className="col col-icon s1 hide-on-med-and-down">adultes</li>
+          <li className="col col-icon s1 hide-on-med-and-down">enfants</li>
+          <li className="col s1 hide-on-med-and-down">capacité</li>
+          <li className="col col-icon s1 hide-on-small-only hide-on-large-only">
+            <Tooltip title="capacité" trigger="click hover">
+              <i className="material-icons icon-white">people</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="email manquant" trigger="click hover">
+              <i className="material-icons icon-white">email</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="allergies" trigger="click hover">
+              <i className="material-icons icon-white">warning</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="commentaires" trigger="click hover">
+              <i className="material-icons icon-white">comment</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="modifier" trigger="click hover">
+              <i className="material-icons icon-white">create</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1">
+            <Tooltip title="supprimer" trigger="click hover">
+              <i className="material-icons icon-white">delete_forever</i>
+            </Tooltip>
+          </li>
+          <li className="col col-icon s1"><i className="material-icons">expand_more</i></li>
+          {/* <i className="material-icons icon-white">pan_tool</i>
+          <i className="material-icons icon-white">restaurant</i>
+          <i className="material-icons icon-white">restaurant_menu</i>
+          <i className="material-icons icon-white">cake</i>  */}
         </ul>
 
         {/* liste des evenements */}
-        {events.map((event, index) => (
-          <ul key={events[index]}>
-            <li className="event-item row valign-wrapper center-align">
-              <p className="col s1">{event.name}</p>
-              <p className="col s2">{moment(event.date_b).format('dddd Do MMM YYYY')}</p>
-              <p className="col s1">{moment(event.date_b).format('HH:mm')}</p>
-              <p className="col s1">{event.quantity_adult}</p>
-              <p className="col s1">{event.quantity_children}</p>
-              <p className="col s1">
-                {event.quantity_adult + event.quantity_children / 2}
+        {filteredEvents.map((event, index) => (
+          <div className="event" key={event.id_event} data-genre={event.name_event}>
+            <ul
+              className={
+                event.nb_persons < event.capacity
+                  ? 'event-item row center-align'
+                  : 'event-item grey lighten-1 row center-align'
+              }
+
+            >
+              <li className="col s2">{event.name_event === '' ? event.name_activity : event.name_event}</li>
+              <li className="col s1 hide-on-large-only">{moment(event.date_b).format('Do/MM')}</li>
+              <li className="col s1 hide-on-med-and-down">
+                {moment(event.date_b).format('ddd DD/MM HH:mm-')}
+                {moment(event.date_e).format('HH:mm')}
+              </li>
+              <li className="col col-icon s1 hide-on-med-and-down">{event.nb_adults}</li>
+              <li className="col col-icon s1 hide-on-med-and-down">{event.nb_children}</li>
+              <li className="col s1 hide-on-small-only">
+                {event.nb_persons}
                 /
                 {event.capacity}
-              </p>
-              <p className="col s1"><i className="material-icons icon-green">create</i></p>
-              <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-              <p className="col s1"><i className="material-icons icon-green">warning</i></p>
-              <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
-              <p className="col s1">
+              </li>
+              <li className="col col-icon s1">
+                {event.nb_emails === event.NB_REG
+                  ? null
+                  : (
+                    <Tooltip title={event.NB_REG - event.nb_emails} trigger="click hover">
+                      <i className="material-icons warning-icon">email</i>
+                    </Tooltip>
+                  )
+                }
+              </li>
+              <li className="col col-icon s1">
+                {event.nb_allergies > 0
+                  ? (
+                    <Tooltip title={event.nb_allergies} trigger="click hover">
+                      <i className="material-icons warning-icon">warning</i>
+                    </Tooltip>
+                  )
+                  : null
+                }
+              </li>
+              <li className="col col-icon s1">
+                {event.nb_comments > 0
+                  ? (
+                    <Tooltip title={event.nb_comments} trigger="click hover">
+                      <i className="material-icons icon-green">comment</i>
+                    </Tooltip>
+                  )
+                  : null
+                }
+              </li>
+              <li className="col col-icon s1">
+                <Link to={`/events/${event.id_event}`} trigger="click hover">
+                  <i className="material-icons icon-green">create</i>
+                </Link>
+              </li>
+
+              <li className="col col-icon s1">
                 <button
-                  className="btn-floating waves-effect waves-light valign-wrapper"
-                  onClick={() => setCollapseRegistrations(
-                    [
-                      ...collapseRegistrations.slice(0, [index]),
-                      !collapseRegistrations[index],
-                      ...collapseRegistrations.slice([index + 1], collapseRegistrations.length),
-                    ],
-                  )}
+                  type="button"
+                  className="button link-button"
+                  onClick={() => showDeleteConfirm(index)}
+                >
+                  <i className="material-icons icon-green">delete_forever</i>
+                </button>
+              </li>
+
+              <li className="col col-icon s1">
+                <button
+                  className="btn btn-small home-btn-collapse waves-effect waves-light"
+                  onClick={() => {
+                    setCollapses([
+                      ...collapses.slice(0, [index]),
+                      !collapses[index],
+                      ...collapses.slice([index + 1], collapses.length),
+                    ]);
+                  }}
                   type="submit"
                   name="action"
                 >
-                  { collapseRegistrations[index] === false
+                  {collapses[index] === false
                     ? <i className="material-icons">expand_more</i>
                     : <i className="material-icons">expand_less</i>
                   }
                 </button>
-              </p>
-            </li>
-            { collapseRegistrations[index] === false
-              ? null
-              : (
-                <ul className="registrations with-header">
-                  <li className="registration-header row">
-                    <p className="col s1">prénom</p>
-                    <p className="col s1">nom</p>
-                    <p className="col s1">email</p>
-                    <p className="col s1">téléphone</p>
-                    <p className="col s1">n°adhérent</p>
-                    <p className="col s1">nb adulte(s)</p>
-                    <p className="col s1">nb enfant(s)</p>
-                    <p className="col s1"><i className="material-icons icon-green">create</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">delete_forever</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">warning</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">priority_high</i></p>
-                    <p className="col s1"><i className="material-icons icon-green">comment</i></p>
+              </li>
+            </ul>
+
+            {/* s'affiche si collapse activé */}
+            <ul>
+              {collapses[index] === false
+                ? null
+                : (
+                  <ReservationHome
+                    eventId={event.id_event}
+                    eventName={event.name_event === '' ? event.name_activity : event.name_event}
+                    eventDate={event.date_b}
+                    registrations={registrations}
+                  />
+                )
+              }
+            </ul>
+
+            {/* affiche lien pour nouvelle résa si évènement pas complet */}
+            <ul>
+              {collapses[index] === true && event.nb_persons < event.capacity
+                ? (
+                  <li className="create-registration col s12">
+                    <Link to="/reservation" homeEvent={event.id_event}>
+                      <button
+                        className="btn btn-small waves-effect waves-light"
+                        type="submit"
+                      >
+                        créer une nouvelle réservation
+                      </button>
+                    </Link>
                   </li>
-                  <ReservationHome />
-                </ul>
-              )
-            }
-          </ul>
+                )
+                : null
+              }
+              {collapses[index] === true && event.nb_persons >= event.capacity
+                ? (
+                  <li className="create-registration col s12">
+                    <Link to="/reservation" homeEvent={event.id_event}>
+                      <button
+                        className="btn btn-small grey lighten-1 waves-effect waves-light"
+                        type="submit"
+                      >
+                        COMPLET: voulez-vous surbooker?
+                      </button>
+                    </Link>
+                  </li>
+                )
+                : null
+              }
+            </ul>
+
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-export default EventHome;
+const mapStateToProps = store => ({
+  events: store.events,
+  registrations: store.registrations,
+});
+
+EventHome.propTypes = {
+  dispatch: PropTypes.func,
+  events: PropTypes.arrayOf(PropTypes.object),
+  registrations: PropTypes.arrayOf(PropTypes.object),
+};
+
+EventHome.defaultProps = {
+  dispatch: null,
+  events: mapStateToProps.events,
+  registrations: mapStateToProps.registrations,
+};
+
+export default connect(mapStateToProps)(EventHome);

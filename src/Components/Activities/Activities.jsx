@@ -1,100 +1,256 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import 'materialize-css/dist/css/materialize.min.css';
+import {
+  message, Modal, Row, Col,
+} from 'antd';
 import M from 'materialize-css/dist/js/materialize';
+import conf from '../../app.conf';
+import setHeaderToken from '../../Utils/tokenUtil';
 import './Activities.css';
 
 function Activities() {
+  // ----------------------------------HOOKS----------------------------------
+  const { confirm } = Modal;
   const [activities, setActivities] = useState([]);
+  const [selectValue, setSelectValue] = useState('default');
+  const [id, setId] = useState(null);
   const [title, setTitle] = useState('');
   const [describtion, setDescribtion] = useState('');
   const [file, setFile] = useState('');
+  const [indexSup, setIndexSup] = useState('default');
+  const [nameFile, setNameFile] = useState('');
+  const [active, setActive] = useState('');
+  const [emptyFile, setEmptyFile] = useState(0);
+  const [recharge, setRecharge] = useState(0);
 
-  const handleChangeTitle = (event) => {
-    setTitle(event.target.value);
-  };
-
-  const handleChangeDescribtion = (event) => {
-    setDescribtion(event.target.value);
-  };
-
-  useEffect(() => {
-    axios.get('http://localhost:8000/activities')
-      .then((result) => {
-        setActivities(result.data);
-      });
-    M.AutoInit();
-  }, []);
-
+  // --------------------------------CHANGEMENT STATE-----------------------------------
+  const handleChange = (event, setHook) => setHook(event.target.value.replace('/', ''));
   const handleChangeFile = (event) => {
-    setFile(URL.createObjectURL(event.target.files[0]));
+    setEmptyFile(1);
+    setFile(event.target.files[0] ? URL.createObjectURL(event.target.files[0]) : false);
+    setNameFile(event.target);
+  };
+  const valueSelected = (event) => {
+    setIndexSup(event.target.value);
+    setSelectValue(activities[event.target.value] ? activities[event.target.value] : 'default');
+    setId(activities[event.target.value] ? activities[event.target.value].id_activity : null);
+    setTitle(activities[event.target.value] ? activities[event.target.value].name : '');
+    setDescribtion(activities[event.target.value] ? activities[event.target.value].description : '');
+    setFile(activities[event.target.value] ? activities[event.target.value].picture : '');
+    setActive(event.target.value === 'default' ? '' : 'active');
   };
 
+  // -----------------------------------------------REQUETES-------------------------------
+  const submitActivity = () => {
+    const file1 = nameFile;
+    const fileName = `activite-${title}.jpg`;
+    const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
+    const newFile = new File([blob], fileName, { type: 'image/jpg' });
+    const data = new FormData();
+    data.append('file', newFile);
+    setHeaderToken(() => {
+      axios.post(`${conf.url}/api/activities/`, {
+        name: title,
+        description: describtion,
+        picture: `${conf.url}/images/${newFile.name}`,
+      })
+        .then(() => {
+          axios.post(`${conf.url}/api/uploaddufichier/`, data)
+            .then(() => {
+              message.success('Activité créée !', 3);
+            })
+            .catch(() => {
+              message.error("L'actvité n'a pas été créée", 3);
+            });
+        })
+        .catch(() => {
+          message.error("L'actvité n'a pas été créée", 3);
+        });
+    });
+    setTitle('');
+    setDescribtion('');
+    setFile('');
+    setNameFile('');
+    setSelectValue('default');
+    setIndexSup('default');
+    setEmptyFile(0);
+    setRecharge(1);
+  };
+
+  const modifyActivity = () => {
+    let newFile;
+    if (emptyFile === 1) {
+      const file1 = nameFile;
+      const fileName = `activite-${title}.jpg`;
+      const blob = file1.files[0].slice(0, file1.files[0].size, 'image/jpg');
+      newFile = new File([blob], fileName, { type: 'image/jpg' });
+      const data = new FormData();
+      data.append('file', newFile);
+      setHeaderToken(() => {
+        axios.post(`${conf.url}/api/uploaddufichier/`, data, {
+        })
+          .then(() => {
+            message.success(`Votre image de l'activité ${title} a été modifiée`, 3);
+          })
+          .catch(() => {
+            message.error("L'image de l'actvité n'a pas été modifiée", 3);
+          });
+      });
+    }
+    setHeaderToken(() => {
+      axios.put(`${conf.url}/api/activities/${id}`, {
+        name: title,
+        description: describtion,
+        picture: emptyFile === 1 ? `${conf.url}/images/${newFile.name}` : activities[indexSup].picture,
+      })
+        .then(() => {
+          message.success(`Votre activité ${title} a été modifiée`, 3);
+        })
+        .catch(() => {
+          message.error("L'actvité n'a pas été modifiée", 3);
+        });
+    });
+    setTitle('');
+    setDescribtion('');
+    setFile('');
+    setNameFile('');
+    setSelectValue('default');
+    setIndexSup('default');
+    setRecharge(1);
+    setEmptyFile(0);
+  };
+
+  const removeActivity = () => {
+    confirm({
+      title: `Etes vous sur de vouloir supprimer l'activité: ${title} ?`,
+      okText: 'Oui',
+      okType: 'danger',
+      cancelText: 'Non',
+      onOk() {
+        const sendFile = file.split('/');
+        setHeaderToken(() => {
+          axios.delete(`${conf.url}/api/activities/${id}`)
+            .then(() => {
+              message.success(`L'activité ${title} a été supprimée`, 3);
+              axios.delete(`${conf.url}/api/deletefile/${sendFile[sendFile.length - 1]}`)
+                .then(() => {
+                  message.success(`L'activité ${title} a été supprimée`, 3);
+                })
+                .catch(() => {
+                  message.error("L'actvité n'a pas été supprimée", 3);
+                });
+            })
+            .catch((error) => {
+              const getErr = `${error}`.split(' ');
+              if (getErr[getErr.length - 1] === '503') {
+                message.error('Des évenements sont liées à cette activité, vous ne pouvez pas la supprimer.', 3);
+              } else {
+                message.error("L'actvité n'a pas été supprimée", 3);
+              }
+            });
+        });
+        setTitle('');
+        setDescribtion('');
+        setFile('');
+        setNameFile('');
+        setSelectValue('default');
+        setIndexSup('default');
+        setRecharge(1);
+        setEmptyFile(0);
+      },
+      onCancel() {
+      },
+    });
+  };
+
+  const prevent = (e) => {
+    e.preventDefault();
+  };
+
+  // ------------------------------------------------GET ACTIVITIES------------------------
+  useEffect(() => {
+    setHeaderToken(() => {
+      axios.get(`${conf.url}/api/activities`)
+        .then((result) => {
+          setActivities(result.data);
+        });
+    });
+    M.AutoInit();
+    setRecharge(0);
+  }, [recharge === 1]);
+
+  // ------------------------------------------------------RENDU------------------------------
   return (
     <div className="container">
-      <h1>Création d&apos;une activité</h1>
-      <form className="" action="#">
-        <div className="row">
-          <div className="input-field col s6">
-            {/* <i className="material-icons prefix">title</i> */}
-            <select className="browser-default">
-              <option value="" disabled selected>Choisir une activité</option>
-              {activities ? activities.map((activity, index) => (
-                <option value={`${index + 1}`}>{activity.name}</option>
-              )) : ''}
-            </select>
-          </div>
-          <div className="input-field col s6">
-            <i className="material-icons prefix">title</i>
-            <input id="titre_activité" type="text" className="validate" value={title} onChange={handleChangeTitle} />
-            <label htmlFor="titre_activité">Titre de l&apos;activité</label>
-          </div>
+      <h1 className="center-align marg">Création d&apos;une activité</h1>
+      <Row>
+        <Col sm={24} lg={12} className="input-field">
+          <select value={indexSup} onChange={valueSelected} className="browser-default color_select">
+            <option value="default">Création d&apos;une nouvelle activité</option>
+            {activities ? activities.map((activity, index) => (
+              <option style={activity.id_activity === 3 ? { display: 'none' } : null} value={index} key={activity.id_activity}>{activity.name}</option>
+            )) : ''}
+          </select>
+        </Col>
+        <Col sm={24} lg={12} className="input-field">
+          <i className="material-icons prefix">title</i>
+          <input id="titre_activité" type="text" value={title} onChange={e => handleChange(e, setTitle)} />
+          <label className={active} htmlFor="titre_activité">Titre de l&apos;activité</label>
+        </Col>
+      </Row>
+      <div className="row">
+        <div className="input-field col s12">
+          <i className="material-icons prefix">description</i>
+          <textarea id="description" className="materialize-textarea" value={describtion} onChange={e => handleChange(e, setDescribtion)} />
+          <label className={active} htmlFor="description">Déscription de l&apos;activité</label>
         </div>
-
-        <div className="row">
-          <div className="input-field col s12">
-            <i className="material-icons prefix">description</i>
-            <textarea id="description" className="materialize-textarea" value={describtion} onChange={handleChangeDescribtion} />
-            <label htmlFor="description">Déscription de l&apos;activité</label>
+      </div>
+      <div className="row">
+        <div className="file-field input-field col s12">
+          <div className="btn">
+            <span>Illustration</span>
+            <input type="file" onChange={handleChangeFile} name="file" />
           </div>
-        </div>
-
-        <div className="row">
-          <div className="file-field input-field">
-            <div className="btn">
-              <span>Illustration</span>
-              <input type="file" onChange={handleChangeFile} />
-            </div>
-            <div className="file-path-wrapper">
-              <input className="file-path validate" type="text" />
-            </div>
+          <div className="file-path-wrapper">
+            <input className="file-path" type="text" defaultValue={file} />
           </div>
         </div>
-
-        <div className="center-align">
-          <button className="btn waves-effect waves-light pos_bt" type="submit" name="action">Créer</button>
-          <button className="btn waves-effect waves-light pos_bt" type="submit" name="action">Supprimer</button>
-        </div>
-
-        <p className="center-align">Rendu de l&apos;activité</p>
-        <div className="render">
-          <div className="container mssg">
-            <h1 className="center-align subtitles"><span>{title}</span></h1>
-            <p className="justify text">{describtion}</p>
-            <img className="activitie_pics" src={`${file}`} alt="cocotte_activite" />
-          </div>
-        </div>
-
-        {/* <div className="center-align">
-              <button className="btn waves-effect waves-light pos_bt"
-              type="submit" name="action">Créer</button>
-            </div> */}
-        {/* <button className="btn waves-effect waves-light"
-        type="submit" name="action">Modifier</button>
-            <button className="btn waves-effect waves-light"
-            type="submit" name="action">Supprimer</button> */}
-
-      </form>
+      </div>
+      <div className="center-align">
+        {selectValue === 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={title !== '' && describtion !== '' && file !== '' ? submitActivity : prevent}
+            type="submit"
+          >
+            Creer
+          </button>
+        ) : ''}
+        {selectValue !== 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={title !== '' && describtion !== '' ? modifyActivity : prevent}
+            type="submit"
+          >
+            Modifier
+          </button>
+        ) : ''}
+        {selectValue !== 'default' ? (
+          <button
+            className="btn waves-effect waves-light pos_bt"
+            onClick={removeActivity}
+            type="submit"
+          >
+            Supprimer
+          </button>
+        ) : ''}
+      </div>
+      <p className="renderSize row center-align">Rendu de l&apos;activité</p>
+      <div className="render container">
+        <h1 className="center-align subtitles"><span>{title}</span></h1>
+        <p className="justify text">{describtion}</p>
+        {file ? <img className="activitie_pics" src={file} alt="cocotte_activite" /> : ''}
+      </div>
     </div>
   );
 }

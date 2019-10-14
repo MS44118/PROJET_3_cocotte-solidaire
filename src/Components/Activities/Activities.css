@@ -1,7 +1,29 @@
 .render {
-  border: 3px solid gray;
+  border: 1.7px solid gray;
   margin: 20px;
   width: 100%;
+  box-shadow: 1px 1px 12px #555;
+  margin-bottom: 5em;
+  max-width: inherit;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.renderSize {
+  padding-top: 2em;
+  font-size: 3em;
+}
+
+ .color_select{
+  color:#498e81 !important;
+ }
+
+.marg {
+
+  font-size: 3.5em;
+  margin: 1em;
+  font-family: Simplifica;
+  text-transform: uppercase;
 }
 
 .activitie_pics {
@@ -48,16 +70,12 @@
   text-justify: inter-word;
   color: black !important;
 }
+
 .text {
   font-size: 1.2em;
   line-height: 2em;
 }
-p {
-  font-family: Roboto;
-}
 
-.mssg {
-  max-width: inherit;
-  word-break: break-all;
-  word-wrap: break-word;
- }
+p {
+  font-family: Roboto!important;
+}

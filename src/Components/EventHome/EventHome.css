@@ -1,65 +1,121 @@
-/* A supprimer quand page terminée*/
-
-.RAF{
-  color: red;
-  margin: 20px auto 20px auto;
+/* general settings */
+.home-container{
+  width: 98% !important;
+  display: flex;
+  flex-direction: column;
+  /* margin-bottom: 30px !important; */
 }
 
-/* settings for calendar */
-
-.react-calendar{
-  vertical-align: middle;
-  margin: 20px auto 20px auto;
+.row{
+  margin: 0;
+  display: flex;
+  justify-content: center;
 }
 
-
-/* settings for filters (checkbox zone) */
-
-form{
-  margin-top: 20px;
+.checkbox{
+  display: flex;
+  /* mobile friendly test */
+  /* flex-direction: column; */  
 }
 
-span{ 
+.checkbox span{ 
   margin: 10px;
   text-align: left;
 }
 
-/* settings for list of events then registrations */
 
-li,p{
-  text-align: center;
-  vertical-align: middle;
-  margin-bottom: 1px;
-  margin-top: 1px;
+.list-events{
+  display: flex;
+  flex-direction: column;
 }
 
-.container{
-  width: 100% !important;
+.list-registrations{
+  display: flex;
+  flex-direction: column;
 }
 
-.row,ul{
+ul{
   margin: 0;
-  /* text-size-adjust: ; */
 }
 
+li{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.col-icon{
+  display: flex;
+  justify-content: center;
+  align-self: center;
+}
+
+.home-btn-collapse{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  max-width: 15px;
+}
+
+/* events list settings */
 .event-header{
   background-color: rgb(55,126,114, 1);
-  color: white;  
-  line-height: 50px;
+  color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
   display: flex;
 }
 
 .event-item{
-  background-color:rgb(248, 200, 190, 0.5);
+  background-color: rgb(55,126,114, 0.2);
+  color: rgba(0, 0, 0, 0.7);
+  /* background-color:rgb(248, 200, 190, 0.5); */
 }
 
-.registration-header{
-  background-color: rgb(55,126,114, 0.3);
+/* .event-item-complete{
+  background-color: rgba(128,128,128, 0.4);
   color: rgba(0, 0, 0, 0.7);
-  line-height: 20px;
+} */
+
+
+.registration-header{
+  /* background-color: rgb(55,126,114, 0.3); */
+  /* color: rgba(0, 0, 0, 0.7); */
+  background-color:rgb(248, 200, 190, 0.5);
+  margin-top: 5px;
+  line-height: 35px;
   display: flex;
 }
 
 .registration-item{
   display: flex;
+}
+
+.create-registration{
+  text-align: center;
+  text-decoration: underline;
+  margin: 15px;
+}
+
+.warning-icon{
+  color: red !important
+}
+
+/* Modal settings */
+
+/* settings buttons */
+.link-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+.link-button:hover,
+.link-button:focus {
+text-decoration: none;
 }

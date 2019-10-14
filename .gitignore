@@ -2,7 +2,18 @@
 node_modules
 package-lock.json
 .DS_Store
+
+# database password
 api/.password.js
+
+# JWT keys
+api/.private.key
+api/.public.key
 
 # special settings visualcode (maelenn)
 .vscode
+
+# email auth
+api/.emailAuth.js
+
+.adherents_la_cocotte_solidaire.xlsx

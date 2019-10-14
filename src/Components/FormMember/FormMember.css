@@ -1,0 +1,37 @@
+.input-field .prefix ~ .select-wrapper {
+  margin-left:3rem;
+  width:92%;
+  width:calc(100% - 3rem);
+}
+
+.select{
+  margin: auto;
+}
+
+.ant-select-focused .ant-select-selection, .ant-select-selection:focus, .ant-select-selection:active{
+  border-color: white!important;
+  box-shadow: 0 0 0 0 !important;
+}
+
+.ant-select-selection:hover{
+  border-color: #83bbb4!important;
+}
+
+.form{
+  margin-bottom: 8em;
+  margin-top: 3em;
+}
+
+.spanForm {
+  color: black;
+  font-size: 1.2em;
+  margin-right: 5px;
+}
+
+.selectForm {
+  color: #498e81;
+}
+
+.ant-col{
+  padding: 0 1em;
+}

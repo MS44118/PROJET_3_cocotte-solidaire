@@ -1,0 +1,10 @@
+.valign-wrapper{
+  height: 100vh!important;
+  width: 100vw!important;
+}
+
+.centerLogin{
+  width: 100vh;
+  margin: auto;
+  text-align: center;
+}

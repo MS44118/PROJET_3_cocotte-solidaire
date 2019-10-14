@@ -1,10 +1,15 @@
 body{
   color:#498e81 !important;
 }
-.txt{
-  text-align: center;
-  font-size: 25px;
-}
+
 .color_select{
-  color:#498e81 !important;
+  border-radius: 80px !important;
+}
+
+.noFuckingmargin{
+  margin-left: 0% !important;
+}
+
+.ant-select-selection{
+  border-radius: 80px !important;
 }

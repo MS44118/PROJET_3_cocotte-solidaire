@@ -1,6 +1,7 @@
 .green-font{
   color: #498e81;
 }
+
 i.icon-green {
   color:  #498e81;
 }
@@ -15,18 +16,20 @@ nav .brand-logo img{
   width: auto;
 }
 
-nav ul a{
+ul a, ul a:hover{
   font-size: 1rem;
-  color: #498e81;
+  color: #498e81!important;
 }
 
 .headline{
   margin-top: 300px;
   color: #ffffff;
 }
+
 .sidebarNO{
   display:none;
 }
+
 .sidebarYES{
   display:none;
 }
@@ -46,10 +49,10 @@ nav ul a{
 
 @media only screen and (max-width : 600px) {
   nav .brand-logo img{
-      height: 56px;
+    height: 56px;
   }
 
   .headline{
-      margin-top: 250px;
+    margin-top: 250px;
   }
 }
