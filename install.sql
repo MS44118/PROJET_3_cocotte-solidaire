@@ -29,10 +29,10 @@ CREATE TABLE users (
 INSERT INTO cocotte_booking.users 
   (firstname, lastname, email, phone, birthday, gender, member_id, member_active, membership_date_last, membership_place, adress, zip, city, neighborhood, image_copyright, mailing_active, anonym)
 VALUES
-  ('maelenn', 'sallic', 'ms44118@gmail.com', '0677251296', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Einstein', 44300, 'Nantes', true, true, false, false),
-  ('cedric', 'gardianot', 'cedric@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false, false),
-  ('aurelia', 'roumesy', 'aurelia@gmail.com', '0655583322', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false, false),
-  ('tristan', 'olivier', 'tristan@gmail.com', '0655983322', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false, false);
+  ('mmmmmmmm', 'SSSSSSSS', 'mmmmmmmm@gmail.com', '0644332211', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Einstein', 44300, 'Nantes', true, true, false, false),
+  ('cccccccc', 'GGGGGGG', 'cccccccc@gmail.com', '0644332211', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert Loupe', 44300, 'Nantes', true, true, false, false),
+  ('aaaaaaa', 'RRRRRRRRR', 'aaaaaaa@gmail.com', '0644332211', NOW(), 'female', 550066, true, NOW(), 'la cocotte solidaire', '1 avenue Albert Deux', 44300, 'Nantes', true, true, false, false),
+  ('tttttttt', 'OOOOOOO', 'tttttttt@gmail.com', '0644332211', NOW(), 'male', 550066, false, NOW(), 'la cocotte solidaire', '1 avenue Albert II', 44300, 'Nantes', true, true, false, false);
   
 -- controls
 SELECT firstname, lastname, email, phone, birthday, gender, anonym FROM users;
@@ -50,9 +50,9 @@ CREATE TABLE activities(
 INSERT INTO cocotte_booking.activities 
   (name, description, picture)
 VALUES
-  ('poterie', "la poterie c\'est genial!", "https://www.neuillysurmarne.fr/wp-content/uploads/2015/10/poterie.jpg"),
-  ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "http://www.canalvie.com/polopoly_fs/1.2710754.1498075197!/image/manger-ensemble.jpg_gen/derivatives/cvlandscape_670_377/manger-ensemble.jpg"),
-  ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://previews.123rf.com/images/rawpixel/rawpixel1605/rawpixel160502810/56123886-amis-cuisine-cuisine-salle-%C3%A0-manger-ensemble-concept.jpg");
+  ('poterie', "la poterie c\'est genial!", "https://placekitten.com/640/360"),
+  ('manger', "manger à la bonne franquette ce que vos voisins ont cuisiné le matin même", "https://placekitten.com/640/360"),
+  ('cuisiner & manger', "cuisiner le matin et partager avec vos voisins votre création culinaire", "https://placekitten.com/640/360");
 
 -- controls
 SELECT id_activity, name, description FROM activities;
