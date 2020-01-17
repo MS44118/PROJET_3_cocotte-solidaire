@@ -18,6 +18,7 @@
     "multer": "^1.4.1",
     "mysql": "^2.17.1",
     "nodemailer": "^6.2.1",
+    "nodemon": "^2.0.2",
     "prop-types": "^15.7.2",
     "query-string": "^6.8.1",
     "react": "^16.8.6",
@@ -28,7 +29,7 @@
     "react-redux": "^7.0.3",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.0.1",
+    "react-scripts": "^3.3.0",
     "react-toastify": "^5.3.1",
     "react-with-styles-interface-aphrodite": "^5.0.1",
     "redux": "^4.0.1",
@@ -37,11 +38,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "./node_modules/.bin/eslint ./ --ext ['.js','.jsx']",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -55,11 +52,5 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.17.3",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.13.0"
-  }
+  "devDependencies": {}
 }

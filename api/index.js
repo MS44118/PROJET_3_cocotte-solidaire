@@ -32,7 +32,7 @@ api.use(bodyParser.urlencoded({
 }));
 // allows cross origin requests (localhost:xxxx)
 // api.use(cors());
-api.use(cors({ origin: '*' }));
+api.use(cors({ origin: '*'}));
 
 // rendre les images accessible
 api.use('/images', express.static('./images'));

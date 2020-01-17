@@ -1,5 +1,5 @@
 -- la cocotte solidaire booking DATABASE CREATION
--- CREATE DATABASE cocotte_booking;
+CREATE DATABASE cocotte_booking;
 
 USE cocotte_booking;
 
